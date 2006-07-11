@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="XMI In Out" default="compile" basedir=".">
+
+  <property file="build.properties"/>
+
+  <property name="src.dir" value="src"/>
+  <property name="test.src.dir" value="test/src"/>
+  <property name="test.class.dir" value="./test/classes" />
+  <property name="class.dir" value="./classes"/>
+  <property name="lib.dir" value="./lib"/>
+  <property name="dist.dir" value="./dist" />
+  <property name="config.dir" value="properties"/>
+  <property name="docs.dir" value="./javadoc" />
+
+  <path id="proj.class.path">
+    <pathelement location="${class.dir}"/>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <path id="test.classpath">
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <pathelement location="${class.dir}"/>
+    <pathelement location="${test.class.dir}"/>
+  </path>
+
+  
+  <target name="clean">
+    <delete dir="${class.dir}" failonerror="true" />
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${class.dir}"/>
+    <mkdir dir="${test.class.dir}"/>
+    <javac
+      destdir="${class.dir}"
+      debug="on"
+      srcdir="${src.dir}"
+      deprecation="false"
+      fork="yes"
+      >
+      <classpath refid="proj.class.path"/>
+    </javac>
+
+    <javac
+      debug="on"
+      destdir="${test.class.dir}"
+      srcdir="${test.src.dir}"
+      deprecation="false"
+      >
+      <classpath refid="test.classpath"/>
+    </javac>
+
+  </target>
+
+  <target name="prepare"
+    depends="compile">
+    <copy todir="${class.dir}">
+      <fileset dir="${config.dir}">
+        <include name="*.properties"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="dist" depends="prepare">
+    <mkdir dir="${dist.dir}"/>
+    <jar destfile="${dist.dir}/xmi.in.out.jar">
+      <fileset dir="${class.dir}">
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="deploy" depends="dist">
+    <copy todir="${deploy.dir}" file="${dist.dir}/xmi.in.out.jar"/>
+  </target>
+
+  <target name="doc">
+    <mkdir dir="${docs.dir}"/>
+    <mkdir dir="${docs.dir}/api"/>
+    <javadoc
+      destdir="${docs.dir}/api"
+      author="true"
+      version="true"
+      use="true"
+      windowtitle="Xmi In Out">
+
+      <packageset dir="src" defaultexcludes="yes">
+        <include name="gov/nih/nci/ncicb/xmiinout/domain" />
+        <include name="gov/nih/nci/ncicb/xmiinout/handler" />
+      </packageset>
+
+      <doctitle><![CDATA[<h1>Xmi In Out</h1>]]></doctitle>
+      <bottom><![CDATA[<i>~~--~~</i>]]></bottom>
+      <tag name="todo" scope="all" description="To do:" />
+      <link href="http://java.sun.com/products/jdk/1.5/docs/api/" />
+      <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <target name="jUnit" depends="prepare">
+    <java classname="XmiTestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/test-with-dependency.xmi"/>
+      <classpath refid="test.classpath"/>
+    </java>
+  </target>
+
+</project>
