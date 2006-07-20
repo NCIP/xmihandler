@@ -59,11 +59,7 @@
 
   <target name="prepare"
     depends="compile">
-    <copy todir="${class.dir}">
-      <fileset dir="${config.dir}">
-        <include name="*.properties"/>
-      </fileset>
-    </copy>
+
   </target>
 
   <target name="dist" depends="prepare">
