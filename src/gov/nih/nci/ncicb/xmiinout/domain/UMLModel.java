@@ -32,7 +32,7 @@ public interface UMLModel {
    */
   public List<UMLDependency> getDependencies();
  
-  public void addDependency(UMLDependency dependency);
+  public UMLDependency addDependency(UMLDependency dependency);
  
   /**
    * All associations in this model.
