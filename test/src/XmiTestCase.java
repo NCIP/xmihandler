@@ -70,6 +70,8 @@ public class XmiTestCase {
 
     addTaggedValueToAll(model);
 
+    addDependency(model);
+
     testSaveModel();
 
     testLoadModel(filename + ".new.xmi");
@@ -78,6 +80,45 @@ public class XmiTestCase {
 
   }
 
+  
+  private void addDependency(UMLModel model) {
+    UMLClass client = null,
+      supplier = null;
+
+    client = findClass(model, "Employee");
+    supplier = findClass(model, "Manager");
+
+    UMLDependency dep = model.createDependency(client, supplier, "reports to");
+    dep = model.addDependency(dep);
+
+    dep.addTaggedValue("ea_type", "Dependency");
+    dep.addTaggedValue("direction", "Source -&gt; Destination");
+    dep.addTaggedValue("style", "3");
+  }
+
+  private UMLClass findClass(UMLModel model, String className) 
+  {
+    for(UMLPackage pkg : model.getPackages()) {
+      UMLClass c = findClass(pkg, className);
+      if(c != null)
+        return c;
+    }    
+    return null;
+  }
+
+  private UMLClass findClass(UMLPackage pkg, String className) {
+    for(UMLClass clazz : pkg.getClasses()) {
+      if(clazz.getName().equals(className))
+        return clazz;
+    }
+    for(UMLPackage _pkg : pkg.getPackages()) {
+      UMLClass c = findClass(_pkg, className);
+      if(c != null)
+        return c;
+    }
+    return null;
+  }
+  
   private void addTaggedValueToAll(UMLModel model) {
     for(UMLPackage pkg : model.getPackages()) {
       addTaggedValueToAll(pkg);
@@ -157,6 +198,8 @@ public class XmiTestCase {
     for(UMLGeneralization gen : clazz.getGeneralizations()) {
       printGeneralization(gen, pkgDepth + 1);
     }
+
+    System.out.println("");
 
     for(UMLDependency dep : clazz.getDependencies()) {
       printDependency(dep, pkgDepth + 1);
