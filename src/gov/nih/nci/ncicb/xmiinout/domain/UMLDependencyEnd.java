@@ -7,8 +7,6 @@ public interface UMLDependencyEnd {
   /**
    * @return a List of all Dependencies where one end points to this element. 
    */
-  public List<UMLDependency> getDependencies();
-
-  public void addDependency(UMLDependency dependency);
+  public Set<UMLDependency> getDependencies();
 
 }
