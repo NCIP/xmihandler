@@ -58,6 +58,41 @@ public class JDomEAXmiWriter implements UMLWriter {
           return new GenericTaggedValueWriter().addTaggedValue(modelElt, tv);
 
         }
+        
+        public UMLDependency writeDependency(UMLModel model, UMLDependency dependency) {
+          UMLModelBean modelBean = (UMLModelBean)model;
+          Element modelElt = modelBean.getJDomElement();
+
+          Namespace ns = modelElt.getNamespace();
+
+          try {
+            JDomDomainObject clientObj = (JDomDomainObject)dependency.getClient();
+            
+            JDomDomainObject supplierObj = (JDomDomainObject)dependency.getSupplier();
+
+            Element depElement = new Element("Dependency", ns);
+            depElement.setAttribute("client", clientObj.getModelId());
+            depElement.setAttribute("supplier", supplierObj.getModelId());
+            depElement.setAttribute("name", dependency.getName());
+
+            if(dependency.getVisibility() != null) {
+              depElement.setAttribute("visibility", dependency.getVisibility().getName());
+            }
+
+            depElement.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+
+            Element supplierElt = supplierObj.getJDomElement();
+            supplierElt.getParentElement().addContent(depElement);
+            
+            return new UMLDependencyBean(depElement, dependency.getName(), dependency.getVisibility(), dependency.getClient(), dependency.getSupplier());
+            
+            
+          } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Incorrect Input Dependency. root -- " + e.getMessage());
+          }
+          
+        }
+
       };
   }
 
@@ -94,14 +129,16 @@ public class JDomEAXmiWriter implements UMLWriter {
       Element meTvElt = null;
       if(meTvElts.size() > 0)
         meTvElt = meTvElts.get(0);
-      else 
+      else {
         meTvElt = new Element("ModelElement.taggedValue", ns);
-      
+        elt.addContent(meTvElt);
+      }      
+
       Element newTvElt = new Element("TaggedValue", ns);
       newTvElt.setAttribute("tag", tv.getName());
       newTvElt.setAttribute("value", tv.getValue());
 
-      newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+//       newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
       
       meTvElt.addContent(newTvElt);
       
