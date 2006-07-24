@@ -16,7 +16,7 @@ public interface XmiInOutHandler {
 
   public UMLModel getModel(String modelName);
 
-  public UMLWriter getUMLWriter();
+//  public UMLWriter getUMLWriter();
 
 
 }

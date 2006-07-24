@@ -80,9 +80,9 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     return models.get(modelName);
   }
 
-  public UMLWriter getUMLWriter() {
-    return new JDomEAXmiWriter();
-  }
+//  public UMLWriter getUMLWriter() {
+//    return new JDomEAXmiWriter();
+//  }
 
   private void readModel(Element rootElement) throws JaxenException {
 
@@ -113,7 +113,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
       }
 
       for(UMLDependency dep : doDependencies(elt)) {
-        model.addDependency(dep);
+        model._addDependency(dep);
       }
 
       for(UMLAssociation assoc : doAssociations(elt)) {

@@ -40,4 +40,8 @@ public class EAXmi10Impl extends EABaseImpl {
   }
 
 
+  protected List<UMLDependency> doDependencies(Element elt)
+  {
+    return null;
+  }
 }

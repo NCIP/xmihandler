@@ -1,6 +1,7 @@
 package gov.nih.nci.ncicb.xmiinout.handler;
 
 import gov.nih.nci.ncicb.xmiinout.domain.bean.JDomDomainObject;
+import gov.nih.nci.ncicb.xmiinout.writer.UMLWriter;
 
 public class XmiHandlerFactory {
 
@@ -9,7 +10,7 @@ public class XmiHandlerFactory {
     try {
       XmiInOutHandler handler = (XmiInOutHandler)(Class.forName(handlerType.className()).newInstance());
 
-      JDomDomainObject.setUMLWriter(handler.getUMLWriter());
+      JDomDomainObject.setUMLWriter((UMLWriter)Class.forName(handlerType.getWriterClassName()).newInstance());
 
       return handler;
     } catch (ClassNotFoundException e) {
