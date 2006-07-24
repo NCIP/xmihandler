@@ -4,7 +4,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.*;
 
 import java.util.*;
 
-public class UMLClassBean extends JDomDomainObject implements UMLClass, UMLDependencyEnd {
+public class UMLClassBean extends JDomDomainObject implements UMLClass, IUMLDependencyEnd {
 
   private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
@@ -13,7 +13,7 @@ public class UMLClassBean extends JDomDomainObject implements UMLClass, UMLDepen
   private Set<UMLAssociation> associations = new HashSet<UMLAssociation>();
   private List<UMLGeneralization> generalizations = new ArrayList<UMLGeneralization>();
 
-  private List<UMLDependency> dependencies = new ArrayList<UMLDependency>();
+  private Set<UMLDependency> dependencies = new HashSet<UMLDependency>();
 
   private UMLVisibility visibility;
   private UMLPackageBean umlPkg;
@@ -124,7 +124,7 @@ public class UMLClassBean extends JDomDomainObject implements UMLClass, UMLDepen
     return stereotype;
   }
 
-  public List<UMLDependency> getDependencies() {
+  public Set<UMLDependency> getDependencies() {
     return dependencies;
   }
 

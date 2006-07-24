@@ -106,24 +106,30 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
     return generalizations;
   }
 
+  
   public void _addDependency(UMLDependency dependency) 
   {
     dependencies.add(dependency);
   }
 
-  public void addDependency(UMLDependency dependency) {
+  public UMLDependency addDependency(UMLDependency dependency) {
     if(dependency instanceof UMLDependencyBean) 
     {
       UMLDependencyBean depBean = (UMLDependencyBean)dependency;
       // if dep does not have an element, then we want to 
       if(depBean.getJDomElement() == null) 
       {
+        UMLDependency dep = writer.getUMLModelWriter().writeDependency(this, dependency);
         
+        dependencies.add(dep);
+        return dep;
+      } else {
+        throw new IllegalArgumentException("Cannot add an existing dependency");
       }
+    } else {
+      throw new IllegalArgumentException("Incorrect dependency parameter, expecting class=" + UMLDependencyBean.class + " but received=" + dependency.getClass().getName());
     }
-     
-  
-    dependencies.add(dependency);
+    
   }
 
   public List<UMLDependency> getDependencies() {
@@ -139,6 +145,12 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
   public UMLDependency createDependency(UMLDependencyEnd client,
                                         UMLDependencyEnd supplier, String name)
   {
+    if(client == null)
+      throw new IllegalArgumentException("client may not be null");
+
+    if(supplier == null)
+      throw new IllegalArgumentException("supplier may not be null");
+
     return new UMLDependencyBean(null, name, null, client, supplier);
   }
 }

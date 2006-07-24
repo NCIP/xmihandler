@@ -26,8 +26,8 @@ public class UMLDependencyBean extends JDomDomainObject implements UMLDependency
 
     this.name = name;
 
-    supplier.addDependency(this);
-    client.addDependency(this);
+    ((IUMLDependencyEnd)supplier).addDependency(this);
+    ((IUMLDependencyEnd)client).addDependency(this);
 
   }
 
@@ -60,8 +60,12 @@ public class UMLDependencyBean extends JDomDomainObject implements UMLDependency
     return taggedValue;
   }
 
-  public UMLTaggedValue addTaggedValue(String name, String value) {
+  public UMLTaggedValue addTaggedValue(String name, String value) throws IllegalStateException {
     UMLTaggedValueBean taggedValue = new UMLTaggedValueBean(null, name, value);
+
+    if(getJDomElement() == null) {
+      throw new IllegalStateException("Cannot add to a detached object. Please persist first.");
+    }
 
     // add to jdom element
     UMLTaggedValue tv = writer.getUMLDependencyWriter().writeTaggedValue(this, taggedValue);
