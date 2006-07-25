@@ -14,6 +14,8 @@ import org.jdom.output.*;
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 
 /**
@@ -21,6 +23,7 @@ import java.io.*;
  */
 public class EADefaultImpl extends EABaseImpl {
 
+  private static Logger logger = Logger.getLogger(EADefaultImpl.class.getName());
 
   protected List<UMLDatatype> doDataTypes(Element modelElt) {
     Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
@@ -90,6 +93,16 @@ public class EADefaultImpl extends EABaseImpl {
     for(Element depElt : depElts) {
       UMLDependencyEnd client = idClassMap.get(depElt.getAttribute("client").getValue());
       UMLDependencyEnd supplier = idClassMap.get(depElt.getAttribute("supplier").getValue());
+
+      if(client == null) {
+        logger.info("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+        continue;
+      }
+      if(supplier == null) {
+        logger.info("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+        continue;
+      }
+        
 
       Attribute nameAtt = depElt.getAttribute("name");
       String depName = null;
@@ -186,6 +199,11 @@ public class EADefaultImpl extends EABaseImpl {
       List<UMLAssociationEnd> endBeans = new ArrayList<UMLAssociationEnd>();
       endBeans.add(srcEnd);
       endBeans.add(targetEnd);
+
+      if(srcEnd.getUMLClass() == null || targetEnd.getUMLClass() == null) {
+        logger.info("Can't find end class for Association: " + assocElt.getAttribute("xmi.id") + " -- only associations to classes are supported -- ignoring");
+        continue;
+      }
 
       
       Attribute nameAtt = assocElt.getAttribute("name");
