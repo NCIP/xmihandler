@@ -4,7 +4,8 @@ import gov.nih.nci.ncicb.xmiinout.domain.*;
 
 import java.util.*;
 
-public class UMLClassBean extends JDomDomainObject implements UMLClass, IUMLDependencyEnd {
+public class UMLClassBean extends JDomDomainObject 
+  implements UMLClass, IUMLDependencyEnd, UMLDatatype {
 
   private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
