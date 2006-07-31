@@ -14,8 +14,13 @@ class JDomXmiTransformer {
 
   private static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
+  private static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
+
   static void addDatatype(UMLDatatype datatype) {
-    datatypes.put(((UMLDatatypeBean)datatype).getModelId(), datatype);
+    if(datatype instanceof UMLDatatypeBean)
+      datatypes.put(((UMLDatatypeBean)datatype).getModelId(), datatype);
+    else if(datatype instanceof UMLClassBean)
+      datatypes.put(((UMLClassBean)datatype).getModelId(), datatype);
   }
 
   static UMLDatatypeBean toUMLDatatype(Element typeElt) {
@@ -69,6 +74,8 @@ class JDomXmiTransformer {
                                           stereotype);
 
     clazz.setModelId(classElement.getAttribute("xmi.id").getValue());
+
+    addDatatype(clazz);
     return clazz;
   }
 
@@ -92,13 +99,42 @@ class JDomXmiTransformer {
       }
     }
 
+
     UMLAttributeBean att = new UMLAttributeBean(attElement,
                                                 attElement.getAttribute("name").getValue(),
                                                 datatype,
                                                 umlVis);
 
+    // maybe we haven't discovered the datatype yet.
+    if(datatype == null)
+      attWithMissingDatatypes.add(att);
 
     return att;
+  }
+
+  /**
+   * Run this after you've processed attributes for attributes 
+   * that use classes as datatypes.
+   */
+  static void completeAttributes() {
+    for(UMLAttributeBean att : attWithMissingDatatypes) {
+      Element attElement = att.getJDomElement();
+
+      Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+      Element sfTypeElement = attElement.getChild("StructuralFeature.type", ns);
+      if(sfTypeElement != null) {
+        Element classifElt = sfTypeElement.getChild("Classifier", ns);
+        if(classifElt != null) {
+          Attribute typeAtt = classifElt.getAttribute("xmi.idref");
+          if(typeAtt != null) {
+            String typeId = typeAtt.getValue();
+            att._setDatatype(datatypes.get(typeId));
+          }
+        }
+      }
+    }
+
+    
   }
 
 

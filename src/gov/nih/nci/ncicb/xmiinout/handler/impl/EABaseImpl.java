@@ -122,6 +122,9 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     }
 
     doRootTaggedValues(rootElement);
+
+    // Must be done after classes for cross references.
+    JDomXmiTransformer.completeAttributes();
   }
 
 
