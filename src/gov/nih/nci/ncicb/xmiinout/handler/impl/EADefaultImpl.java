@@ -200,7 +200,7 @@ public class EADefaultImpl extends EABaseImpl {
       endBeans.add(srcEnd);
       endBeans.add(targetEnd);
 
-      if(srcEnd.getUMLClass() == null || targetEnd.getUMLClass() == null) {
+      if(srcEnd.getUMLElement() == null || targetEnd.getUMLElement() == null) {
         logger.info("Can't find end class for Association: " + assocElt.getAttribute("xmi.id") + " -- only associations to classes are supported -- ignoring");
         continue;
       }
