@@ -8,9 +8,9 @@ import java.util.*;
 public interface UMLAssociationEnd {
 
   /**
-   * @return the UML Class this end points to
+   * @return the element (i.e class) this end points to
    */
-  public UMLClass getUMLClass();
+  public UMLAssociable getUMLElement();
 
   /**
    * @return the end role name, or null if there isn't any.
