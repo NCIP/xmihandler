@@ -5,7 +5,7 @@ import java.util.*;
 
 public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssociationEnd {
 
-  private UMLClass endClass;
+  private UMLAssociable endElement;
   private String roleName;
 
   private int lowMultiplicity, highMultiplicity;
@@ -15,7 +15,7 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
   public UMLAssociationEndBean
     (org.jdom.Element elt,
-     UMLClass clazz,
+     UMLAssociable end,
      String roleName,
      int lowMultiplicity,
      int highMultiplicity,
@@ -24,7 +24,7 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
     super(elt);
     
-    this.endClass = clazz;
+    this.endElement = end;
     this.roleName = roleName;
     this.lowMultiplicity = lowMultiplicity;
     this.highMultiplicity = highMultiplicity;
@@ -32,8 +32,8 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
   }
 
-  public UMLClass getUMLClass() {
-    return endClass;
+  public UMLAssociable getUMLElement() {
+    return endElement;
   }
 
   public String getRoleName() {
