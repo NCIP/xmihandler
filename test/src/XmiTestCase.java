@@ -228,14 +228,14 @@ public class XmiTestCase {
     }
     printInColor(GREEN,
                  "Association: "
-                 + srcEnd.getUMLClass().getName() 
+                 + ((UMLClass)srcEnd.getUMLElement()).getName() 
                  + "(" + srcEnd.getRoleName() + ")"
                  + "[" + srcEnd.getLowMultiplicity() + ".."
                  + srcEnd.getHighMultiplicity() + "]"
                  + (srcEnd.isNavigable()?"<":"")
                  + "--"
                  + (targetEnd.isNavigable()?">":"")
-                 + targetEnd.getUMLClass().getName() 
+                 + ((UMLClass)targetEnd.getUMLElement()).getName() 
                  + "(" + targetEnd.getRoleName() + ")"
                  + "[" + targetEnd.getLowMultiplicity() + ".."
                  + targetEnd.getHighMultiplicity() + "]"
