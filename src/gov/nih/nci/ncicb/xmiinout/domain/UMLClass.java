@@ -2,7 +2,7 @@ package gov.nih.nci.ncicb.xmiinout.domain;
 
 import java.util.*;
 
-public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd {
+public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssociable {
 
   /**
    * @return the class name
