@@ -10,7 +10,7 @@ public interface UMLPackage extends UMLTaggableElement {
   public String getName();
 
   /**
-   * The parent Package
+   * @return the parent package or null if this is the root package
    */ 
   public UMLPackage getParent();
 
