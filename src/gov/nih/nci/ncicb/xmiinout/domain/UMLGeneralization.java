@@ -2,6 +2,9 @@ package gov.nih.nci.ncicb.xmiinout.domain;
 
 import java.util.*;
 
+/**
+ * Generalization or inheritance between 2 classes. 
+ */
 public interface UMLGeneralization {
 
   /**

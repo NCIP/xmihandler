@@ -32,6 +32,13 @@ public interface UMLModel {
    */
   public List<UMLDependency> getDependencies();
  
+  /**
+   * Add a dependency to the model. A dependency can be created with createDependency.
+   * <br> Existing Dependency can not be added this way.
+   * 
+   * @param dependency
+   * @return
+   */
   public UMLDependency addDependency(UMLDependency dependency);
  
   /**
