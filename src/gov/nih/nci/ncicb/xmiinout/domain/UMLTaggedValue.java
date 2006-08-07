@@ -15,7 +15,10 @@ public interface UMLTaggedValue {
    */
   public String getValue();
 
-  
+  /**
+   * Modify a taggedValue's value.
+   * @param value the value to change to.
+   */
   public void setValue(String value);
 
 }

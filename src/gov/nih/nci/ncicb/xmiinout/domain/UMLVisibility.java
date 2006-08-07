@@ -5,6 +5,10 @@ package gov.nih.nci.ncicb.xmiinout.domain;
  */
 public interface UMLVisibility {
 
+  /**
+   * 
+   * @return The visibility name, for example 'public'
+   */
   public String getName();
 
 }
