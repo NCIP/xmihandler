@@ -28,7 +28,16 @@ public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssoc
   public List<UMLAttribute> getAttributes();
 
   /**
-   * @return a Set of all association where at least one end points to this class. 
+   * Convenient method to retrieve one Attribute by it's name.
+   *
+   * @param name the name of the attribute to find
+   * @return The Attribute with requested name or null if none exists
+   */
+  public UMLAttribute getAttribute(String name);
+
+
+  /**
+   * @return a Set of all associations where at least one end points to this class. 
    */
   public Set<UMLAssociation> getAssociations();
   
