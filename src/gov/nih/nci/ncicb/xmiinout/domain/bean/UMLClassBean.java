@@ -84,6 +84,14 @@ public class UMLClassBean extends JDomDomainObject
     return attributes;
   }
 
+  public UMLAttribute getAttribute(String name) {
+    for(UMLAttribute att : attributes)
+      if(att.getName().equals(name))
+        return att;
+
+    return null;
+  }
+
   public void addAttribute(UMLAttribute attribute) {
     attributes.add(attribute);
   }

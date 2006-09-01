@@ -49,6 +49,14 @@ public class UMLPackageBean extends JDomDomainObject implements UMLPackage {
     return packages;
   }
 
+  public UMLPackage getPackage(String name) {
+    for(UMLPackage pkg : packages) 
+      if(pkg.getName().equals(name))
+        return pkg;
+
+    return null;
+  }
+
   public void addPackage(UMLPackage pkg) {
     packages.add(pkg);
 
@@ -66,6 +74,15 @@ public class UMLPackageBean extends JDomDomainObject implements UMLPackage {
   public List<UMLClass> getClasses() {
     return classes;
   }
+
+  public UMLClass getClass(String name) {
+    for(UMLClass clazz : classes)
+      if(clazz.getName().equals(name))
+        return clazz;
+    
+    return null;
+  }
+
   public void addClass(UMLClassBean clazz) {
     classes.add(clazz);
     clazz.setPackage(this);

@@ -43,6 +43,14 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
     return packages;
   }
 
+  public UMLPackage getPackage(String name) {
+    for(UMLPackage pkg : packages) 
+      if(pkg.getName().equals(name))
+        return pkg;
+
+    return null;
+  }
+
   public void addPackage(UMLPackage pkg) {
     packages.add(pkg);
   }
