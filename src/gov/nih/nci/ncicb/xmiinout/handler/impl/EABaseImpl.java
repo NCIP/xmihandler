@@ -139,7 +139,8 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     for(Element tvElt : elts) {
       UMLTaggedValue tv = JDomXmiTransformer.toUMLTaggedValue(tvElt);
 
-      result.add(tv);
+      if(tv != null)
+        result.add(tv);
 
       Attribute refAtt = tvElt.getAttribute("modelElement");
       if(refAtt != null) {
