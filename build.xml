@@ -49,7 +49,7 @@
 
     <javac
       debug="on"
-      destdir="${test.class.dir}"
+      destdir="${class.dir}"
       srcdir="${test.src.dir}"
       deprecation="false"
       >
@@ -88,6 +88,7 @@
       <packageset dir="src" defaultexcludes="yes">
         <include name="gov/nih/nci/ncicb/xmiinout/domain" />
         <include name="gov/nih/nci/ncicb/xmiinout/handler" />
+        <include name="gov/nih/nci/ncicb/xmiinout/util" />
       </packageset>
 
       <doctitle><![CDATA[<h1>Xmi In Out</h1>]]></doctitle>
