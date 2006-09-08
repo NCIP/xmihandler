@@ -59,6 +59,82 @@ public class ModelUtil {
     return null;
   }
 
-  
+
+  /**
+   * Util method to return a package name given a class
+   * <br> e.g "java.lang" if class is "java.lang.Math"
+   */
+  public static String getFullPackageName(UMLClass clazz) {
+
+    StringBuilder sb = new StringBuilder();
+
+    UMLPackage pkg = clazz.getPackage();
+    while(pkg != null) {
+      if(sb.length() > 0)
+        sb.insert(0, ".");
+      sb.insert(0, pkg.getName());
+      
+      pkg = pkg.getParent();
+    }
+    
+    return sb.toString();
+    
+  }
+
+  /**
+   * Util method to return a full name given a class
+   * <br> e.g "java.lang.Math"
+   */
+  public static String getFullName(UMLClass clazz) {
+
+    StringBuilder sb = new StringBuilder(getFullPackageName(clazz));
+
+    sb.append(".");
+    sb.append(clazz.getName());
+    
+    return sb.toString();
+    
+  }
+
+
+  /**
+   * returns an array of classes this class extends from, or an empty array if none.
+   */ 
+  public static UMLClass[] getSuperclasses(UMLClass clazz) {
+
+    if(clazz == null)
+      return null;
+
+    List<UMLGeneralization> gens = clazz.getGeneralizations();
+
+    List<UMLClass> classes = new ArrayList<UMLClass>();
+    for(UMLGeneralization gen : gens) {
+      if(gen.getSupertype() != clazz) 
+        classes.add(gen.getSupertype());
+    }
+
+    UMLClass[] result = new UMLClass[classes.size()];
+    result = classes.toArray(result);
+
+    return result;
+  }
+
+
+
+//   /**
+//    * returns the full name for an association end.
+//    * <br> including package name, other end's class name and end role name
+//    * <br> returns null if the end is not navigable or the role name is not set.
+//    */
+//   public static String getFullName(UMLAssociationEnd end) {
+
+//     StringBuilder sb = new StringBuilder(getFullPackageName(clazz));
+
+//     sb.append(".");
+//     sb.append(clazz.getName());
+    
+//     return sb.toString();
+    
+//   }
 
 }
