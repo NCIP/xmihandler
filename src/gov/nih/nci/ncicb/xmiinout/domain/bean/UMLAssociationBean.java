@@ -23,6 +23,7 @@ public class UMLAssociationBean extends JDomDomainObject implements UMLAssociati
 
     for(UMLAssociationEnd end : associationEnds) {
       ((UMLClassBean)(end.getUMLElement())).addAssociation(this);
+      ((UMLAssociationEndBean)end)._setOwningAssociation(this);
     }
   }
 

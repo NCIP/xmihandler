@@ -13,6 +13,8 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
   private boolean navigable;
   private UMLVisibility visibility;
 
+  private UMLAssociation owner;
+
   public UMLAssociationEndBean
     (org.jdom.Element elt,
      UMLAssociable end,
@@ -23,7 +25,7 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
      ) {
 
     super(elt);
-    
+
     this.endElement = end;
     this.roleName = roleName;
     this.lowMultiplicity = lowMultiplicity;
@@ -53,6 +55,14 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
   public UMLVisibility getVisibility() {
     return visibility;
+  }
+
+  public UMLAssociation getOwningAssociation() {
+    return owner;
+  }
+
+  public void _setOwningAssociation(UMLAssociation owner) {
+    this.owner = owner;
   }
 
 }
