@@ -1,12 +1,15 @@
 
 import gov.nih.nci.ncicb.xmiinout.domain.*;
 import gov.nih.nci.ncicb.xmiinout.handler.*;
+import gov.nih.nci.ncicb.xmiinout.util.*;
 
 import java.io.IOException;
 
 import java.util.Arrays;
 
-public class XmiTestCase {
+import junit.framework.*;
+
+public class XmiTestCase extends TestCase {
 
   private XmiInOutHandler handler = null;
   private String filename;
@@ -56,10 +59,6 @@ public class XmiTestCase {
       System.out.print((char)27 + "[0;" + color + ";40m" + text + (char)27 + "[0;37;40m");
   }
 
-  private void testAddTaggedValue() {
-    
-  }
-
   private void suite() {
     
     init();
@@ -78,9 +77,76 @@ public class XmiTestCase {
     model = testGetModel("EA Model");
     printModel(model);
 
+    testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+
+    testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
+
+    testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+
+    testGetSuperclasses(model);
+
   }
 
+
+  private void testGetSuperclasses(UMLModel model) {
+    UMLClass[] classes = testGetSuperclasses(model, "Logical View.Logical Model.com.ludet.hr.domain.Manager");
+    Assert.assertTrue(classes.length == 1);
+    Assert.assertTrue(classes[0].getName().equals("Employee"));
+    System.out.println("Found superclass: " + classes[0].getName());
+
+    classes = testGetSuperclasses(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject");
+    Assert.assertTrue(classes.length == 0);
+    System.out.println("Correctly found no superclass for DomainObject");
+
+  }
+
+  private UMLClass[] testGetSuperclasses(UMLModel model, String className) {
+    UMLClass clazz = ModelUtil.findClass(model, className);
+    return ModelUtil.getSuperclasses(clazz);
+  }
+
+
+
+  private void testGetFullPackageName(UMLModel model, String className) {
+    String pkgName = className.substring(0, className.lastIndexOf("."));
+
+    UMLClass clazz = ModelUtil.findClass(model, className);
+    String result = ModelUtil.getFullPackageName(clazz);
+
+    Assert.assertTrue("Found Wrong Package Name: " + result + "   For Class : " + className, pkgName.equals(result));
+    
+    System.out.println("Correct PAckage: " + result);
+  }
+
+  private void testFindClass(UMLModel model, String fullClassName) {
+    
+    UMLClass clazz = ModelUtil.findClass(model, fullClassName);
+
+    String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+
+    Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
+    
+    Assert.assertTrue("Class not found -- " + fullClassName + " -- " + className, clazz.getName().equals(className));
+
+    System.out.println("Found Class: " + clazz.getName());
+
+  }
   
+  private void testFindAttribute(UMLModel model, String fullAttName) {
+    
+    UMLAttribute att = ModelUtil.findAttribute(model, fullAttName);
+
+    String attName = fullAttName.substring(fullAttName.lastIndexOf(".") + 1);
+
+    Assert.assertNotNull("Attrubute not found -- " + fullAttName + " -- " + attName, att);
+    
+    Assert.assertTrue("Attribute not found -- " + fullAttName + " -- " + attName, att.getName().equals(attName));
+
+    System.out.println("Found Attribute: " + att.getName());
+
+  }
+
+
   private void addDependency(UMLModel model) {
     UMLClass client = null,
       supplier = null;
@@ -242,7 +308,25 @@ public class XmiTestCase {
                  );
 
     System.out.println("");
+    for(int i = 0; i < pkgDepth; i++)
+      System.out.print("  ");
+    System.out.print("  ");
+
+    printInColor(GREEN, 
+                 "Association from Source:" 
+                 + srcEnd.getOwningAssociation().getRoleName());
+
+    System.out.println("");
+    for(int i = 0; i < pkgDepth; i++)
+      System.out.print("  ");
+    System.out.print("  ");
+    printInColor(GREEN, 
+                 "Association from target:" 
+                 + targetEnd.getOwningAssociation().getRoleName());
+  
+    System.out.println("");
   }
+
 
   private void printGeneralization(UMLGeneralization gen, int pkgDepth) {
     for(int i = 0; i < pkgDepth; i++)
