@@ -37,6 +37,10 @@ public interface UMLAssociationEnd {
    */
   public UMLVisibility getVisibility();
 
+  /**
+   * @return the association this end belongs to.
+   */
+  public UMLAssociation getOwningAssociation();
   
 
 }
