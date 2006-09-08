@@ -8,6 +8,8 @@ import org.jdom.*;
 import org.jdom.input.*;
 import org.jdom.output.*;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
 
 class JDomXmiTransformer {
@@ -15,6 +17,8 @@ class JDomXmiTransformer {
   private static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
   private static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
+
+  private static Logger logger = Logger.getLogger(JDomXmiTransformer.class.getName());
 
   static void addDatatype(UMLDatatype datatype) {
     if(datatype instanceof UMLDatatypeBean)
@@ -139,6 +143,15 @@ class JDomXmiTransformer {
 
 
   static UMLTaggedValueBean toUMLTaggedValue(Element tvElement) {
+    if(tvElement.getAttribute("tag") == null) {
+      logger.info("taggedValue missing tag attribute, skipping");
+      return null;
+    }
+    if(tvElement.getAttribute("value") == null) {
+      logger.info("taggedValue " + tvElement.getAttribute("tag").getValue() + " missing value attribute, skipping");
+      return null;
+    }
+
     UMLTaggedValueBean tv = new UMLTaggedValueBean(tvElement, tvElement.getAttribute("tag").getValue(), tvElement.getAttribute("value").getValue());
     return tv;
   }
