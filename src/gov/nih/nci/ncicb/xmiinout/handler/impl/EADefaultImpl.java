@@ -51,7 +51,8 @@ public class EADefaultImpl extends EABaseImpl {
     List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
     for(Element tvElt : tvElements) {
       UMLTaggedValue tv = JDomXmiTransformer.toUMLTaggedValue(tvElt);
-      result.add(tv);
+      if(tv != null)
+        result.add(tv);
     }
 
     return result;
