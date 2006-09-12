@@ -6,6 +6,8 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 
 public interface UMLDependencyWriter {
 
-  public UMLTaggedValue writeTaggedValue(UMLDependency clazz, UMLTaggedValue taggedValue);
+  public UMLTaggedValue writeTaggedValue(UMLDependency dep, UMLTaggedValue taggedValue);
+
+  public void removeTaggedValue(UMLDependency dep, UMLTaggedValue taggedValue);
   
 }

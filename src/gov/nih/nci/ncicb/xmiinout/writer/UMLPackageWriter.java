@@ -6,4 +6,6 @@ public interface UMLPackageWriter {
 
   public UMLTaggedValue writeTaggedValue(UMLPackage pkg, UMLTaggedValue taggedValue);
   
+  public void removeTaggedValue(UMLPackage pkg, UMLTaggedValue taggedValue);
+  
 }

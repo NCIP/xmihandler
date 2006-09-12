@@ -6,5 +6,7 @@ public interface UMLModelWriter {
 
   public UMLTaggedValue writeTaggedValue(UMLModel model, UMLTaggedValue taggedValue);
 
+  public void removeTaggedValue(UMLModel model, UMLTaggedValue taggedValue);
+
   public UMLDependency writeDependency(UMLModel model, UMLDependency dependency);
 }

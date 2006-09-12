@@ -7,5 +7,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 public interface UMLAttributeWriter {
 
   public UMLTaggedValue writeTaggedValue(UMLAttribute att, UMLTaggedValue taggedValue);
+
+  public void removeTaggedValue(UMLAttribute att, UMLTaggedValue taggedValue);
   
 }
