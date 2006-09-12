@@ -19,6 +19,14 @@ public class JDomEAXmiWriter implements UMLWriter {
           return new ClassTaggedValueWriter().addTaggedValue(clazzElt, tv);
         }
 
+
+        public void removeTaggedValue(UMLClass clazz, UMLTaggedValue tv) {
+          UMLClassBean clazzBean = (UMLClassBean)clazz;
+          Element clazzElt = clazzBean.getJDomElement();
+
+          new GenericTaggedValueWriter().removeTaggedValue(clazzElt, tv);
+        }
+
       };
   }
 
@@ -31,6 +39,14 @@ public class JDomEAXmiWriter implements UMLWriter {
           return new GenericTaggedValueWriter().addTaggedValue(attElt, tv);
 
         }
+
+        public void removeTaggedValue(UMLAttribute att, UMLTaggedValue tv) {
+          UMLAttributeBean attBean = (UMLAttributeBean)att;
+          Element attElt = attBean.getJDomElement();
+
+          new GenericTaggedValueWriter().removeTaggedValue(attElt, tv);
+        }
+
       };
   }
 
@@ -58,6 +74,14 @@ public class JDomEAXmiWriter implements UMLWriter {
           return new GenericTaggedValueWriter().addTaggedValue(modelElt, tv);
 
         }
+
+        public void removeTaggedValue(UMLModel model, UMLTaggedValue tv) {
+          UMLModelBean modelBean = (UMLModelBean)model;
+          Element modelElt = modelBean.getJDomElement();
+
+          new GenericTaggedValueWriter().removeTaggedValue(modelElt, tv);
+        }
+
         
         public UMLDependency writeDependency(UMLModel model, UMLDependency dependency) {
           UMLModelBean modelBean = (UMLModelBean)model;
@@ -105,6 +129,12 @@ public class JDomEAXmiWriter implements UMLWriter {
           return new GenericTaggedValueWriter().addTaggedValue(pkgElt, tv);
 
         }
+        public void removeTaggedValue(UMLPackage pkg, UMLTaggedValue tv) {
+          UMLPackageBean pkgBean = (UMLPackageBean)pkg;
+          Element pkgElt = pkgBean.getJDomElement();
+          
+          new GenericTaggedValueWriter().removeTaggedValue(pkgElt, tv);
+        }
       };
   }
 
@@ -115,6 +145,12 @@ public class JDomEAXmiWriter implements UMLWriter {
           Element depElt = depBean.getJDomElement();
 
           return new GenericTaggedValueWriter().addTaggedValue(depElt, tv);
+        }
+        public void removeTaggedValue(UMLDependency dep, UMLTaggedValue tv) {
+          UMLDependencyBean depBean = (UMLDependencyBean)dep;
+          Element depElt = depBean.getJDomElement();
+          
+          new GenericTaggedValueWriter().removeTaggedValue(depElt, tv);
         }
 
       };
@@ -146,6 +182,23 @@ public class JDomEAXmiWriter implements UMLWriter {
       
       return tv;
     }
+
+    public void removeTaggedValue(Element elt, UMLTaggedValue tv) {
+      UMLTaggedValueBean tvBean = (UMLTaggedValueBean)tv;
+      Namespace ns = elt.getNamespace();
+      List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
+      
+      Element meTvElt = null;
+      if(meTvElts.size() > 0)
+        meTvElt = meTvElts.get(0);
+    
+      if(meTvElt == null || !meTvElt.removeContent(tvBean.getJDomElement())) { // try to remove from elt itself, if not, do the following
+        Element rootElement = elt.getDocument().getRootElement();
+        Element xmiContentElt = rootElement.getChild("XMI.content");
+        xmiContentElt.removeContent(tvBean.getJDomElement());
+      }
+    }
+
   }
 
   class ClassTaggedValueWriter {
@@ -155,7 +208,6 @@ public class JDomEAXmiWriter implements UMLWriter {
       Element xmiContentElt = rootElement.getChild("XMI.content");
       
       Namespace ns = elt.getNamespace();
-      List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
       
       Attribute xmiId = elt.getAttribute("xmi.id");
       if(xmiId == null)
@@ -174,6 +226,9 @@ public class JDomEAXmiWriter implements UMLWriter {
       
       return tv;
     }
+
+
+
   }
 
  
