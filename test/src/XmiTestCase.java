@@ -67,16 +67,6 @@ public class XmiTestCase extends TestCase {
 
     printModel(model);
 
-    addTaggedValueToAll(model);
-
-    addDependency(model);
-
-    testSaveModel();
-
-    testLoadModel(filename + ".new.xmi");
-    model = testGetModel("EA Model");
-    printModel(model);
-
     testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
     testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
@@ -84,6 +74,20 @@ public class XmiTestCase extends TestCase {
     testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
     testGetSuperclasses(model);
+
+    addTaggedValueToAll(model);
+
+    addDependency(model);
+
+    testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
+    testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
+
+    testSaveModel();
+
+    testLoadModel(filename + ".new.xmi");
+    model = testGetModel("EA Model");
+    printModel(model);
+
 
   }
 
@@ -183,6 +187,19 @@ public class XmiTestCase extends TestCase {
         return c;
     }
     return null;
+  }
+
+  private void testRemoveTaggedValue(UMLModel model, String className, String tvName) {
+    UMLClass clazz = ModelUtil.findClass(model, className);
+
+    clazz.removeTaggedValue(tvName);
+
+//     for(UMLTaggedValue tv : clazz.getTaggedValues()) {
+//       if(tv.getName().equals(tvName)) {
+//         clazz.removeTaggedValue(tv);
+//       }
+//     }
+    
   }
   
   private void addTaggedValueToAll(UMLModel model) {
