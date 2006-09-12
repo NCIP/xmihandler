@@ -94,7 +94,10 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 
   public void removeTaggedValue(String name) {
     //remove from jdom element
-    taggedValuesMap.remove(name);
+    UMLTaggedValue tv = taggedValuesMap.remove(name);
+    if(tv != null) {
+      writer.getUMLModelWriter().removeTaggedValue(this, tv);
+    }
   }
 
   public void addAssociation(UMLAssociation assoc) {

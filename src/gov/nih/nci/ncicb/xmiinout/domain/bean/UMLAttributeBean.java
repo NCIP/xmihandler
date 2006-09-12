@@ -67,7 +67,12 @@ public class UMLAttributeBean extends JDomDomainObject implements UMLAttribute {
 
   public void removeTaggedValue(String name) {
     //remove from jdom element
-    taggedValuesMap.remove(name);
+    UMLTaggedValue tv = taggedValuesMap.remove(name);
+
+    if(tv != null) {
+      writer.getUMLAttributeWriter().removeTaggedValue(this, tv);
+    }
+
   }
 
   public UMLVisibility getVisibility() {

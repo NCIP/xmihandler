@@ -59,6 +59,8 @@ public class UMLClassBean extends JDomDomainObject
   
 
   public UMLTaggedValue addTaggedValue(UMLTaggedValue taggedValue) {
+    if(taggedValue == null)
+      return null;
     taggedValuesMap.put(taggedValue.getName(), taggedValue);
     return taggedValue;
   }
@@ -76,7 +78,12 @@ public class UMLClassBean extends JDomDomainObject
 
   public void removeTaggedValue(String name) {
     //remove from jdom element
-    taggedValuesMap.remove(name);
+    UMLTaggedValue tv = taggedValuesMap.remove(name);
+
+    if(tv != null) {
+      writer.getUMLClassWriter().removeTaggedValue(this, tv);
+    }
+    
   }
 
 
