@@ -36,7 +36,7 @@ public class JDomEAXmiWriter implements UMLWriter {
           UMLAttributeBean attBean = (UMLAttributeBean)att;
           Element attElt = attBean.getJDomElement();
 
-          return new GenericTaggedValueWriter().addTaggedValue(attElt, tv);
+          return new AttributeTaggedValueWriter().addTaggedValue(attElt, tv);
 
         }
 
@@ -45,6 +45,46 @@ public class JDomEAXmiWriter implements UMLWriter {
           Element attElt = attBean.getJDomElement();
 
           new GenericTaggedValueWriter().removeTaggedValue(attElt, tv);
+        }
+
+      };
+  }
+
+  public UMLAssociationWriter getUMLAssociationWriter() {
+    return new UMLAssociationWriter() {
+        public UMLTaggedValue writeTaggedValue(UMLAssociation azz, UMLTaggedValue tv) {
+          UMLAssociationBean azzBean = (UMLAssociationBean)azz;
+          Element azzElt = azzBean.getJDomElement();
+
+          return new AttributeTaggedValueWriter().addTaggedValue(azzElt, tv);
+
+        }
+
+        public void removeTaggedValue(UMLAssociation azz, UMLTaggedValue tv) {
+          UMLAssociationBean azzBean = (UMLAssociationBean)azz;
+          Element azzElt = azzBean.getJDomElement();
+
+          new GenericTaggedValueWriter().removeTaggedValue(azzElt, tv);
+        }
+
+      };
+  }
+
+  public UMLAssociationEndWriter getUMLAssociationEndWriter() {
+    return new UMLAssociationEndWriter() {
+        public UMLTaggedValue writeTaggedValue(UMLAssociationEnd end, UMLTaggedValue tv) {
+          UMLAssociationEndBean endBean = (UMLAssociationEndBean)end;
+          Element endElt = endBean.getJDomElement();
+
+          return new AttributeTaggedValueWriter().addTaggedValue(endElt, tv);
+
+        }
+
+        public void removeTaggedValue(UMLAssociationEnd end, UMLTaggedValue tv) {
+          UMLAssociationEndBean endBean = (UMLAssociationEndBean)end;
+          Element endElt = endBean.getJDomElement();
+
+          new GenericTaggedValueWriter().removeTaggedValue(endElt, tv);
         }
 
       };
@@ -217,7 +257,7 @@ public class JDomEAXmiWriter implements UMLWriter {
       newTvElt.setAttribute("tag", tv.getName());
       newTvElt.setAttribute("value", tv.getValue());
 
-      newTvElt.setAttribute("xmi.id", java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+      newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
       newTvElt.setAttribute("modelElement", xmiId.getValue());
       
       xmiContentElt.addContent(newTvElt);
@@ -226,11 +266,32 @@ public class JDomEAXmiWriter implements UMLWriter {
       
       return tv;
     }
-
-
-
   }
 
- 
+  class AttributeTaggedValueWriter {
+    public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
+      Namespace ns = elt.getNamespace();
+      List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
+      
+      Element meTvElt = null;
+      if(meTvElts.size() > 0)
+        meTvElt = meTvElts.get(0);
+      else {
+        meTvElt = new Element("ModelElement.taggedValue", ns);
+        elt.addContent(meTvElt);
+      }      
+
+      Element newTvElt = new Element("TaggedValue", ns);
+      newTvElt.setAttribute("tag", tv.getName());
+      newTvElt.setAttribute("value", tv.getValue());
+      newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+      
+      meTvElt.addContent(newTvElt);
+      
+      tv = new UMLTaggedValueBean(newTvElt, tv.getName(), tv.getValue());
+      
+      return tv;
+    } 
+  }
  
 }
