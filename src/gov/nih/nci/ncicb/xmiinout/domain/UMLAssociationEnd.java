@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Represents the end of an association
  */
-public interface UMLAssociationEnd {
+public interface UMLAssociationEnd extends UMLTaggableElement {
 
   /**
    * @return the element (i.e class) this end points to

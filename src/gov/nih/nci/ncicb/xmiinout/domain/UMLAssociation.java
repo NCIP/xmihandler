@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Represents a UML Association between UML Classes
  */
-public interface UMLAssociation {
+public interface UMLAssociation extends UMLTaggableElement {
 
   /**
    * @return a List of at least two Association Ends. 
@@ -16,5 +16,6 @@ public interface UMLAssociation {
    * @return the association's role name, or null if there isn't any
    */
   public String getRoleName();
+  
 
 }
