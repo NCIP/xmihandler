@@ -82,6 +82,8 @@ public class XmiTestCase extends TestCase {
     testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
     testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
 
+    testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
+
     testSaveModel();
 
     testLoadModel(filename + ".new.xmi");
@@ -189,10 +191,16 @@ public class XmiTestCase extends TestCase {
     return null;
   }
 
-  private void testRemoveTaggedValue(UMLModel model, String className, String tvName) {
-    UMLClass clazz = ModelUtil.findClass(model, className);
+  private void testRemoveTaggedValue(UMLModel model, String fullName, String tvName) {
+    UMLClass clazz = ModelUtil.findClass(model, fullName);
 
-    clazz.removeTaggedValue(tvName);
+    if(clazz != null)
+      clazz.removeTaggedValue(tvName);
+    else {
+      UMLAttribute att = ModelUtil.findAttribute(model, fullName);
+      att.removeTaggedValue(tvName);
+    }
+    
 
 //     for(UMLTaggedValue tv : clazz.getTaggedValues()) {
 //       if(tv.getName().equals(tvName)) {
@@ -228,10 +236,22 @@ public class XmiTestCase extends TestCase {
     for(UMLAttribute att : clazz.getAttributes()) {
       addTaggedValueToAll(att);
     }
+
+    for(UMLAssociation assoc : clazz.getAssociations()) {
+      addTaggedValueToAll(assoc);
+    }
   }
 
   private void addTaggedValueToAll(UMLAttribute att) {
-    att.addTaggedValue("myTaggedValue", "A boring, highly uninteresting value");
+    att.addTaggedValue("myAttributeTaggedValue", "A boring, highly uninteresting value");
+  }
+
+  private void addTaggedValueToAll(UMLAssociation assoc) {
+    assoc.addTaggedValue("myAssociationTaggedValue", "Fill in Assoc TV here.");
+    for(UMLAssociationEnd end : assoc.getAssociationEnds()) {
+      end.addTaggedValue("myAssociationEndTaggedValue", "Fill in AssocEND TV here.");
+    }
+    
   }
 
   private void printModel(UMLModel model) {
@@ -325,6 +345,12 @@ public class XmiTestCase extends TestCase {
                  );
 
     System.out.println("");
+
+    for(UMLTaggedValue tv : assoc.getTaggedValues()) {
+      printTaggedValue(tv, pkgDepth);
+    }    
+
+    System.out.println("");
     for(int i = 0; i < pkgDepth; i++)
       System.out.print("  ");
     System.out.print("  ");
@@ -334,14 +360,26 @@ public class XmiTestCase extends TestCase {
                  + srcEnd.getOwningAssociation().getRoleName());
 
     System.out.println("");
+    for(UMLTaggedValue tv : srcEnd.getTaggedValues()) {
+      printTaggedValue(tv, pkgDepth);
+    }    
+
+    System.out.println("");
     for(int i = 0; i < pkgDepth; i++)
       System.out.print("  ");
     System.out.print("  ");
     printInColor(GREEN, 
                  "Association from target:" 
                  + targetEnd.getOwningAssociation().getRoleName());
+
+    System.out.println("");
+    for(UMLTaggedValue tv : targetEnd.getTaggedValues()) {
+      printTaggedValue(tv, pkgDepth);
+    }    
+
   
     System.out.println("");
+
   }
 
 
