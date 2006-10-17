@@ -15,6 +15,8 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
   private UMLAssociation owner;
 
+  private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
+
   public UMLAssociationEndBean
     (org.jdom.Element elt,
      UMLAssociable end,
@@ -63,6 +65,40 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
 
   public void _setOwningAssociation(UMLAssociation owner) {
     this.owner = owner;
+  }
+
+  public UMLTaggedValue getTaggedValue(String name) {
+    return taggedValuesMap.get(name);
+  }
+
+  public Collection<UMLTaggedValue> getTaggedValues() {
+    return new ArrayList(taggedValuesMap.values());
+  }
+
+  public UMLTaggedValue addTaggedValue(UMLTaggedValue taggedValue) {
+    taggedValuesMap.put(taggedValue.getName(), taggedValue);
+    return taggedValue;
+  }
+  
+  public UMLTaggedValue addTaggedValue(String name, String value) {
+    UMLTaggedValueBean taggedValue = new UMLTaggedValueBean(null, name, value);
+
+    // add to jdom element
+    UMLTaggedValue tv = writer.getUMLAssociationEndWriter().writeTaggedValue(this, taggedValue);
+    
+    taggedValuesMap.put(tv.getName(), tv);
+    
+    return tv;
+  }
+
+  public void removeTaggedValue(String name) {
+    //remove from jdom element
+    UMLTaggedValue tv = taggedValuesMap.remove(name);
+
+    if(tv != null) {
+      writer.getUMLAssociationEndWriter().removeTaggedValue(this, tv);
+    }
+
   }
 
 }
