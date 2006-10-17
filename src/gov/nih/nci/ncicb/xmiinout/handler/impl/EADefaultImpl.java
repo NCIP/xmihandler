@@ -195,6 +195,12 @@ public class EADefaultImpl extends EABaseImpl {
           srcEnd = endBean;
         else
           targetEnd = endBean;
+
+        Collection<UMLTaggedValue> taggedValues = doTaggedValues(endElt);
+        for(UMLTaggedValue tv : taggedValues) {
+          endBean.addTaggedValue(tv);
+        }
+
       }
 
       List<UMLAssociationEnd> endBeans = new ArrayList<UMLAssociationEnd>();
@@ -214,6 +220,11 @@ public class EADefaultImpl extends EABaseImpl {
         
       
       UMLAssociationBean assoc = new UMLAssociationBean(assocElt, assocRoleName, endBeans);
+
+      Collection<UMLTaggedValue> taggedValues = doTaggedValues(assocElt);
+      for(UMLTaggedValue tv : taggedValues) {
+        assoc.addTaggedValue(tv);
+      }
 
       result.add(assoc);
     }    
