@@ -17,16 +17,19 @@ public class ModelUtil {
 
     UMLPackage pkg = null;
     
-    for(String query : queries) {
+    for(int i = 0; i<queries.length; i++) {
       if(pkg == null) {
-        pkg = model.getPackage(query);
+        pkg = model.getPackage(queries[i]);
+        if(pkg == null)
+          return null;
       } else {
-        UMLPackage newPkg = pkg.getPackage(query);
+        UMLPackage newPkg = pkg.getPackage(queries[i]);
         if(newPkg != null)
           pkg = newPkg;
-        else {
-          return pkg.getClass(query);
-        }
+        else if(i == queries.length -1){
+          return pkg.getClass(queries[i]);
+        } else
+          return null;
       }
     }
     return null;
