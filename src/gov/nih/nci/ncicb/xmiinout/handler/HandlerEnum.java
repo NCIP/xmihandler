@@ -4,7 +4,9 @@ public enum HandlerEnum {
   EAXmi10 ("gov.nih.nci.ncicb.xmiinout.handler.impl.EAXmi10Impl",
            "gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter"),
   EADefault ("gov.nih.nci.ncicb.xmiinout.handler.impl.EADefaultImpl",
-           "gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter");
+           "gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter"),
+  ArgoUMLDefault ("gov.nih.nci.ncicb.xmiinout.handler.impl.ArgoUMLDefaultImpl",
+  "gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter");  
 
   private final String className, writerClassName;
 

@@ -5,12 +5,13 @@
 
   <property name="src.dir" value="src"/>
   <property name="test.src.dir" value="test/src"/>
-  <property name="test.class.dir" value="./test/classes" />
-  <property name="class.dir" value="./classes"/>
-  <property name="lib.dir" value="./lib"/>
-  <property name="dist.dir" value="./dist" />
+  <property name="test.class.dir" value="test/classes" />
+  <property name="class.dir" value="classes"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="dist.dir" value="dist" />
   <property name="config.dir" value="properties"/>
-  <property name="docs.dir" value="./javadoc" />
+  <property name="docs.dir" value="javadoc" />
+  <property name="log4j.dir" value="test/resources" />	
 
   <path id="proj.class.path">
     <pathelement location="${class.dir}"/>
@@ -100,12 +101,24 @@
   </target>
 
   <target name="jUnit" depends="prepare">
-    <java classname="XmiTestCase"
+  	<java classname="XmiTestCase"
       fork="yes"
       >
       <arg value="test/testdata/test-with-dependency.xmi"/>
       <classpath refid="test.classpath"/>
+	  <sysproperty key="log4j.configuration"
+			value="${log4j.dir}/log4j.properties"/>
     </java>
+
+    <java classname="ArgoUML_XmiTestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/SDKTestModel.xmi"/>
+      <classpath refid="test.classpath"/>
+  	  <sysproperty key="log4j.configuration"
+  			value="${log4j.dir}/log4j.properties"/>
+    </java>
+
   </target>
 
 </project>
