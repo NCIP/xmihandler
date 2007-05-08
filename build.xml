@@ -100,7 +100,10 @@
     </javadoc>
   </target>
 
-  <target name="jUnit" depends="prepare">
+  <target name="jUnit" depends="clean, prepare">
+
+<!--  -->
+  	
   	<java classname="XmiTestCase"
       fork="yes"
       >
@@ -109,16 +112,36 @@
 	  <sysproperty key="log4j.configuration"
 			value="${log4j.dir}/log4j.properties"/>
     </java>
+    
+<!-- -->
 
-    <java classname="ArgoUML_XmiTestCase"
+<!-- -->
+    <java classname="SDKTestModel_TestCase"
       fork="yes"
       >
-      <arg value="test/testdata/SDKTestModel.xmi"/>
+      <arg value="test/testdata/SDKTestModel.uml"/>
+      <arg value="ArgoUMLDefault"/>
+      <arg value=".new.uml"/>    	
+      <arg value="Model"/>        
       <classpath refid="test.classpath"/>
   	  <sysproperty key="log4j.configuration"
   			value="${log4j.dir}/log4j.properties"/>
     </java>
-
+<!-- -->  	
+<!--    -->
+	<java classname="SDKTestModel_TestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/sdk-test-full-roundtrip.xmi"/>
+      <arg value="EADefault"/>
+      <arg value=".new.xmi"/>    
+	  <arg value="EA Model"/>    		
+      <classpath refid="test.classpath"/>
+  	  <sysproperty key="log4j.configuration"
+  			value="${log4j.dir}/log4j.properties"/>
+    </java>  	
+	
+<!-- -->
   </target>
 
 </project>
