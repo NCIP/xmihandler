@@ -15,11 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
 public class UMLModelBean extends JDomDomainObject implements UMLModel {
-
+	private static Logger logger = Logger.getLogger(JDomDomainObject.class.getName());
 	private List<UMLPackage> packages = new ArrayList();
 	private List<UMLClass> classes = new ArrayList<UMLClass>();
 
@@ -137,32 +138,32 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 
 	public static UMLTagDefinitionBean addTagDefinition(Element elt, String name) {
 		Namespace ns = elt.getNamespace();
-		System.out.println("Namespace: " + ns);
+		logger.debug("Namespace: " + ns);
 		
 		Element rootElt = elt.getDocument().getRootElement();
-		System.out.println("Root Element name: " + rootElt.getName());
+		logger.debug("Root Element name: " + rootElt.getName());
 		Element xmiElt = rootElt.getChild("XMI");	
-		System.out.println("XMI Element name: " + xmiElt.getName());		
+		logger.debug("XMI Element name: " + xmiElt.getName());		
 		Element xmiContentElt = xmiElt.getChild("XMI.content");
-		System.out.println("XMI Content Element name: " + xmiContentElt.getName());		
+		logger.debug("XMI Content Element name: " + xmiContentElt.getName());		
 
 	
 	    List<Element> xmiContentChildren = (List<Element>)xmiContentElt.getChildren();
-	    System.out.println("xmiContentChildren Elements found: " + xmiContentChildren.size());
+	    logger.debug("xmiContentChildren Elements found: " + xmiContentChildren.size());
 	    
 	    Element modelElt = null;
 	    for(Element xmiContentChild : xmiContentChildren) {
-	    	System.out.println("xmiContentChild: " + xmiContentChild.getName());
+	    	logger.debug("xmiContentChild: " + xmiContentChild.getName());
 	    	
 	    	if (xmiContentChild.getName().equalsIgnoreCase("Model")){
 	    		modelElt = xmiContentChild;
 	    	}
 	    }		
 	    
-		System.out.println("Model Element name: " + modelElt.getName());	    
+		logger.debug("Model Element name: " + modelElt.getName());	    
 
 		Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);	
-		System.out.println("ownedElement name: " + ownedElement.getName());		
+		logger.debug("ownedElement name: " + ownedElement.getName());		
 		
 		String xmiId = java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase();
 		UMLTagDefinitionBean tdBean = new UMLTagDefinitionBean(ownedElement, xmiId, name); 

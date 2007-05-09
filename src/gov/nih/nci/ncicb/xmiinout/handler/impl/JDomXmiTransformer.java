@@ -174,14 +174,14 @@ class JDomXmiTransformer {
 	static UMLTaggedValueBean toUMLTaggedValue(Element tvElement) {
 		if (tvElement.getAttribute("tag") == null) {
 			logger.info("taggedValue missing tag attribute, skipping");
-			System.out.println("taggedValue missing tag attribute, skipping");
+			logger.debug("taggedValue missing tag attribute, skipping");
 			return null;
 		}
 		if (tvElement.getAttribute("value") == null) {
 			logger.info("taggedValue "
 					+ tvElement.getAttribute("tag").getValue()
 					+ " missing value attribute, skipping");
-			System.out.println("taggedValue "
+			logger.debug("taggedValue "
 					+ tvElement.getAttribute("tag").getValue()
 					+ " missing value attribute, skipping");
 
@@ -219,7 +219,7 @@ class JDomXmiTransformer {
 			logger.info("taggedValue "
 					+ tvElement.getAttribute("xmi.id").getValue()
 					+ " missing 'TagDefinition' element, skipping");
-			System.out.println("taggedValue "
+			logger.debug("taggedValue "
 					+ tvElement.getAttribute("xmi.id").getValue()
 					+ " missing 'TagDefinition' element, skipping");
 
@@ -236,10 +236,10 @@ class JDomXmiTransformer {
 		Element tagDefinitionElement = typeElement
 				.getChild("TagDefinition", ns);
 
-		System.out.println("*** tagDefinition name: "
+		logger.debug("*** tagDefinition name: "
 				+ tagDefinitions.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
 
-		System.out.println("*** dataValue: "
+		logger.debug("*** dataValue: "
 				+ dataValueElement.getText());
 
 		UMLTaggedValueBean tv = new UMLTaggedValueBean(tvElement,

@@ -20,7 +20,11 @@ import java.util.Arrays;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
+
 public class SDKTestModel_TestCase extends TestCase {
+
+	private static Logger logger = Logger.getLogger(SDKTestModel_TestCase.class.getName());
 
 	private XmiInOutHandler handler = null;
 	private String filename;
@@ -125,8 +129,6 @@ public class SDKTestModel_TestCase extends TestCase {
 		return ModelUtil.getSuperclasses(clazz);
 	}
 
-
-
 	private void testGetFullPackageName(UMLModel model, String className) {
 		String pkgName = className.substring(0, className.lastIndexOf("."));
 
@@ -229,11 +231,9 @@ public class SDKTestModel_TestCase extends TestCase {
 		pkg.addTaggedValue("myPackageTaggedValue", "test package tagged Value");
 
 		for(UMLPackage _pkg : pkg.getPackages()) {
-			System.out.println("Adding tagged value to package: " + pkg.getName());			
 			addTaggedValueToAll(_pkg);
 		}
 		for(UMLClass clazz : pkg.getClasses()) {
-			System.out.println("Adding tagged value to class: " + clazz.getName());
 			addTaggedValueToAll(clazz);
 		}    
 	}
@@ -410,9 +410,6 @@ public class SDKTestModel_TestCase extends TestCase {
 		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName());
 		System.out.println("");
 
-		if ((dep.getTaggedValues() != null) &&  (dep.getTaggedValues().size() > 0)) {
-			System.out.println("Dependency Tagged Values found: " + dep.getTaggedValues().size());
-		}
 		for(UMLTaggedValue tv : dep.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
 		}    
@@ -465,12 +462,6 @@ public class SDKTestModel_TestCase extends TestCase {
 	}
 
 	public static void main(String[] args) {
-
-		System.out.println("args.length: " + args.length);
-		System.out.println("args[0]: " + args[0]);
-		System.out.println("args[1]: " + args[1]);
-		System.out.println("args[2]: " + args[2]);		
-		System.out.println("args[3]: " + args[3]);		
 		
 		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(args[0], args[1], args[2], args[3]);
 

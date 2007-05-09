@@ -8,8 +8,4 @@ public interface UMLTaggedValueWriter {
 
 	public void writeValue(UMLTaggedValue taggedValue);
 
-	public UMLTaggedValue writeTaggedValue(JDomDomainObject domainObjElt, UMLTaggedValue taggedValue);
-
-	public void removeTaggedValue(JDomDomainObject domainObjElt, UMLTaggedValue taggedValue);
-
 }

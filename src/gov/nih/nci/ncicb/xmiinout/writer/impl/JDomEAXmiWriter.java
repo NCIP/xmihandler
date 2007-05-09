@@ -101,14 +101,6 @@ public class JDomEAXmiWriter implements UMLWriter {
           Attribute valueAtt = tvElt.getAttribute("value");
           valueAtt.setValue(taggedValue.getValue());
         }
-
-		public UMLTaggedValue writeTaggedValue(JDomDomainObject domainObjElt, UMLTaggedValue taggedValue) {
-			return new GenericTaggedValueWriter().addTaggedValue(domainObjElt.getJDomElement(), taggedValue);
-		}     
-
-		public void removeTaggedValue(JDomDomainObject domainObjElt, UMLTaggedValue taggedValue) {
-			new GenericTaggedValueWriter().removeTaggedValue(domainObjElt.getJDomElement(), taggedValue);
-		} 		
       };
 
   }

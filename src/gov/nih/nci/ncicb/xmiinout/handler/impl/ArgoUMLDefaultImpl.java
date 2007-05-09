@@ -23,7 +23,7 @@ import java.io.*;
  */
 public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
-  private static Logger logger = Logger.getLogger(EADefaultImpl.class.getName());
+  private static Logger logger = Logger.getLogger(ArgoUMLDefaultImpl.class.getName());
 
   
   protected Element rootElement;
@@ -38,7 +38,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       rootElement = doc.getRootElement();
 
       logger.debug("rootElement.getName(): " + rootElement.getName());      
-      System.out.println("rootElement.getName(): " + rootElement.getName());
+      logger.debug("rootElement.getName(): " + rootElement.getName());
       readModel(rootElement);
       
     } catch (Exception ex) {
@@ -94,13 +94,13 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> elts = path.selectNodes(rootElement);
 
-    System.out.println("Elements Found:  " + elts.size());
+    logger.debug("Elements Found:  " + elts.size());
     
     for(Element elt : elts) {
       UMLModelBean model = JDomXmiTransformer.toUMLModel(elt);
       models.put(model.getName(), model);
       
-      System.out.println("Model Name:  " + model.getName());
+      logger.debug("Model Name:  " + model.getName());
  
       for(UMLTagDefinitionBean def : doTagDefinitions(elt)) {
           model.addTagDefinition(def);
@@ -149,9 +149,9 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
 
     if ( elts != null) {
-    	System.out.println("Root Tagged Values found: " + elts.size());
+    	logger.debug("Root Tagged Values found: " + elts.size());
     } else {
-    	System.out.println("No Root Tagged Values found");
+    	logger.debug("No Root Tagged Values found");
     }
     
     for(Element tvElt : elts) {
@@ -178,18 +178,18 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);	    
 	    
 	    if (ownedElement == null){
-	    	System.out.println("ownedElement is null for Element " + elt.getAttributeValue("name"));
+	    	logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
 	    	return (List)new ArrayList();
 	    }
 	    
 	    List<UMLTagDefinitionBean> result = new ArrayList<UMLTagDefinitionBean>();
 
 	    List<Element> tdElements = (List<Element>)ownedElement.getChildren("TagDefinition", ns);
-	    System.out.println("TagDefinition Elements found: " + tdElements.size());
+	    logger.debug("TagDefinition Elements found: " + tdElements.size());
 	    
 	    for(Element tdElt : tdElements) {
 	    	UMLTagDefinitionBean td = JDomXmiTransformer.toUMLTagDefinition(tdElt);
-	      System.out.println("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
+	      logger.debug("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
 	      if(td != null)
 	        result.add(td);
 	    }
@@ -203,17 +203,17 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
     
     if (ownedElement == null){
-    	System.out.println("ownedElement is null for Element " + elt.getAttributeValue("name"));
+    	logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
     	return (List)new ArrayList();
     }
     
     List<Element> packageElements = (List<Element>)ownedElement.getChildren("Package", ns);
 
-    System.out.println("Package size: " + packageElements.size());
+    logger.debug("Package size: " + packageElements.size());
     List<UMLPackageBean> result = new ArrayList<UMLPackageBean>();
 
     for(Element pkgElement : packageElements) {
-      System.out.println("Package name: " + pkgElement.getAttributeValue("name"));
+      logger.debug("Package name: " + pkgElement.getAttributeValue("name"));
       UMLPackageBean umlPkg = JDomXmiTransformer.toUMLPackage(pkgElement);
       result.add(umlPkg);
 
@@ -240,7 +240,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     
     
     if (ownedElement == null){
-    	System.out.println("ownedElement is null for Element " + elt.getAttributeValue("name"));
+    	logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
     	return (List)new ArrayList();
     }
     
@@ -276,7 +276,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
     List<Element> typeElements = (List<Element>)ownedElement.getChildren("DataType", ns);
     
-    System.out.println("TypeElements size: " + typeElements.size());
+    logger.debug("TypeElements size: " + typeElements.size());
     
     List<UMLDatatype> result = new ArrayList<UMLDatatype>();
 
@@ -296,7 +296,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       return result;
 
     List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
-    System.out.println("TaggedValue Elements found: " + tvElements.size());
+    logger.debug("TaggedValue Elements found: " + tvElements.size());
     for(Element tvElt : tvElements) {
       UMLTaggedValue tv = JDomXmiTransformer.toArgoUMLTaggedValue(tvElt);
       if(tv != null)
@@ -337,7 +337,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> depElts = path.selectNodes(rootElement);
     
-    System.out.println("Dependency Elements Found: " + depElts.size());
+    logger.debug("Dependency Elements Found: " + depElts.size());
     
     List<UMLDependency> result = new ArrayList<UMLDependency>();
     
@@ -346,32 +346,32 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     	String xmiId = depElt.getAttributeValue("xmi.id");
         if (xmiId == null ) { continue; }
         
-        System.out.println("depElt.getAttributeValue('xmi.id'): " + xmiId);    	
+        logger.debug("depElt.getAttributeValue('xmi.id'): " + xmiId);    	
     	
 		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
 		Element clientElement = depElt.getChild("Dependency.client", ns);
 		Element clientClassElement = clientElement.getChild("Class", ns);
 		
-		System.out.println("clientClassElement: " + clientClassElement.getAttributeValue("xmi.idref")); 
+		logger.debug("clientClassElement: " + clientClassElement.getAttributeValue("xmi.idref")); 
 		
 		Element supplierElement = depElt.getChild("Dependency.supplier", ns);
 		Element supplierClassElement = supplierElement.getChild("Class", ns);
 		
-		System.out.println("supplierClassElement: " + supplierClassElement.getAttributeValue("xmi.idref"));  
+		logger.debug("supplierClassElement: " + supplierClassElement.getAttributeValue("xmi.idref"));  
         
 		UMLDependencyEnd client = idClassMap.get(clientClassElement.getAttributeValue("xmi.idref"));
-	    System.out.println("client: " + client);
+	    logger.debug("client: " + client);
 	    
 		UMLDependencyEnd supplier = idClassMap.get(supplierClassElement.getAttributeValue("xmi.idref"));
-	    System.out.println("supplier: " + supplier);
+	    logger.debug("supplier: " + supplier);
 	
 	    if(client == null) {
-	      System.out.println("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+	      logger.debug("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 	      logger.info("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 	      continue;
 	    }
 	    if(supplier == null) {
-		  System.out.println("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+		  logger.debug("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 	      logger.info("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 	      continue;
 	    }
@@ -409,12 +409,12 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> genElts = path.selectNodes(rootElement);
     
-    System.out.println("Number of Generalization Elements Found: " + genElts.size());
+    logger.debug("Number of Generalization Elements Found: " + genElts.size());
     
     List<UMLGeneralization> result = new ArrayList<UMLGeneralization>();
     
     if (genElts == null || genElts.isEmpty()){
-    	System.out.println("No Generalization Elements found");
+    	logger.debug("No Generalization Elements found");
     	return (List)new ArrayList();
     }
     
@@ -422,24 +422,24 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
      
       if (genElt.getAttributeValue("xmi.id") == null ) { continue; }
       
-//      System.out.println("genElt.getAttributeValue('xmi.id'): " + genElt.getAttributeValue("xmi.id"));
+//      logger.debug("genElt.getAttributeValue('xmi.id'): " + genElt.getAttributeValue("xmi.id"));
 
       Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
       Element childElement = genElt.getChild("Generalization.child", ns);
       Element childClassElement = childElement.getChild("Class", ns);
       
-//      System.out.println("*** childClassElement: " + childClassElement.getAttributeValue("xmi.idref")); 
+//      logger.debug("*** childClassElement: " + childClassElement.getAttributeValue("xmi.idref")); 
       
       Element parentElement = genElt.getChild("Generalization.parent", ns);
       Element parentClassElement = parentElement.getChild("Class", ns);
       
-//      System.out.println("*** parentClassElement: " + parentClassElement.getAttributeValue("xmi.idref"));  
+//      logger.debug("*** parentClassElement: " + parentClassElement.getAttributeValue("xmi.idref"));  
    
       UMLClassBean subClass = idClassMap.get(childClassElement.getAttributeValue("xmi.idref"));
-      System.out.println("*** subClass name: " + subClass.getName());
+      logger.debug("*** subClass name: " + subClass.getName());
       
       UMLClassBean superClass = idClassMap.get(parentClassElement.getAttributeValue("xmi.idref"));
-      System.out.println("*** superClass name: " + superClass.getName());      
+      logger.debug("*** superClass name: " + superClass.getName());      
 //    result.add(JDomXmiTransformer.toUMLGeneralization(genElt));
       result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
     }    
@@ -455,7 +455,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> assocElts = path.selectNodes(rootElement);
     
-    System.out.println("Number of Association Elements Found: " + assocElts.size());    
+    logger.debug("Number of Association Elements Found: " + assocElts.size());    
     
     List<UMLAssociation> result = new ArrayList<UMLAssociation>();
     
@@ -464,7 +464,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       String xmiId = assocElt.getAttributeValue("xmi.id");
       if (xmiId == null ) { continue; }
         
-      System.out.println("assocElt.getAttributeValue('xmi.id'): " + xmiId);    	
+      logger.debug("assocElt.getAttributeValue('xmi.id'): " + xmiId);    	
     	
       Element connectionElement = assocElt.getChild("Association.connection", ns);
 
@@ -473,7 +473,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
       List<Element> endElements = (List<Element>)connectionElement.getChildren("AssociationEnd", ns);
       
-      System.out.println("Number of Association End Elements Found: " + endElements.size());
+      logger.debug("Number of Association End Elements Found: " + endElements.size());
       
       UMLAssociationEndBean srcEnd = null, targetEnd = null;
       
@@ -481,10 +481,10 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     	  
 	  	Element participantElement = endElt.getChild("AssociationEnd.participant", ns);
 	  	Element participantClassElement = participantElement.getChild("Class", ns);
-	  	System.out.println("participantClassElement: " + participantClassElement.getAttributeValue("xmi.idref")); 
+	  	logger.debug("participantClassElement: " + participantClassElement.getAttributeValue("xmi.idref")); 
     	  
         UMLClassBean endClass = idClassMap.get(participantClassElement.getAttributeValue("xmi.idref"));
-        System.out.println("AssociationEnd Class: " + endClass.getName());
+        logger.debug("AssociationEnd Class: " + endClass.getName());
   
 //  EA
 //		<UML:AssociationEnd visibility="public" multiplicity="1..*" name="organization" aggregation="none" isOrdered="false" isNavigable="true" type="EAID_C090E3E1_AFE9_48cd_B28C_130C42C6A4C7">
@@ -506,7 +506,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	  	Element multiplicityElement = assocEndMultiplicity.getChild("Multiplicity", ns);
 	  	Element multiplicityDotRangeElement = multiplicityElement.getChild("Multiplicity.range", ns);
 	  	Element multiplicityRangeElement = multiplicityDotRangeElement.getChild("MultiplicityRange", ns);	  	
-	  	System.out.println("multiplicityRangeElement: " + multiplicityRangeElement.getAttributeValue("xmi.id"));         
+	  	logger.debug("multiplicityRangeElement: " + multiplicityRangeElement.getAttributeValue("xmi.id"));         
         
         int low = 0, high = 0;
         org.jdom.Attribute lowerMultAttr = multiplicityRangeElement.getAttribute("lower");
@@ -514,21 +514,21 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
         
         if(lowerMultAttr != null && upperMultAttr != null) {
           String lower = lowerMultAttr.getValue();
-          System.out.println("multiplicity lower:  " + lower);
+          logger.debug("multiplicity lower:  " + lower);
           
           String upper = upperMultAttr.getValue();
-          System.out.println("multiplicity upper:  " + upper);
+          logger.debug("multiplicity upper:  " + upper);
           
           low = Integer.valueOf(lower);
           low = Integer.valueOf(upper);          
         }
 
         boolean navigable = Boolean.valueOf(endElt.getAttribute("isNavigable").getValue());
-        System.out.println("isNavigable: " + navigable);
+        logger.debug("isNavigable: " + navigable);
 
         org.jdom.Attribute nameAtt = endElt.getAttribute("name");
         String name = nameAtt != null?nameAtt.getValue():"";
-        System.out.println("name: " + name);
+        logger.debug("name: " + name);
 
         UMLAssociationEndBean endBean = new UMLAssociationEndBean
           (endElt,
@@ -545,7 +545,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
         Collection<UMLTaggedValue> taggedValues = doTaggedValues(endElt);
         for(UMLTaggedValue tv : taggedValues) {
-          System.out.println("taggedValue: " + tv.getName());
+          logger.debug("taggedValue: " + tv.getName());
           endBean.addTaggedValue(tv);
         }
 
