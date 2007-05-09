@@ -102,7 +102,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       
       System.out.println("Model Name:  " + model.getName());
  
-      for(UMLTagDefinition def : doTagDefinitions(elt)) {
+      for(UMLTagDefinitionBean def : doTagDefinitions(elt)) {
           model.addTagDefinition(def);
           JDomXmiTransformer.addTagDefinition(def);
         }
@@ -173,7 +173,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     
   }
   
-  protected List<UMLTagDefinition> doTagDefinitions(Element elt) {
+  protected List<UMLTagDefinitionBean> doTagDefinitions(Element elt) {
 	    Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
 	    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);	    
 	    
@@ -182,13 +182,13 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	    	return (List)new ArrayList();
 	    }
 	    
-	    List<UMLTagDefinition> result = new ArrayList<UMLTagDefinition>();
+	    List<UMLTagDefinitionBean> result = new ArrayList<UMLTagDefinitionBean>();
 
 	    List<Element> tdElements = (List<Element>)ownedElement.getChildren("TagDefinition", ns);
 	    System.out.println("TagDefinition Elements found: " + tdElements.size());
 	    
 	    for(Element tdElt : tdElements) {
-	      UMLTagDefinition td = JDomXmiTransformer.toUMLTagDefinition(tdElt);
+	    	UMLTagDefinitionBean td = JDomXmiTransformer.toUMLTagDefinition(tdElt);
 	      System.out.println("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
 	      if(td != null)
 	        result.add(td);

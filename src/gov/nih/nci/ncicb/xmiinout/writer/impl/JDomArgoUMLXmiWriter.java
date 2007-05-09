@@ -7,7 +7,6 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
-import gov.nih.nci.ncicb.xmiinout.domain.UMLTagDefinition;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.JDomDomainObject;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAssociationBean;
@@ -17,6 +16,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAssociationEndWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAssociationWriter;
@@ -236,7 +236,7 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 			Element tvTagDefinition = new Element("TagDefinition",ns);
 
 			System.out.println("Adding Tag Value Tag Definition for Name:  " + tv.getName());
-			UMLTagDefinition td = UMLModelBean.getTagDefinition(tv.getName());
+			UMLTagDefinitionBean td = UMLModelBean.getTagDefinition(tv.getName());
 			if (td == null){
 				System.out.println("Adding Tag Definition for Name:  " + tv.getName());
 				td = UMLModelBean.addTagDefinition(elt, tv.getName());

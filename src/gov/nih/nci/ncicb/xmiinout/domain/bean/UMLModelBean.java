@@ -8,7 +8,6 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
-import gov.nih.nci.ncicb.xmiinout.domain.UMLTagDefinition;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	private List<UMLPackage> packages = new ArrayList();
 	private List<UMLClass> classes = new ArrayList<UMLClass>();
 
-	static private Map<String, UMLTagDefinition> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinition>();
-	static private Map<String, UMLTagDefinition> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinition>();
+	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinitionBean>();
+	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinitionBean>();
 
 	private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
@@ -90,11 +89,11 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		classes.add(clazz);
 	}
 
-	static public UMLTagDefinition getTagDefinitionByName(String name) {
+	static public UMLTagDefinitionBean getTagDefinitionByName(String name) {
 		return tagDefinitionsByNameMap.get(name);
 	}
 
-	static public UMLTagDefinition getTagDefinitionByXmiId(String xmiId) {
+	static public UMLTagDefinitionBean getTagDefinitionByXmiId(String xmiId) {
 		return tagDefinitionsByNameMap.get(xmiId);
 	}
 
@@ -107,13 +106,13 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		return taggedValue;
 	}
 
-	public UMLTagDefinition addTagDefinition(UMLTagDefinition tagDefinition) {
+	public UMLTagDefinitionBean addTagDefinition(UMLTagDefinitionBean tagDefinition) {
 		tagDefinitionsByNameMap.put(tagDefinition.getName(), tagDefinition);
 		tagDefinitionsByXmiIdMap.put(tagDefinition.getXmiId(), tagDefinition);	    
 		return tagDefinition;
 	}  
 
-	public UMLTagDefinition addTagDefinition(String name) {
+	public UMLTagDefinitionBean addTagDefinition(String name) {
 
 		// add to jdom element
 		Element modelElt = this.getJDomElement();
@@ -133,10 +132,10 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		tagDefinitionsByNameMap.put(tdBean.getName(), tdBean);
 		tagDefinitionsByXmiIdMap.put(tdBean.getXmiId(), tdBean);
 
-		return (UMLTagDefinition)tdBean;
+		return (UMLTagDefinitionBean)tdBean;
 	}
 
-	public static UMLTagDefinition addTagDefinition(Element elt, String name) {
+	public static UMLTagDefinitionBean addTagDefinition(Element elt, String name) {
 		Namespace ns = elt.getNamespace();
 		System.out.println("Namespace: " + ns);
 		
@@ -176,7 +175,7 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		tagDefinitionsByNameMap.put(tdBean.getName(), tdBean);
 		tagDefinitionsByXmiIdMap.put(tdBean.getXmiId(), tdBean);		
 
-		return (UMLTagDefinition)tdBean;
+		return (UMLTagDefinitionBean)tdBean;
 	}  	
 
 	public UMLTaggedValue addTaggedValue(String name, String value) {
@@ -265,8 +264,8 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		return new UMLDependencyBean(null, name, null, client, supplier);
 	}
 
-	public static UMLTagDefinition getTagDefinition(String name){
-		UMLTagDefinition td = UMLModelBean.getTagDefinitionByName(name);
+	public static UMLTagDefinitionBean getTagDefinition(String name){
+		UMLTagDefinitionBean td = UMLModelBean.getTagDefinitionByName(name);
 
 		if (td != null){ return td; }
 

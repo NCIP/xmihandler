@@ -15,7 +15,7 @@ class JDomXmiTransformer {
 
 	private static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
-	private static Map<String, UMLTagDefinition> tagDefinitions = new HashMap<String, UMLTagDefinition>();
+	private static Map<String, UMLTagDefinitionBean> tagDefinitions = new HashMap<String, UMLTagDefinitionBean>();
 
 	private static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
 
@@ -29,8 +29,8 @@ class JDomXmiTransformer {
 			datatypes.put(((UMLClassBean) datatype).getModelId(), datatype);
 	}
 
-	static void addTagDefinition(UMLTagDefinition tagDefinition) {
-		tagDefinitions.put(((UMLTagDefinition) tagDefinition).getXmiId(),
+	static void addTagDefinition(UMLTagDefinitionBean tagDefinition) {
+		tagDefinitions.put(((UMLTagDefinitionBean) tagDefinition).getXmiId(),
 				tagDefinition);
 	}
 

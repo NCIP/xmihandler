@@ -1,8 +1,6 @@
 package gov.nih.nci.ncicb.xmiinout.domain.bean;
 
-import gov.nih.nci.ncicb.xmiinout.domain.UMLTagDefinition;
-
-public class UMLTagDefinitionBean extends JDomDomainObject implements UMLTagDefinition {
+public class UMLTagDefinitionBean extends JDomDomainObject {
 
   private String xmiId;
   private String name;  
