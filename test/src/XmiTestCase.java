@@ -403,10 +403,9 @@ public class XmiTestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName());
+		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());
 		System.out.println("");
 	}
-
 
 	private void printAttribute(UMLAttribute att, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)

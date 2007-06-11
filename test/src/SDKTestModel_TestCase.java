@@ -407,7 +407,7 @@ public class SDKTestModel_TestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName());
+		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());		
 		System.out.println("");
 
 		for(UMLTaggedValue tv : dep.getTaggedValues()) {

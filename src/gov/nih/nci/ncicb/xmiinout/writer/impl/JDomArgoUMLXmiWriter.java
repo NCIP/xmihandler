@@ -178,7 +178,7 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 					Element supplierElt = supplierObj.getJDomElement();
 					supplierElt.getParentElement().addContent(depElement);
 
-					return new UMLDependencyBean(depElement, dependency.getName(), dependency.getVisibility(), dependency.getClient(), dependency.getSupplier());
+					return new UMLDependencyBean(depElement, dependency.getName(), dependency.getVisibility(), dependency.getClient(), dependency.getSupplier(), null);
 
 
 				} catch (ClassCastException e) {

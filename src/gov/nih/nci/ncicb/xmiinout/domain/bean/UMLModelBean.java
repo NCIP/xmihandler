@@ -9,6 +9,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
+import gov.nih.nci.ncicb.xmiinout.handler.impl.JDomXmiTransformer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +24,6 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	private static Logger logger = Logger.getLogger(JDomDomainObject.class.getName());
 	private List<UMLPackage> packages = new ArrayList();
 	private List<UMLClass> classes = new ArrayList<UMLClass>();
-
-	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinitionBean>();
-	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinitionBean>();
 
 	private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
@@ -90,14 +88,6 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		classes.add(clazz);
 	}
 
-	static public UMLTagDefinitionBean getTagDefinitionByName(String name) {
-		return tagDefinitionsByNameMap.get(name);
-	}
-
-	static public UMLTagDefinitionBean getTagDefinitionByXmiId(String xmiId) {
-		return tagDefinitionsByNameMap.get(xmiId);
-	}
-
 	public UMLTaggedValue getTaggedValue(String name) {
 		return taggedValuesMap.get(name);
 	}
@@ -105,35 +95,6 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	public UMLTaggedValue addTaggedValue(UMLTaggedValue taggedValue) {
 		taggedValuesMap.put(taggedValue.getName(), taggedValue);
 		return taggedValue;
-	}
-
-	public UMLTagDefinitionBean addTagDefinition(UMLTagDefinitionBean tagDefinition) {
-		tagDefinitionsByNameMap.put(tagDefinition.getName(), tagDefinition);
-		tagDefinitionsByXmiIdMap.put(tagDefinition.getXmiId(), tagDefinition);	    
-		return tagDefinition;
-	}  
-
-	public UMLTagDefinitionBean addTagDefinition(String name) {
-
-		// add to jdom element
-		Element modelElt = this.getJDomElement();
-
-		Namespace ns = modelElt.getNamespace();
-		Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);	    
-
-		String xmiId = java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase();
-		UMLTagDefinitionBean tdBean = new UMLTagDefinitionBean(ownedElement, xmiId, name);
-
-
-		Element tdElement = new Element("TagDefinition", ns);
-		tdElement.setAttribute("xmi.id", xmiId);
-		tdElement.setAttribute("name", name);;
-		ownedElement.addContent(tdElement);
-
-		tagDefinitionsByNameMap.put(tdBean.getName(), tdBean);
-		tagDefinitionsByXmiIdMap.put(tdBean.getXmiId(), tdBean);
-
-		return (UMLTagDefinitionBean)tdBean;
 	}
 
 	public static UMLTagDefinitionBean addTagDefinition(Element elt, String name) {
@@ -173,8 +134,7 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		tdElement.setAttribute("name", name);
 		ownedElement.addContent(tdElement);
 
-		tagDefinitionsByNameMap.put(tdBean.getName(), tdBean);
-		tagDefinitionsByXmiIdMap.put(tdBean.getXmiId(), tdBean);		
+		JDomXmiTransformer.addTagDefinition(tdBean);
 
 		return (UMLTagDefinitionBean)tdBean;
 	}  	
@@ -247,11 +207,9 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		return dependencies;
 	}
 
-
 	public void addDatatype(UMLDatatype type) {
 		datatypes.put(((UMLDatatypeBean)type).getModelId(), type);
 	}
-
 
 	public UMLDependency createDependency(UMLDependencyEnd client,
 			UMLDependencyEnd supplier, String name)
@@ -266,11 +224,11 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	}
 
 	public static UMLTagDefinitionBean getTagDefinition(String name){
-		UMLTagDefinitionBean td = UMLModelBean.getTagDefinitionByName(name);
+		UMLTagDefinitionBean td = JDomXmiTransformer.getTagDefinitionByName(name);
 
 		if (td != null){ return td; }
 
-		td = UMLModelBean.getTagDefinitionByXmiId(name);
+		td = JDomXmiTransformer.getTagDefinitionByXmiId(name);
 
 		if (td != null){ return td; }
 

@@ -1,21 +1,36 @@
 package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
-import gov.nih.nci.ncicb.xmiinout.domain.*;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.*;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDatatypeBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLVisibilityBean;
 
-import org.jdom.*;
-import org.jdom.input.*;
-import org.jdom.output.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.Namespace;
 
-import java.util.*;
-
-class JDomXmiTransformer {
+public class JDomXmiTransformer {
 
 	private static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
-	private static Map<String, UMLTagDefinitionBean> tagDefinitions = new HashMap<String, UMLTagDefinitionBean>();
+//	private static Map<String, UMLTagDefinitionBean> tagDefinitions = new HashMap<String, UMLTagDefinitionBean>();
+	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinitionBean>();
+	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinitionBean>();
+
+	private static Map<String, UMLStereotypeDefinitionBean> stereotypeDefinitions = new HashMap<String, UMLStereotypeDefinitionBean>();	
 
 	private static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
 
@@ -29,9 +44,24 @@ class JDomXmiTransformer {
 			datatypes.put(((UMLClassBean) datatype).getModelId(), datatype);
 	}
 
-	static void addTagDefinition(UMLTagDefinitionBean tagDefinition) {
-		tagDefinitions.put(((UMLTagDefinitionBean) tagDefinition).getXmiId(),
+	public static void addTagDefinition(UMLTagDefinitionBean tagDefinition) {
+		tagDefinitionsByXmiIdMap.put(((UMLTagDefinitionBean) tagDefinition).getXmiId(),
 				tagDefinition);
+		tagDefinitionsByNameMap.put(((UMLTagDefinitionBean) tagDefinition).getName(),
+				tagDefinition);		
+	}
+
+
+	static void addStereotypeDefinition(UMLStereotypeDefinitionBean typeDef) {
+		stereotypeDefinitions.put(typeDef.getModelId(), typeDef);
+	}	
+
+	static String getStereotypeName(String id) {
+		UMLStereotypeDefinitionBean typeDef =  stereotypeDefinitions.get(id);
+		if (typeDef != null) {
+			return typeDef.getName();
+		}
+		return null;
 	}
 
 	static UMLDatatypeBean toUMLDatatype(Element typeElt) {
@@ -45,6 +75,22 @@ class JDomXmiTransformer {
 			name = "";
 
 		UMLDatatypeBean result = new UMLDatatypeBean(typeElt, name);
+		result.setModelId(xmi_id);
+		return result;
+	}
+
+
+	static UMLStereotypeDefinitionBean toUMLUMLStereotypeDef(Element typeElt) {
+		String xmi_id = typeElt.getAttribute("xmi.id").getValue();
+
+		Attribute nameAtt = typeElt.getAttribute("name");
+		String name = null;
+		if (nameAtt != null)
+			name = nameAtt.getValue();
+		else
+			name = "";
+
+		UMLStereotypeDefinitionBean result = new UMLStereotypeDefinitionBean(typeElt, name);
 		result.setModelId(xmi_id);
 		return result;
 	}
@@ -161,7 +207,7 @@ class JDomXmiTransformer {
 		if (tdElement.getAttribute("name") == null) {
 			logger.info("tagDefinition missing 'name' attribute, skipping");
 			System.out
-					.println("tagDefinition missing 'name' attribute, skipping");
+			.println("tagDefinition missing 'name' attribute, skipping");
 			return null;
 		}
 
@@ -229,21 +275,21 @@ class JDomXmiTransformer {
 		if (dataValueElement == null) {
 			logger.info("taggedValue missing dataValue Element, skipping");
 			System.out
-					.println("taggedValue missing dataValue Element, skipping");
+			.println("taggedValue missing dataValue Element, skipping");
 			return null;
 		}
 
 		Element tagDefinitionElement = typeElement
-				.getChild("TagDefinition", ns);
+		.getChild("TagDefinition", ns);
 
 		logger.debug("*** tagDefinition name: "
-				+ tagDefinitions.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
+				+ tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
 
 		logger.debug("*** dataValue: "
 				+ dataValueElement.getText());
 
 		UMLTaggedValueBean tv = new UMLTaggedValueBean(tvElement,
-				tagDefinitions.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName(),
+				tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName(),
 				dataValueElement.getText());
 		return tv;
 	}
@@ -255,5 +301,14 @@ class JDomXmiTransformer {
 	// return null;
 
 	// }
+	
+
+	public static UMLTagDefinitionBean getTagDefinitionByName(String name) {
+		return tagDefinitionsByNameMap.get(name);
+	}
+
+	public static UMLTagDefinitionBean getTagDefinitionByXmiId(String xmiId) {
+		return tagDefinitionsByNameMap.get(xmiId);
+	}
 
 }

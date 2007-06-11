@@ -31,5 +31,9 @@ public interface UMLDependency extends UMLTaggableElement {
    */
   public UMLDependencyEnd getSupplier();
 
+  /**
+   * @return the dependency stereotype, or null if there isn't any
+   */
+  public String getStereotype();
 }
 
