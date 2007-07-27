@@ -69,7 +69,7 @@ public class EADefaultImpl extends EABaseImpl {
 		List<Element> attElements = (List<Element>)featureElement.getChildren("Attribute", ns);
 
 		for(Element attElt : attElements) {
-			UMLAttributeBean umlAtt = JDomXmiTransformer.toUMLAttribute(attElt);
+			UMLAttributeBean umlAtt = JDomXmiTransformer.toUMLAttribute(attElt, ns);
 
 			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt);
 			for(UMLTaggedValue tv : taggedValues) {

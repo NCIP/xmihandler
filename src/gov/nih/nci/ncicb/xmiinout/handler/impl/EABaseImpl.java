@@ -1,21 +1,40 @@
 package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
 
-import gov.nih.nci.ncicb.xmiinout.domain.*;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.*;
-import gov.nih.nci.ncicb.xmiinout.writer.UMLWriter;
-import gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociation;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAttribute;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 
-import java.util.*;
-
-import org.jdom.*;
-import org.jdom.input.*;
-import org.jdom.output.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
-
-import java.io.*;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * 
@@ -80,13 +99,10 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     return models.get(modelName);
   }
 
-//  public UMLWriter getUMLWriter() {
-//    return new JDomEAXmiWriter();
-//  }
-
   private void readModel(Element rootElement) throws JaxenException {
 
     String xpath = "/XMI/XMI.content/*[local-name()='Model']";
+    Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
 
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> elts = path.selectNodes(rootElement);
@@ -124,7 +140,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     doRootTaggedValues(rootElement);
 
     // Must be done after classes for cross references.
-    JDomXmiTransformer.completeAttributes();
+    JDomXmiTransformer.completeAttributes(ns);
   }
 
 
@@ -191,7 +207,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     List<UMLClassBean> result = new ArrayList<UMLClassBean>();
 
     for(Element classElement : classElements) {
-      UMLClassBean umlClass = JDomXmiTransformer.toUMLClass(classElement);
+      UMLClassBean umlClass = JDomXmiTransformer.toUMLClass(classElement, ns);
       Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement);
       for(UMLTaggedValue tv : taggedValues) {
         umlClass.addTaggedValue(tv);

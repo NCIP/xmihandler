@@ -7,8 +7,6 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDatatypeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLVisibilityBean;
 
@@ -24,15 +22,9 @@ import org.jdom.Namespace;
 
 public class JDomXmiTransformer {
 
-	private static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
+	protected static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
-//	private static Map<String, UMLTagDefinitionBean> tagDefinitions = new HashMap<String, UMLTagDefinitionBean>();
-	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinitionBean>();
-	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinitionBean>();
-
-	private static Map<String, UMLStereotypeDefinitionBean> stereotypeDefinitions = new HashMap<String, UMLStereotypeDefinitionBean>();	
-
-	private static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
+	protected static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
 
 	private static Logger logger = Logger.getLogger(JDomXmiTransformer.class
 			.getName());
@@ -43,25 +35,14 @@ public class JDomXmiTransformer {
 		else if (datatype instanceof UMLClassBean)
 			datatypes.put(((UMLClassBean) datatype).getModelId(), datatype);
 	}
-
-	public static void addTagDefinition(UMLTagDefinitionBean tagDefinition) {
-		tagDefinitionsByXmiIdMap.put(((UMLTagDefinitionBean) tagDefinition).getXmiId(),
-				tagDefinition);
-		tagDefinitionsByNameMap.put(((UMLTagDefinitionBean) tagDefinition).getName(),
-				tagDefinition);		
-	}
-
-
-	static void addStereotypeDefinition(UMLStereotypeDefinitionBean typeDef) {
-		stereotypeDefinitions.put(typeDef.getModelId(), typeDef);
-	}	
-
-	static String getStereotypeName(String id) {
-		UMLStereotypeDefinitionBean typeDef =  stereotypeDefinitions.get(id);
-		if (typeDef != null) {
-			return typeDef.getName();
-		}
-		return null;
+	
+	static String getStereotypeName(Element stElt){
+		
+		String stereotypeName = null;
+		Attribute stereotypeAtt = stElt.getAttribute("name");
+		stereotypeName =  stereotypeAtt.getValue();
+		
+		return stereotypeName;
 	}
 
 	static UMLDatatypeBean toUMLDatatype(Element typeElt) {
@@ -79,22 +60,6 @@ public class JDomXmiTransformer {
 		return result;
 	}
 
-
-	static UMLStereotypeDefinitionBean toUMLUMLStereotypeDef(Element typeElt) {
-		String xmi_id = typeElt.getAttribute("xmi.id").getValue();
-
-		Attribute nameAtt = typeElt.getAttribute("name");
-		String name = null;
-		if (nameAtt != null)
-			name = nameAtt.getValue();
-		else
-			name = "";
-
-		UMLStereotypeDefinitionBean result = new UMLStereotypeDefinitionBean(typeElt, name);
-		result.setModelId(xmi_id);
-		return result;
-	}
-
 	static UMLModelBean toUMLModel(Element modelElement) {
 		UMLModelBean model = new UMLModelBean(modelElement);
 		model.setName(modelElement.getAttribute("name").getValue());
@@ -107,29 +72,30 @@ public class JDomXmiTransformer {
 		return pkg;
 	}
 
-	static UMLClassBean toUMLClass(Element classElement) {
-		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+	static UMLClassBean toUMLClass(Element classElement, Namespace ns) {
 
 		Attribute visibilityAtt = classElement.getAttribute("visibility");
 		String visibility = visibilityAtt != null ? visibilityAtt.getValue()
 				: null;
 		UMLVisibility umlVis = new UMLVisibilityBean(visibility);
 
-		String stereotype = null;
+		String stereotypeName = null;
+			
 		List<Element> elts = (List<Element>) classElement.getChildren(
 				"ModelElement.stereotype", ns);
+		
 		if (elts.size() > 0) {
 			Element modelStElt = elts.get(0);
 			List<Element> stElts = (List<Element>) modelStElt.getChildren(
 					"Stereotype", ns);
 			if (stElts.size() > 0) {
 				Element stElt = stElts.get(0);
-				stereotype = stElt.getAttribute("name").getValue();
+				stereotypeName = getStereotypeName(stElts.get(0));
 			}
 		}
 
 		UMLClassBean clazz = new UMLClassBean(classElement, classElement
-				.getAttribute("name").getValue(), umlVis, stereotype);
+				.getAttribute("name").getValue(), umlVis, stereotypeName);
 
 		clazz.setModelId(classElement.getAttribute("xmi.id").getValue());
 
@@ -137,7 +103,7 @@ public class JDomXmiTransformer {
 		return clazz;
 	}
 
-	static UMLAttributeBean toUMLAttribute(Element attElement) {
+	static UMLAttributeBean toUMLAttribute(Element attElement, Namespace ns) {
 		Attribute visibilityAtt = attElement.getAttribute("visibility");
 		String visibility = visibilityAtt != null ? visibilityAtt.getValue()
 				: null;
@@ -145,15 +111,20 @@ public class JDomXmiTransformer {
 
 		UMLDatatype datatype = null;
 
-		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
-		Element sfTypeElement = attElement.getChild("StructuralFeature.type",
-				ns);
+		logger.debug("***attElement.getAttribute('name'): " + attElement.getAttribute("name"));
+		
+		Element sfTypeElement = attElement.getChild("StructuralFeature.type", ns);		
+		logger.debug("sfTypeElement: " + sfTypeElement);
+		
 		if (sfTypeElement != null) {
 			Element classifElt = sfTypeElement.getChild("Classifier", ns);
+			logger.debug("classifElt: " + classifElt);
+			
 			if (classifElt != null) {
 				Attribute typeAtt = classifElt.getAttribute("xmi.idref");
 				if (typeAtt != null) {
 					String typeId = typeAtt.getValue();
+					logger.debug("*** typeId: " + typeId);
 					datatype = datatypes.get(typeId);
 				}
 			}
@@ -163,21 +134,22 @@ public class JDomXmiTransformer {
 				.getAttribute("name").getValue(), datatype, umlVis);
 
 		// maybe we haven't discovered the datatype yet.
-		if (datatype == null)
+		if (datatype == null) {
+			logger.debug("*** datatype is null; will try to discover later");
 			attWithMissingDatatypes.add(att);
+		}
 
 		return att;
 	}
-
+	
 	/**
 	 * Run this after you've processed attributes for attributes that use
 	 * classes as datatypes.
 	 */
-	static void completeAttributes() {
+	static void completeAttributes(Namespace ns) {
 		for (UMLAttributeBean att : attWithMissingDatatypes) {
 			Element attElement = att.getJDomElement();
 
-			Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
 			Element sfTypeElement = attElement.getChild(
 					"StructuralFeature.type", ns);
 			if (sfTypeElement != null) {
@@ -193,30 +165,7 @@ public class JDomXmiTransformer {
 		}
 
 	}
-
-	static UMLTagDefinitionBean toUMLTagDefinition(Element tdElement) {
-		//
-		// EA
-		// None
-		//
-		// ArgoUML
-		// <UML:TagDefinition xmi.id="-64--88-1-107-8238f4:1121acba21f:-8000:000000000000317C" name="type" isSpecification="false" tagType="String" />
-		//	  	  
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
-
-		if (tdElement.getAttribute("name") == null) {
-			logger.info("tagDefinition missing 'name' attribute, skipping");
-			System.out
-			.println("tagDefinition missing 'name' attribute, skipping");
-			return null;
-		}
-
-		UMLTagDefinitionBean td = new UMLTagDefinitionBean(tdElement, tdElement
-				.getAttribute("xmi.id").getValue(), tdElement.getAttribute(
-				"name").getValue());
-		return td;
-	}
-
+	
 	static UMLTaggedValueBean toUMLTaggedValue(Element tvElement) {
 		if (tvElement.getAttribute("tag") == null) {
 			logger.info("taggedValue missing tag attribute, skipping");
@@ -239,76 +188,4 @@ public class JDomXmiTransformer {
 				.getAttribute("value").getValue());
 		return tv;
 	}
-
-	static UMLTaggedValueBean toArgoUMLTaggedValue(Element tvElement) {
-		//
-		// EA
-		// <UML:TaggedValue tag="myClassTaggedValue" value="test 123"
-		// xmi.id="1D2F36D4_E881_44C1_8051_106A39593C26"
-		// modelElement="EAID_05D28ABC_F678_4c6a_AA5C_513217EB2E68" />
-		//
-		// ArgoUML
-		// <UML:TaggedValue xmi.id="EAID_E5485B89_9415_42ea_AC45_28D8A2349539_fix_2_fix_0_fix_0"
-		// isSpecification="false">
-		// <UML:TaggedValue.dataValue>gov.nih.nci.cacoresdk.domain.manytomany.bidirectional.Project.employeeCollection</UML:TaggedValue.dataValue>
-		// <UML:TaggedValue.type>
-		// <UML:TagDefinition xmi.idref="-64--88-1-107-16925b0:1120c726d7c:-8000:0000000000003170" />
-		// </UML:TaggedValue.type>
-		// </UML:TaggedValue>
-
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
-		Element dataValueElement = tvElement.getChild("TaggedValue.dataValue",
-				ns);
-		Element typeElement = tvElement.getChild("TaggedValue.type", ns);
-
-		if (typeElement == null) {
-			logger.info("taggedValue "
-					+ tvElement.getAttribute("xmi.id").getValue()
-					+ " missing 'TagDefinition' element, skipping");
-			logger.debug("taggedValue "
-					+ tvElement.getAttribute("xmi.id").getValue()
-					+ " missing 'TagDefinition' element, skipping");
-
-			return null;
-		}
-
-		if (dataValueElement == null) {
-			logger.info("taggedValue missing dataValue Element, skipping");
-			System.out
-			.println("taggedValue missing dataValue Element, skipping");
-			return null;
-		}
-
-		Element tagDefinitionElement = typeElement
-		.getChild("TagDefinition", ns);
-
-		logger.debug("*** tagDefinition name: "
-				+ tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
-
-		logger.debug("*** dataValue: "
-				+ dataValueElement.getText());
-
-		UMLTaggedValueBean tv = new UMLTaggedValueBean(tvElement,
-				tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName(),
-				dataValueElement.getText());
-		return tv;
-	}
-
-	// static UMLGeneralizationBean toUMLGeneralization(Element genElement) {
-	// String subtypeId = genElement.getAttribute("subtype").getValue();
-	// String supertypeId = genElement.getAttribute("supertype").getValue();
-
-	// return null;
-
-	// }
-	
-
-	public static UMLTagDefinitionBean getTagDefinitionByName(String name) {
-		return tagDefinitionsByNameMap.get(name);
-	}
-
-	public static UMLTagDefinitionBean getTagDefinitionByXmiId(String xmiId) {
-		return tagDefinitionsByNameMap.get(xmiId);
-	}
-
 }

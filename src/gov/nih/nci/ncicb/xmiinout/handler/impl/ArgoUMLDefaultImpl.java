@@ -1,22 +1,52 @@
 
 package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociation;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociationEnd;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAttribute;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAssociationBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAssociationEndBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLGeneralizationBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLVisibilityBean;
 
-import gov.nih.nci.ncicb.xmiinout.domain.*;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.*;
-
-import java.util.*;
-
-import org.jdom.*;
-import org.jdom.input.*;
-import org.jdom.output.*;
-
-import org.jaxen.JaxenException;
-import org.jaxen.jdom.JDOMXPath;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import java.io.*;
+import org.jaxen.JaxenException;
+import org.jaxen.jdom.JDOMXPath;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * 
@@ -90,6 +120,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	protected void readModel(Element rootElement) throws JaxenException {
 
 		String xpath = "/uml/XMI/XMI.content/*[local-name()='Model']";
+		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
 
 		JDOMXPath path = new JDOMXPath(xpath);
 		List<Element> elts = path.selectNodes(rootElement);
@@ -97,57 +128,58 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		logger.debug("Elements Found:  " + elts.size());
 
 		for(Element elt : elts) {
-			UMLModelBean model = JDomXmiTransformer.toUMLModel(elt);
+			UMLModelBean model = ArgoJDomXmiTransformer.toUMLModel(elt);
 			models.put(model.getName(), model);
 
 			logger.debug("Model Name:  " + model.getName());
 
-			for(UMLTagDefinitionBean def : doTagDefinitions(elt)) {
-				JDomXmiTransformer.addTagDefinition(def);
+			for(UMLTagDefinitionBean def : doTagDefinitions(elt, ns)) {
+				ArgoJDomXmiTransformer.addTagDefinition(def);
 			}
 
-			for(UMLDatatype type : doDataTypes(elt)) {
+			for(UMLDatatype type : doDataTypes(elt, ns)) {
 				model.addDatatype(type);
-				JDomXmiTransformer.addDatatype(type);
+				ArgoJDomXmiTransformer.addDatatype(type);
 			}
 			
 
-			for(UMLStereotypeDefinitionBean stereotype : doStereotypeDefinitions(elt)) {
-				JDomXmiTransformer.addStereotypeDefinition(stereotype);
+			for(UMLStereotypeDefinitionBean stereotype : doStereotypeDefinitions(elt, ns)) {
+				ArgoJDomXmiTransformer.addStereotypeDefinition(stereotype);
 			}			
 
-			for(UMLPackage pkg : doPackages(elt)) {
+			for(UMLPackage pkg : doPackages(elt, ns)) {
 				model.addPackage(pkg);
 			}
 
-			for(UMLClass clazz : doClasses(elt)) {
+			for(UMLClass clazz : doClasses(elt, ns)) {
 				model.addClass(clazz);
 			}
 
-			for(UMLGeneralization gen : doGeneralizations(elt)) {
+			for(UMLGeneralization gen : doGeneralizations(elt, ns)) {
 				model.addGeneralization(gen);
 			}
 
-			for(UMLDependency dep : doDependencies(elt)) {
+			for(UMLDependency dep : doDependencies(elt, ns)) {
 				model._addDependency(dep);
 			}
 
-			for(UMLAssociation assoc : doAssociations(elt)) {
+			for(UMLAssociation assoc : doAssociations(elt, ns)) {
 				model.addAssociation(assoc);
 			}      
 		}
 
-		doRootTaggedValues(rootElement);
+		doRootTaggedValues(rootElement, ns);
 
 		// Must be done after classes for cross references.
-		JDomXmiTransformer.completeAttributes();
+		ArgoJDomXmiTransformer.completeAttributes(ns);
 	}
 
 
-	protected List<UMLTaggedValue> doRootTaggedValues(Element rootElement) 
+	protected List<UMLTaggedValue> doRootTaggedValues(Element rootElement, Namespace ns) 
 	throws JaxenException {
 		String xpath = "/XMI/XMI.content/*[local-name()='TaggedValue']";
 		JDOMXPath path = new JDOMXPath(xpath);
+
 		List<Element> elts = path.selectNodes(rootElement);
 
 		List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
@@ -159,7 +191,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		}
 
 		for(Element tvElt : elts) {
-			UMLTaggedValue tv = JDomXmiTransformer.toArgoUMLTaggedValue(tvElt);
+			UMLTaggedValue tv = ArgoJDomXmiTransformer.toUMLTaggedValue(tvElt, ns);
 
 			if(tv != null)
 				result.add(tv);
@@ -177,8 +209,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 	}
 
-	protected List<UMLTagDefinitionBean> doTagDefinitions(Element elt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLTagDefinitionBean> doTagDefinitions(Element elt, Namespace ns) {
 		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);	    
 
 		if (ownedElement == null){
@@ -192,7 +223,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		logger.debug("TagDefinition Elements found: " + tdElements.size());
 
 		for(Element tdElt : tdElements) {
-			UMLTagDefinitionBean td = JDomXmiTransformer.toUMLTagDefinition(tdElt);
+			UMLTagDefinitionBean td = ArgoJDomXmiTransformer.toUMLTagDefinition(tdElt);
 			logger.debug("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
 			if(td != null)
 				result.add(td);
@@ -201,9 +232,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		return result;
 	}
 
-
-	protected List<UMLPackageBean> doPackages(Element elt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLPackageBean> doPackages(Element elt, Namespace ns) {
 		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
 
 		if (ownedElement == null){
@@ -218,18 +247,18 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 		for(Element pkgElement : packageElements) {
 			logger.debug("Package name: " + pkgElement.getAttributeValue("name"));
-			UMLPackageBean umlPkg = JDomXmiTransformer.toUMLPackage(pkgElement);
+			UMLPackageBean umlPkg = ArgoJDomXmiTransformer.toUMLPackage(pkgElement);
 			result.add(umlPkg);
 
-			Collection<UMLTaggedValue> taggedValues = doTaggedValues(pkgElement);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(pkgElement, ns);
 			for(UMLTaggedValue tv : taggedValues) {
 				umlPkg.addTaggedValue(tv);
 			}
 
-			for(UMLPackageBean pkg : doPackages(pkgElement)) {
+			for(UMLPackageBean pkg : doPackages(pkgElement, ns)) {
 				umlPkg.addPackage(pkg);
 			}
-			for(UMLClassBean clazz : doClasses(pkgElement)) {
+			for(UMLClassBean clazz : doClasses(pkgElement, ns)) {
 				umlPkg.addClass(clazz);
 			}
 		}
@@ -238,10 +267,8 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 	}
 
-	protected List<UMLClassBean> doClasses(Element elt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLClassBean> doClasses(Element elt, Namespace ns) {
 		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
-
 
 		if (ownedElement == null){
 			logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
@@ -252,14 +279,14 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		List<UMLClassBean> result = new ArrayList<UMLClassBean>();
 
 		for(Element classElement : classElements) {
-			UMLClassBean umlClass = JDomXmiTransformer.toUMLClass(classElement);
+			UMLClassBean umlClass = ArgoJDomXmiTransformer.toUMLClass(classElement, ns);
 
-			Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement, ns);
 			for(UMLTaggedValue tv : taggedValues) {
 				umlClass.addTaggedValue(tv);
 			}
 
-			List<UMLAttribute> atts = doAttributes(classElement);
+			List<UMLAttribute> atts = doAttributes(classElement, ns);
 			for(UMLAttribute att : atts) {
 				umlClass.addAttribute(att);
 			}
@@ -274,25 +301,24 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	}
 
 
-	protected List<UMLDatatype> doDataTypes(Element modelElt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLDatatype> doDataTypes(Element modelElt, Namespace ns) {
 		Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);
 
 		List<Element> typeElements = (List<Element>)ownedElement.getChildren("DataType", ns);
 
-		logger.debug("TypeElements size: " + typeElements.size());
+		logger.debug("DataTypeElements size: " + typeElements.size());
+		logger.debug("DataTypeElements size: " + typeElements.size());
 
 		List<UMLDatatype> result = new ArrayList<UMLDatatype>();
 
 		for(Element typeElt : typeElements) {
-			result.add(JDomXmiTransformer.toUMLDatatype(typeElt));
+			result.add(ArgoJDomXmiTransformer.toUMLDatatype(typeElt));
 		}
 		return result;
 
 	}
 	
-	protected List<UMLStereotypeDefinitionBean> doStereotypeDefinitions(Element modelElt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLStereotypeDefinitionBean> doStereotypeDefinitions(Element modelElt, Namespace ns) {
 		Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);
 
 		List<Element> typeElements = (List<Element>)ownedElement.getChildren("Stereotype", ns);
@@ -302,14 +328,13 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		List<UMLStereotypeDefinitionBean> result = new ArrayList<UMLStereotypeDefinitionBean>();
 
 		for(Element typeElt : typeElements) {
-			result.add(JDomXmiTransformer.toUMLUMLStereotypeDef(typeElt));
+			result.add(ArgoJDomXmiTransformer.toUMLStereotypeDef(typeElt));
 		}
 		return result;
 
 	}	
 
-	protected List<UMLTaggedValue> doTaggedValues(Element elt) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLTaggedValue> doTaggedValues(Element elt, Namespace ns) {
 		Element modelElement = elt.getChild("ModelElement.taggedValue", ns);
 
 		List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
@@ -319,7 +344,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
 		logger.debug("TaggedValue Elements found: " + tvElements.size());
 		for(Element tvElt : tvElements) {
-			UMLTaggedValue tv = JDomXmiTransformer.toArgoUMLTaggedValue(tvElt);
+			UMLTaggedValue tv = ArgoJDomXmiTransformer.toUMLTaggedValue(tvElt, ns);
 			if(tv != null)
 				result.add(tv);
 		}
@@ -327,8 +352,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		return result;
 	}
 
-	protected  List<UMLAttribute> doAttributes(Element classElement) {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected  List<UMLAttribute> doAttributes(Element classElement, Namespace ns) {
 		Element featureElement = classElement.getChild("Classifier.feature", ns);
 
 		List<UMLAttribute> result = new ArrayList<UMLAttribute>();
@@ -338,9 +362,9 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		List<Element> attElements = (List<Element>)featureElement.getChildren("Attribute", ns);
 
 		for(Element attElt : attElements) {
-			UMLAttributeBean umlAtt = JDomXmiTransformer.toUMLAttribute(attElt);
+			UMLAttributeBean umlAtt = ArgoJDomXmiTransformer.toUMLAttribute(attElt, ns);
 
-			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt, ns);
 			for(UMLTaggedValue tv : taggedValues) {
 				umlAtt.addTaggedValue(tv);
 			}
@@ -352,7 +376,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 	}
 
-	protected List<UMLDependency> doDependencies(Element modelElement) throws JaxenException {
+	protected List<UMLDependency> doDependencies(Element modelElement, Namespace ns) throws JaxenException {
 		String xpath = "//*[local-name()='Dependency']";
 
 		JDOMXPath path = new JDOMXPath(xpath);
@@ -369,7 +393,6 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 			logger.debug("depElt.getAttributeValue('xmi.id'): " + xmiId);    	
 
-			Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
 			Element clientElement = depElt.getChild("Dependency.client", ns);
 			Element clientClassElement = clientElement.getChild("Class", ns);
 
@@ -388,12 +411,10 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 			if(client == null) {
 				logger.debug("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-				logger.info("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 				continue;
 			}
 			if(supplier == null) {
 				logger.debug("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-				logger.info("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
 				continue;
 			}
 
@@ -414,17 +435,14 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 				Element modelStElt = elts.get(0);
 				List<Element> stElts = (List<Element>) modelStElt.getChildren("Stereotype", ns);
 				if (stElts.size() > 0) {
-					Element stElt = stElts.get(0);
-					String stereotypeId = stElt.getAttribute("xmi.id").getValue();
-					logger.debug("***** Stereotype xmi.id: " + stereotypeId);
-					stereotype = JDomXmiTransformer.getStereotypeName(stereotypeId);
+					stereotype = ArgoJDomXmiTransformer.getStereotypeName(stElts.get(0));
 					logger.debug("Dependency Stereotype:  " + stereotype);
 				}
 			}
 
 			UMLDependencyBean depBean = new UMLDependencyBean(depElt, depName, visibility, client, supplier, stereotype);
 
-			Collection<UMLTaggedValue> taggedValues = doTaggedValues(depElt);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(depElt, ns);
 			for(UMLTaggedValue tv : taggedValues) {
 				depBean.addTaggedValue(tv);
 			}
@@ -437,7 +455,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	}
 
 
-	protected List<UMLGeneralization> doGeneralizations(Element modelElement) throws JaxenException {
+	protected List<UMLGeneralization> doGeneralizations(Element modelElement, Namespace ns) throws JaxenException {
 		String xpath = "//*[local-name()='Generalization']";
 
 		JDOMXPath path = new JDOMXPath(xpath);
@@ -458,7 +476,6 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 //			logger.debug("genElt.getAttributeValue('xmi.id'): " + genElt.getAttributeValue("xmi.id"));
 
-			Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
 			Element childElement = genElt.getChild("Generalization.child", ns);
 			Element childClassElement = childElement.getChild("Class", ns);
 
@@ -474,7 +491,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 			UMLClassBean superClass = idClassMap.get(parentClassElement.getAttributeValue("xmi.idref"));
 			logger.debug("*** superClass name: " + superClass.getName());      
-//			result.add(JDomXmiTransformer.toUMLGeneralization(genElt));
+//			result.add(ArgoJDomXmiTransformer.toUMLGeneralization(genElt));
 			result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
 		}    
 
@@ -482,8 +499,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 	}
 
-	protected List<UMLAssociation> doAssociations(Element modelElement) throws JaxenException {
-		Namespace ns = Namespace.getNamespace("org.omg.xmi.namespace.UML");
+	protected List<UMLAssociation> doAssociations(Element modelElement, Namespace ns) throws JaxenException {
 		String xpath = "//*[local-name()='Association']";
 
 		JDOMXPath path = new JDOMXPath(xpath);
@@ -577,7 +593,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 				else
 					targetEnd = endBean;
 
-				Collection<UMLTaggedValue> taggedValues = doTaggedValues(endElt);
+				Collection<UMLTaggedValue> taggedValues = doTaggedValues(endElt, ns);
 				for(UMLTaggedValue tv : taggedValues) {
 					logger.debug("taggedValue: " + tv.getName());
 					endBean.addTaggedValue(tv);
@@ -603,7 +619,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
 			UMLAssociationBean assoc = new UMLAssociationBean(assocElt, assocRoleName, endBeans);
 
-			Collection<UMLTaggedValue> taggedValues = doTaggedValues(assocElt);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(assocElt, ns);
 			for(UMLTaggedValue tv : taggedValues) {
 				assoc.addTaggedValue(tv);
 			}
