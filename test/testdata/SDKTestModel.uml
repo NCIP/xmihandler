@@ -77,7 +77,7 @@
             name="SDKTestModel.todo" />
     <historyfile name="" />
   </argo>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu May 03 12:04:33 PDT 2007'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu Jul 26 17:42:58 PDT 2007'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.24(5) revised on $Date: 2006-11-06 19:55:22 +0100 (Mon, 06 Nov 2006) $ </XMI.exporterVersion>
@@ -5175,6 +5175,9 @@
                 </UML:Class>
                 <UML:Dependency xmi.id = 'EAID_C5996166_097F_4053_9536_706CD2C74872' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_05D28ABC_F678_4c6a_AA5C_513217EB2E68'/>
                   </UML:Dependency.client>
@@ -5256,6 +5259,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_F703E50E_B275_4CE9_9A97_1F64AD3717AA' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_0E4D07AE_DF41_485d_AE83_0F5EF7CCD592'/>
                   </UML:Dependency.client>
@@ -5373,6 +5379,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_D3BEB16E_7EA7_4AD5_8A70_D7E6EF948658' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_142F6B68_9970_4954_959F_E4E4B143F30C'/>
                   </UML:Dependency.client>
@@ -5382,6 +5391,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_303DB0A0_0820_4FA7_8330_79FA56B54928' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_159377E1_0116_418a_8B1C_D0CDFF38D31A'/>
                   </UML:Dependency.client>
@@ -5427,6 +5439,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_03DCD28F_DEB5_4385_853C_72CE7D9A8828' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_219079C5_B7DE_40ac_B07F_896FC9DA6627'/>
                   </UML:Dependency.client>
@@ -5508,6 +5523,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_917353BB_1737_449A_9959_7B0247247105' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_249A807B_21BE_4be9_83B4_33E42B9CF9A2'/>
                   </UML:Dependency.client>
@@ -5553,6 +5571,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_C3031BB9_E93A_45A8_B4DA_66F5AF760A35' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_253DE03D_92CD_4459_97EC_26E5C52B6EE1'/>
                   </UML:Dependency.client>
@@ -5562,6 +5583,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_A50BBCE6_7EDF_4E2E_A038_A4CC49AB6977' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_30C6C782_44B0_40c4_AF1C_393415BB58C3'/>
                   </UML:Dependency.client>
@@ -5679,6 +5703,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_7BE30EED_891A_458C_9BFD_5BB8DB79CD8F' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_39BA10D3_F7B9_468e_8C39_CCBA190E856A'/>
                   </UML:Dependency.client>
@@ -5724,6 +5751,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_38FD5895_1190_4813_BEDA_5EA9DCFAB141' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_39C1C549_5C9B_4280_8957_C83A3B49D0EB'/>
                   </UML:Dependency.client>
@@ -5733,6 +5763,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_34212776_0CC3_47A1_A94A_EC089D5B9581' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_484F817B_ED75_4092_AECA_F018F3B55206'/>
                   </UML:Dependency.client>
@@ -5778,6 +5811,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_A4D2FA42_2D86_4DEA_B936_12BFA016904D' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_57DBA3B7_581B_41aa_9B3F_0A3CA2B5AA68'/>
                   </UML:Dependency.client>
@@ -5859,6 +5895,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_974D149E_5537_483C_B82F_07802689913C' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_5A3EFFAA_5CCC_495b_8CDE_1DE0A94CCFED'/>
                   </UML:Dependency.client>
@@ -5904,6 +5943,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_01D2331F_7EF6_47BC_9F60_45CFDD249C0E' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_61853F69_1F39_4737_863D_015FDD9575E3'/>
                   </UML:Dependency.client>
@@ -5913,6 +5955,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_10C4F419_8E45_469B_B3D6_7040F749D1D3' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_61B7DD8A_FDA5_4c3b_B331_5C56A71FB1BE'/>
                   </UML:Dependency.client>
@@ -5958,6 +6003,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_0B90C15D_3ACD_4031_886C_91E7DF80EA4B' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_67F107E8_7E37_4848_82E5_F9EAC1113CAB'/>
                   </UML:Dependency.client>
@@ -6003,6 +6051,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_074BDE96_5F42_4FD3_A2AB_BBB6D211BC76' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_6BB8DF98_4AB1_4899_B8DA_D2AF16D14DA4'/>
                   </UML:Dependency.client>
@@ -6048,6 +6099,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_2AA5D5EB_F838_4164_BC49_34928D3CD080' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_6BD42D64_464D_4d15_9418_DEC26B6553F3'/>
                   </UML:Dependency.client>
@@ -6093,6 +6147,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_4D545E7D_68AA_4BAA_B3BB_6700A40605F4' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_6C8389BC_9651_4914_AF77_5055BC96BD28'/>
                   </UML:Dependency.client>
@@ -6138,6 +6195,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_15C194A8_8E10_4DE3_9503_FDD1E124F3CE' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_70EC47AD_F5C0_4c81_889D_ED0F777F1396'/>
                   </UML:Dependency.client>
@@ -6183,6 +6243,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_2E4A0A8B_7798_4DE9_8DFF_8D8780730F8F' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_74FAAA9D_01B6_4b4f_B37A_4106607156FE'/>
                   </UML:Dependency.client>
@@ -6228,6 +6291,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_9FD35A3A_539E_44F2_8806_1E655E8EC372' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_75BE56C3_1C34_4dcf_8D1B_9CA45D518193'/>
                   </UML:Dependency.client>
@@ -6237,6 +6303,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_6DBCE2A3_E28B_4F1C_AAFD_45AD5695886B' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_77C53686_0435_4ea6_ADF2_87685C5E8194'/>
                   </UML:Dependency.client>
@@ -6282,6 +6351,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_6683AF90_D961_456E_BDC2_4EC9BE918354' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_7C804B64_1C9D_4bff_B129_6C6D9A09079D'/>
                   </UML:Dependency.client>
@@ -6291,6 +6363,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_D0B5FE54_E8E3_4B62_AA2C_341272D06A2D' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_7D1E7C4F_5A0B_46c1_8DEB_A140CEE321AA'/>
                   </UML:Dependency.client>
@@ -6336,6 +6411,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_82A9E9FD_4908_4D4B_AFA8_163343BF182C' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_85FEC480_6243_43c2_A72C_2E2B6D4F4087'/>
                   </UML:Dependency.client>
@@ -6345,6 +6423,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_9A2171FF_17EC_4105_BA08_CC3E01F272EE' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_88740600_2ABE_43cd_963C_4644D9062C78'/>
                   </UML:Dependency.client>
@@ -6354,6 +6435,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_C5855796_BF67_4544_8FAA_D7EE5963D619' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_8AC93FAC_02FE_4ca0_92A1_E88EAFC69F53'/>
                   </UML:Dependency.client>
@@ -6363,6 +6447,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_2E26745C_87DD_4244_8A31_75334477E817' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_8C9445ED_1701_4885_8989_57A262BC1932'/>
                   </UML:Dependency.client>
@@ -6372,6 +6459,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_99431ED6_C705_4D32_88C8_6A0E5DBFEF26' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_92CC229F_665B_4d9c_AD0C_82E30104D484'/>
                   </UML:Dependency.client>
@@ -6381,6 +6471,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_1ABAC21D_DF58_48E0_ABE3_3ABFDA348AF5' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_A1CBC2E2_3020_4816_88AD_EFB0B57B7338'/>
                   </UML:Dependency.client>
@@ -6390,6 +6483,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_66DD81B7_6AF7_495E_97E1_F7C026B97115' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_A2BA174C_D1D4_4933_BAB3_3E35446F5AA6'/>
                   </UML:Dependency.client>
@@ -6399,6 +6495,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_E7206166_DA32_465F_9E6C_166A9227AE65' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_A8A10228_F24E_414e_B3BA_3991A9D8E3C1'/>
                   </UML:Dependency.client>
@@ -6408,6 +6507,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_0365CE46_1CD3_45D3_8698_9E43A3C078F1' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_A953B7CA_3592_4966_89CD_2457BD8CD7B2'/>
                   </UML:Dependency.client>
@@ -6453,6 +6555,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_5338B21E_5C72_49B0_8EB0_832C1ED2F2F6' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_AED854E0_8E67_4aed_AF31_71CDFCD1E59E'/>
                   </UML:Dependency.client>
@@ -6498,6 +6603,9 @@
                 </UML:Association>
                 <UML:Dependency xmi.id = 'EAID_F8332A15_D300_4C40_8BAF_B45F7E0333CA' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_BDE98D1A_9599_437b_A076_5BD372D06122'/>
                   </UML:Dependency.client>
@@ -6507,6 +6615,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_4A72EF89_A258_4C2A_AC46_9058854D6EFF' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_BFD15E72_3CE6_4b80_98B4_DF102B3154FC'/>
                   </UML:Dependency.client>
@@ -6516,6 +6627,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_9A3EC511_B666_476C_8C0D_0D3568D16F29' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_D0B8381A_AE30_4596_8DDE_A92C22E848D1'/>
                   </UML:Dependency.client>
@@ -6525,6 +6639,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_B2277370_2994_4299_9ABB_BB01688EAA7B' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_D74B8811_BD4F_49df_A171_7955DF4E7249'/>
                   </UML:Dependency.client>
@@ -6534,6 +6651,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_4A235EA2_490D_4DD0_989A_902C2CEB9531' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_DA0EED73_E5F7_4af9_89BA_F8A711339BB2'/>
                   </UML:Dependency.client>
@@ -6543,6 +6663,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_488EE107_E109_4220_96D2_C67A98AE006C' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_DD5DF684_720D_414e_9CE7_81F5FD2502C6'/>
                   </UML:Dependency.client>
@@ -6552,6 +6675,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_1ECF545F_A487_44C8_A5EE_1580D638BB5C' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_F3DEA245_6D40_4cea_ADDA_4CD26EF13AB1'/>
                   </UML:Dependency.client>
@@ -6561,6 +6687,9 @@
                 </UML:Dependency>
                 <UML:Dependency xmi.id = 'EAID_D9BA6269_6892_4661_821D_8F409A11ED97' name = 'dependency'
                   visibility = 'public' isSpecification = 'false'>
+                  <UML:ModelElement.stereotype>
+                    <UML:Stereotype xmi.idref = 'eaxmiid6'/>
+                  </UML:ModelElement.stereotype>
                   <UML:Dependency.client>
                     <UML:Class xmi.idref = 'EAID_F8E45904_0E69_4440_BB1E_45F28EEF5865'/>
                   </UML:Dependency.client>
