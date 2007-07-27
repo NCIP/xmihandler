@@ -9,7 +9,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
-import gov.nih.nci.ncicb.xmiinout.handler.impl.JDomXmiTransformer;
+import gov.nih.nci.ncicb.xmiinout.handler.impl.ArgoJDomXmiTransformer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import org.jdom.Namespace;
 
 public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	private static Logger logger = Logger.getLogger(JDomDomainObject.class.getName());
-	private List<UMLPackage> packages = new ArrayList();
+	private List<UMLPackage> packages = new ArrayList<UMLPackage>();
 	private List<UMLClass> classes = new ArrayList<UMLClass>();
 
 	private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
@@ -134,7 +134,7 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 		tdElement.setAttribute("name", name);
 		ownedElement.addContent(tdElement);
 
-		JDomXmiTransformer.addTagDefinition(tdBean);
+		ArgoJDomXmiTransformer.addTagDefinition(tdBean);
 
 		return (UMLTagDefinitionBean)tdBean;
 	}  	
@@ -224,11 +224,11 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
 	}
 
 	public static UMLTagDefinitionBean getTagDefinition(String name){
-		UMLTagDefinitionBean td = JDomXmiTransformer.getTagDefinitionByName(name);
+		UMLTagDefinitionBean td = ArgoJDomXmiTransformer.getTagDefinitionByName(name);
 
 		if (td != null){ return td; }
 
-		td = JDomXmiTransformer.getTagDefinitionByXmiId(name);
+		td = ArgoJDomXmiTransformer.getTagDefinitionByXmiId(name);
 
 		if (td != null){ return td; }
 
