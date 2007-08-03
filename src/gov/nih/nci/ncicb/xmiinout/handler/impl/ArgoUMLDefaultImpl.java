@@ -328,7 +328,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 		List<UMLStereotypeDefinitionBean> result = new ArrayList<UMLStereotypeDefinitionBean>();
 
 		for(Element typeElt : typeElements) {
-			result.add(ArgoJDomXmiTransformer.toUMLStereotypeDef(typeElt));
+			result.add(ArgoJDomXmiTransformer.toUMLStereotypeDefinition(typeElt));
 		}
 		return result;
 

@@ -90,6 +90,35 @@ public class UMLDependencyBean extends JDomDomainObject implements UMLDependency
 	public String getStereotype() {
 		return stereotype;
 	}	
+	
+	public void addStereotype(String stereotype) {
+		
+		if(getJDomElement() == null) {
+			throw new IllegalStateException("Cannot add to a detached object. Please persist first.");
+		}
+
+		
+		//add to jdom element
+		writer.getUMLDependencyWriter().writeStereotype(this, stereotype);
+		
+		
+		this.stereotype = stereotype;
+	}	
+	
+	public void removeStereotype(String stereotype) {
+		
+		if(getJDomElement() == null) {
+			throw new IllegalStateException("Cannot add to a detached object. Please persist first.");
+		}
+
+		
+		//remove from jdom element
+		writer.getUMLDependencyWriter().removeStereotype(this, stereotype);
+		
+		
+		this.stereotype = stereotype;
+	}		
+	
 
 	public UMLTaggedValue addTaggedValue(String name, String value) throws IllegalStateException {
 		UMLTaggedValueBean taggedValue = new UMLTaggedValueBean(null, name, value);
@@ -113,7 +142,5 @@ public class UMLDependencyBean extends JDomDomainObject implements UMLDependency
 			writer.getUMLDependencyWriter().removeTaggedValue(this, tv);
 		}
 	}
-
-
 
 }

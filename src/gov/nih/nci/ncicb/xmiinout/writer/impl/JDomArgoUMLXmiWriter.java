@@ -16,8 +16,10 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
+import gov.nih.nci.ncicb.xmiinout.handler.impl.ArgoJDomXmiTransformer;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAssociationEndWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAssociationWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAttributeWriter;
@@ -25,9 +27,9 @@ import gov.nih.nci.ncicb.xmiinout.writer.UMLClassWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLDependencyWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLModelWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLPackageWriter;
+import gov.nih.nci.ncicb.xmiinout.writer.UMLStereotypeWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLTaggedValueWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLWriter;
-import gov.nih.nci.ncicb.xmiinout.writer.impl.JDomEAXmiWriter.GenericTaggedValueWriter;
 
 import java.util.List;
 
@@ -224,18 +226,86 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 				Element depElt = depBean.getJDomElement();
 
 				new UMLTagValueWriter().removeTaggedValue(depElt, tv);
-			}			
+			}		
+			
+			public void writeStereotype(UMLDependency dep, String stereotype) {
+				UMLDependencyBean depBean = (UMLDependencyBean)dep;
+				Element depElt = depBean.getJDomElement();
+
+				new StereotypeWriter().addStereotype(depElt, stereotype);				
+			}
+
+			public void removeStereotype(UMLDependency dep, String stereotype) {
+				UMLDependencyBean depBean = (UMLDependencyBean)dep;
+				Element depElt = depBean.getJDomElement();
+
+				new StereotypeWriter().removeStereotype(depElt, stereotype);
+			}	
 
 		};
 	}
 
+	public UMLStereotypeWriter getUMLStereotypeWriter() {
+		return new StereotypeWriter();
+	}
+
+	private class StereotypeWriter implements UMLStereotypeWriter {	
+
+		public void addStereotype(Element elt, String stereotype) {
+			Namespace ns = elt.getNamespace();
+			List<Element> meStereotypeElts = (List<Element>)elt.getChildren("ModelElement.stereotype", ns);
+
+			Element meStereotypeElt = null;
+			if(meStereotypeElts.size() > 0)
+				meStereotypeElt = meStereotypeElts.get(0);
+			else {
+				meStereotypeElt = new Element("ModelElement.stereotype", ns);
+				elt.addContent(meStereotypeElt);
+			}      
+
+			Element newStereotypeElt = new Element("Stereotype", ns);
+			
+			UMLStereotypeDefinitionBean stereotypeDef = ArgoJDomXmiTransformer.getStereotypeDefinition(stereotype);
+			if (stereotypeDef == null){
+				logger.debug("Adding Tag Definition for Name:  " + stereotype);				
+				stereotypeDef = ArgoJDomXmiTransformer.addStereotypeDefinition(elt, stereotype);
+			}
+
+			logger.debug("Stereotype Definition xmi.id: " + stereotypeDef.getXmiId());
+			newStereotypeElt.setAttribute("xmi.idref", stereotypeDef.getXmiId());
+   
+			meStereotypeElt.addContent(newStereotypeElt);
+
+		}
+
+		public void removeStereotype(Element elt, String stereotype) {
+			logger.debug("stereotype: " + stereotype);
+			UMLStereotypeDefinitionBean stereotypeDef = ArgoJDomXmiTransformer.getStereotypeDefinition(stereotype);
+			if (stereotypeDef != null){
+				Namespace ns = elt.getNamespace();
+				List<Element> meStereotypeElts = (List<Element>)elt.getChildren("ModelElement.stereotype", ns);
+
+				logger.debug("Removing Stereotype: " + stereotype + " with xmi.id: " + stereotypeDef.getModelId() + " from Element: " + elt.getAttributeValue("name"));
+				logger.debug("meStereotypeElts.size(): " + meStereotypeElts.size());
+
+				Element meStereotypeElt = null;
+				if(meStereotypeElts.size() > 0)
+					meStereotypeElt = meStereotypeElts.get(0);
+
+				if(meStereotypeElt == null || !meStereotypeElt.removeChild("Stereotype", ns)) { // try to remove from elt itself, if not, do the following
+					logger.error("Was not able to remove stereotype: " + stereotype + " from Element: " + elt.getName());
+				}
+			}
+		}
+	}		
+	
 	public UMLTaggedValueWriter getUMLTaggedValueWriter() {
 		return new UMLTagValueWriter();
 	}
 
 	private class UMLTagValueWriter implements UMLTaggedValueWriter {	
 
-		public void writeValue(UMLTaggedValue taggedValue) {
+		public void writeTaggedValue(UMLTaggedValue taggedValue) {
 			UMLTaggedValueBean tvb = (UMLTaggedValueBean)taggedValue;
 
 			Element tvElt = tvb.getJDomElement();
@@ -244,7 +314,7 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 			valueAtt.setValue(taggedValue.getValue());
 		}
 
-		private UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
+		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
 			Namespace ns = elt.getNamespace();
 			List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
 
@@ -288,7 +358,7 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 			return tv;
 		}
 
-		private void removeTaggedValue(Element elt, UMLTaggedValue tv) {
+		public void removeTaggedValue(Element elt, UMLTaggedValue tv) {
 			UMLTaggedValueBean tvBean = (UMLTaggedValueBean)tv;
 			Namespace ns = elt.getNamespace();
 			List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);

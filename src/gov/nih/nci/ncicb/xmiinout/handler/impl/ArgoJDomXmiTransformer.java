@@ -4,15 +4,11 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDatatypeBean;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
-import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLVisibilityBean;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +26,8 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByNameMap = new HashMap<String, UMLTagDefinitionBean>();
 	static private Map<String, UMLTagDefinitionBean> tagDefinitionsByXmiIdMap = new HashMap<String, UMLTagDefinitionBean>();
 
-	private static Map<String, UMLStereotypeDefinitionBean> stereotypeDefinitions = new HashMap<String, UMLStereotypeDefinitionBean>();	
+	private static Map<String, UMLStereotypeDefinitionBean> stereotypeDefinitionsByName = new HashMap<String, UMLStereotypeDefinitionBean>();
+	private static Map<String, UMLStereotypeDefinitionBean> stereotypeDefinitionsByXmiId = new HashMap<String, UMLStereotypeDefinitionBean>();	
 
 
 	public static void addTagDefinition(UMLTagDefinitionBean tagDefinition) {
@@ -41,13 +38,24 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 	}
 
 	static void addStereotypeDefinition(UMLStereotypeDefinitionBean typeDef) {
-		stereotypeDefinitions.put(typeDef.getModelId(), typeDef);
-	}	
+		stereotypeDefinitionsByXmiId.put(typeDef.getModelId(), typeDef);
+		stereotypeDefinitionsByName.put(typeDef.getName(), typeDef);
+	}
 	
+	public static UMLStereotypeDefinitionBean getStereotypeDefinition(String stereotype) {
+		UMLStereotypeDefinitionBean defBean = stereotypeDefinitionsByXmiId.get(stereotype);
+		
+		if (defBean == null){
+			defBean = stereotypeDefinitionsByName.get(stereotype);
+		}
+		
+		return defBean;
+	}	
+		
 	static String getStereotypeName(Element stElt) {
 		String stereotypeId = stElt.getAttribute("xmi.idref").getValue();
 		
-		UMLStereotypeDefinitionBean typeDef =  stereotypeDefinitions.get(stereotypeId);
+		UMLStereotypeDefinitionBean typeDef =  stereotypeDefinitionsByXmiId.get(stereotypeId);
 		if (typeDef != null) {
 			return typeDef.getName();
 		}
@@ -86,8 +94,8 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 		return clazz;
 	}
 	
-	static UMLStereotypeDefinitionBean toUMLStereotypeDef(Element typeElt) {
-		String xmi_id = typeElt.getAttribute("xmi.id").getValue();
+	static UMLStereotypeDefinitionBean toUMLStereotypeDefinition(Element typeElt) {
+		String xmiId = typeElt.getAttribute("xmi.id").getValue();
 
 		Attribute nameAtt = typeElt.getAttribute("name");
 		String name = null;
@@ -96,8 +104,8 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 		else
 			name = "";
 
-		UMLStereotypeDefinitionBean result = new UMLStereotypeDefinitionBean(typeElt, name);
-		result.setModelId(xmi_id);
+		UMLStereotypeDefinitionBean result = new UMLStereotypeDefinitionBean(typeElt, xmiId, name);
+		result.setModelId(xmiId);
 		return result;
 	}
 	
@@ -118,7 +126,6 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 			Element classifElt = sfTypeElement.getChild("DataType", ns);
 			logger.debug("classifElt: " + classifElt);
 			
-			//TODO :: argo implementation - refactor
 			if (classifElt == null) {
 				classifElt = sfTypeElement.getChild("Class", ns);
 				logger.debug("classifElt: " + classifElt);
@@ -256,4 +263,55 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 		return tagDefinitionsByNameMap.get(xmiId);
 	}
 
+	public static UMLStereotypeDefinitionBean addStereotypeDefinition(Element elt, String name) {
+		Namespace ns = elt.getNamespace();
+		logger.debug("Namespace: " + ns);
+		
+		Element rootElt = elt.getDocument().getRootElement();
+		logger.debug("Root Element name: " + rootElt.getName());
+		Element xmiElt = rootElt.getChild("XMI");	
+		logger.debug("XMI Element name: " + xmiElt.getName());		
+		Element xmiContentElt = xmiElt.getChild("XMI.content");
+		logger.debug("XMI Content Element name: " + xmiContentElt.getName());		
+
+	
+	    List<Element> xmiContentChildren = (List<Element>)xmiContentElt.getChildren();
+	    logger.debug("xmiContentChildren Elements found: " + xmiContentChildren.size());
+	    
+	    Element modelElt = null;
+	    for(Element xmiContentChild : xmiContentChildren) {
+	    	logger.debug("xmiContentChild: " + xmiContentChild.getName());
+	    	
+	    	if (xmiContentChild.getName().equalsIgnoreCase("Model")){
+	    		modelElt = xmiContentChild;
+	    	}
+	    }		
+	    
+		logger.debug("Model Element name: " + modelElt.getName());	    
+
+		Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);	
+		logger.debug("ownedElement name: " + ownedElement.getName());		
+		
+		String xmiId = java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase();
+		UMLStereotypeDefinitionBean stereotypeDefBean = new UMLStereotypeDefinitionBean(ownedElement, xmiId, name); 
+		
+		
+		Element newStereotypeElt = new Element("Stereotype", ns);
+		
+		newStereotypeElt.setAttribute("xmi.id", xmiId);
+		newStereotypeElt.setAttribute("name", name);
+
+		//<UML:Stereotype.baseClass>Dependency</UML:Stereotype.baseClass>
+		Element stBaseClassElt = new Element("Stereotype.baseClass", ns);
+		stBaseClassElt.setText("Dependency");	
+		
+		newStereotypeElt.addContent(stBaseClassElt);
+
+		ownedElement.addContent(newStereotypeElt);
+
+		ArgoJDomXmiTransformer.addStereotypeDefinition(stereotypeDefBean);
+
+		return (UMLStereotypeDefinitionBean)stereotypeDefBean;
+	}
+	
 }

@@ -4,7 +4,6 @@ public class UMLTagDefinitionBean extends JDomDomainObject {
 
   private String xmiId;
   private String name;  
-  private boolean newTagDefinition;
 
   public UMLTagDefinitionBean(org.jdom.Element element, String id,
                             String name) {
@@ -28,23 +27,5 @@ public class UMLTagDefinitionBean extends JDomDomainObject {
   public String getName() {
     return name;
   }
-
-  /**
-   * Set the Name value.
-   * @param newName The new Name value.
-   */
-  public void setName(String newName) {
-    this.name = newName;
-    //writer.getUMLTagDefinitionWriter().writeValue(this);
-  }
-
-  public boolean isNewTagDefinition() {
-	  return newTagDefinition;
-  }
-
-  public void setNewTagDefinition(boolean newTagDefinition) {
-	  this.newTagDefinition = newTagDefinition;
-  }
-  
   
 }

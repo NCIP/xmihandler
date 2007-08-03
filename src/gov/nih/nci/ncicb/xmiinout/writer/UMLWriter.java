@@ -18,4 +18,6 @@ public interface UMLWriter {
 
   public UMLDependencyWriter getUMLDependencyWriter();
   
+  public UMLStereotypeWriter getUMLStereotypeWriter();  
+  
 }
