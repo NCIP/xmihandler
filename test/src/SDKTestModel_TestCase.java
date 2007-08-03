@@ -181,7 +181,10 @@ public class SDKTestModel_TestCase extends TestCase {
 
 		dep.addTaggedValue("ea_type", "Dependency");
 		dep.addTaggedValue("direction", "Source -&gt; Destination");
-		dep.addTaggedValue("style", "3");		
+		dep.addTaggedValue("style", "3");
+		
+		dep.addStereotype("myTestStereotype");
+		dep.removeStereotype("myTestStereotype");
 	}
 
 	private UMLClass findClass(UMLModel model, String className) 
