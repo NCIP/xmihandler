@@ -22,19 +22,27 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 
-public class XmiTestCase extends TestCase {
+public class SDKTestModel_TestCase extends TestCase {
+
+	private static Logger logger = Logger.getLogger(SDKTestModel_TestCase.class.getName());
 
 	private XmiInOutHandler handler = null;
 	private String filename;
+	private String handlerEnumType;
+	private String newFileExtension;
+	private String modelName;
 
-	private boolean noColor = false;
+	private boolean noColor = true;
 
 	static final short RED = 31, GREEN = 32,
 	BLACK = 30, YELLOW = 33, BLUE = 34,
 	MAGENTA = 35, CYAN = 36, WHITE = 37; 
 
-	public XmiTestCase(String filename) {
+	public SDKTestModel_TestCase(String filename, String handlerEnumType, String newFileExtension, String modelName) {
 		this.filename = filename;
+		this.handlerEnumType = handlerEnumType;
+		this.newFileExtension = newFileExtension;
+		this.modelName = modelName;
 	}
 	private void testGetModel() {
 		UMLModel model = handler.getModel();
@@ -59,7 +67,7 @@ public class XmiTestCase extends TestCase {
 
 	private void testSaveModel() {
 		try {
-			handler.save(filename + ".new.xmi");
+			handler.save(filename + newFileExtension);
 		} catch (Exception e){
 			e.printStackTrace();
 		} // end of try-catch
@@ -76,15 +84,15 @@ public class XmiTestCase extends TestCase {
 
 		init();
 
-		UMLModel model = testGetModel("EA Model");
+		UMLModel model = testGetModel(modelName);
 
 		printModel(model);
 
-		testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+		testFindClass(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Payment");
 
-		testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
+		testFindAttribute(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Payment.amount");
 
-		testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+		testGetFullPackageName(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Payment");
 
 		testGetSuperclasses(model);
 
@@ -92,15 +100,12 @@ public class XmiTestCase extends TestCase {
 
 		addDependency(model);
 
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
-
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
+		testRemoveTaggedValue(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Payment", "myClassTaggedValue");
 
 		testSaveModel();
 
-		testLoadModel(filename + ".new.xmi");
-		model = testGetModel("EA Model");
+		testLoadModel(filename + newFileExtension);
+		model = testGetModel(modelName);
 		printModel(model);
 
 
@@ -108,14 +113,14 @@ public class XmiTestCase extends TestCase {
 
 
 	private void testGetSuperclasses(UMLModel model) {
-		UMLClass[] classes = testGetSuperclasses(model, "Logical View.Logical Model.com.ludet.hr.domain.Manager");
+		UMLClass[] classes = testGetSuperclasses(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Cash");
 		Assert.assertTrue(classes.length == 1);
-		Assert.assertTrue(classes[0].getName().equals("Employee"));
-		System.out.println("Found superclass: " + classes[0].getName());
+		Assert.assertTrue(classes[0].getName().equals("Payment"));
+		System.out.println("Found superclass for Cash: " + classes[0].getName());
 
-		classes = testGetSuperclasses(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject");
+		classes = testGetSuperclasses(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Payment");
 		Assert.assertTrue(classes.length == 0);
-		System.out.println("Correctly found no superclass for DomainObject");
+		System.out.println("Correctly found no superclass for Payment");
 
 	}
 
@@ -124,17 +129,15 @@ public class XmiTestCase extends TestCase {
 		return ModelUtil.getSuperclasses(clazz);
 	}
 
-
-
 	private void testGetFullPackageName(UMLModel model, String className) {
 		String pkgName = className.substring(0, className.lastIndexOf("."));
 
 		UMLClass clazz = ModelUtil.findClass(model, className);
 		String result = ModelUtil.getFullPackageName(clazz);
 
-		Assert.assertTrue("Found Wrong Package Name: " + result + "   For Class : " + className, pkgName.equals(result));
+		Assert.assertTrue("Testing GetFullPackageName - Found Wrong Package Name: " + result + "   For Class : " + className, pkgName.equals(result));
 
-		System.out.println("Correct Package: " + result);
+		System.out.println("Testing GetFullPackageName - Correct Package: " + result);
 	}
 
 	private void testFindClass(UMLModel model, String fullClassName) {
@@ -170,15 +173,18 @@ public class XmiTestCase extends TestCase {
 		UMLClass client = null,
 		supplier = null;
 
-		client = findClass(model, "Employee");
-		supplier = findClass(model, "Manager");
+		client = findClass(model, "Human");
+		supplier = findClass(model, "Mammal");
 
-		UMLDependency dep = model.createDependency(client, supplier, "reports to");
+		UMLDependency dep = model.createDependency(client, supplier, "is a type of");
 		dep = model.addDependency(dep);
 
 		dep.addTaggedValue("ea_type", "Dependency");
 		dep.addTaggedValue("direction", "Source -&gt; Destination");
 		dep.addTaggedValue("style", "3");
+		
+		dep.addStereotype("myTestStereotype");
+		dep.removeStereotype("myTestStereotype");
 	}
 
 	private UMLClass findClass(UMLModel model, String className) 
@@ -213,7 +219,6 @@ public class XmiTestCase extends TestCase {
 			UMLAttribute att = ModelUtil.findAttribute(model, fullName);
 			att.removeTaggedValue(tvName);
 		}
-
 	}
 
 	private void addTaggedValueToAll(UMLModel model) {
@@ -237,7 +242,7 @@ public class XmiTestCase extends TestCase {
 	}
 
 	private void addTaggedValueToAll(UMLClass clazz) {
-		clazz.addTaggedValue("myClassTaggedValue", "test 123");
+		clazz.addTaggedValue("myClassTaggedValue", "test class tagged value");
 
 		for(UMLAttribute att : clazz.getAttributes()) {
 			addTaggedValueToAll(att);
@@ -249,13 +254,15 @@ public class XmiTestCase extends TestCase {
 	}
 
 	private void addTaggedValueToAll(UMLAttribute att) {
-		att.addTaggedValue("myAttributeTaggedValue", "A boring, highly uninteresting value");
+		att.addTaggedValue("myAttributeTaggedValue", "test attribute tagged value");
+		
 	}
 
 	private void addTaggedValueToAll(UMLAssociation assoc) {
-		assoc.addTaggedValue("myAssociationTaggedValue", "Fill in Assoc TV here.");
+		assoc.addTaggedValue("myAssociationTaggedValue", "test association tagged value");
+		
 		for(UMLAssociationEnd end : assoc.getAssociationEnds()) {
-			end.addTaggedValue("myAssociationEndTaggedValue", "Fill in AssocEND TV here.");
+			end.addTaggedValue("myAssociationEndTaggedValue", "test associationEnd tagged value");
 		}
 
 	}
@@ -403,9 +410,14 @@ public class XmiTestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());
+		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());		
 		System.out.println("");
+
+		for(UMLTaggedValue tv : dep.getTaggedValues()) {
+			printTaggedValue(tv, pkgDepth);
+		}    
 	}
+
 
 	private void printAttribute(UMLAttribute att, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
@@ -439,7 +451,7 @@ public class XmiTestCase extends TestCase {
 
 	private void init() {
 		try {
-			handler = XmiHandlerFactory.getXmiHandler(HandlerEnum.EADefault);
+			handler = XmiHandlerFactory.getXmiHandler(HandlerEnum.getHandlerEnumType(handlerEnumType));
 			handler.load(filename);
 		} catch (XmiException e){
 			e.printStackTrace();
@@ -453,14 +465,13 @@ public class XmiTestCase extends TestCase {
 	}
 
 	public static void main(String[] args) {
-
-		XmiTestCase testCase = new XmiTestCase(args[args.length - 1]);
+		
+		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(args[0], args[1], args[2], args[3]);
 
 		if(Arrays.binarySearch(args, "--no-color") > -1)
 			testCase.setNoColor(true);
 		else 
 			System.out.println("run with --no-color if you terminal does not support colors");
-
 
 		testCase.suite();
 
