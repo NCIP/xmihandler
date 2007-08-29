@@ -48,7 +48,7 @@ public class UMLTaggedValueBean extends JDomDomainObject implements UMLTaggedVal
    */
   public void setValue(String newValue) {
     this.value = newValue;
-    writer.getUMLTaggedValueWriter().writeValue(this);
+    writer.getUMLTaggedValueWriter().writeTaggedValue(this);
   }
   
 }

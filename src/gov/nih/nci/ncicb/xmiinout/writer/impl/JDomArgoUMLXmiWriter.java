@@ -17,6 +17,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
 import gov.nih.nci.ncicb.xmiinout.handler.impl.ArgoJDomXmiTransformer;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLAssociationEndWriter;
@@ -37,9 +38,9 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
-public class JDomEAXmiWriter implements UMLWriter {
+public class JDomArgoUMLXmiWriter implements UMLWriter {
 
-	private static Logger logger = Logger.getLogger(JDomEAXmiWriter.class.getName());
+	private static Logger logger = Logger.getLogger(JDomArgoUMLXmiWriter.class.getName());
 
 	public UMLClassWriter getUMLClassWriter() {
 		return new UMLClassWriter() {
@@ -47,56 +48,58 @@ public class JDomEAXmiWriter implements UMLWriter {
 				UMLClassBean clazzBean = (UMLClassBean)clazz;
 				Element clazzElt = clazzBean.getJDomElement();
 
-				return new ClassTaggedValueWriter().addTaggedValue(clazzElt, tv);
+				return new UMLTagValueWriter().addTaggedValue(clazzElt, tv);				
 			}
-
 
 			public void removeTaggedValue(UMLClass clazz, UMLTaggedValue tv) {
 				UMLClassBean clazzBean = (UMLClassBean)clazz;
 				Element clazzElt = clazzBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(clazzElt, tv);
+				new UMLTagValueWriter().removeTaggedValue(clazzElt, tv);
 			}
-
 		};
 	}
 
 	public UMLAttributeWriter getUMLAttributeWriter() {
 		return new UMLAttributeWriter() {
+		
 			public UMLTaggedValue writeTaggedValue(UMLAttribute att, UMLTaggedValue tv) {
+
 				UMLAttributeBean attBean = (UMLAttributeBean)att;
 				Element attElt = attBean.getJDomElement();
 
-				return new AttributeTaggedValueWriter().addTaggedValue(attElt, tv);
-
+				return new UMLTagValueWriter().addTaggedValue(attElt, tv);				
 			}
 
 			public void removeTaggedValue(UMLAttribute att, UMLTaggedValue tv) {
+
 				UMLAttributeBean attBean = (UMLAttributeBean)att;
 				Element attElt = attBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(attElt, tv);
-			}
+				new UMLTagValueWriter().removeTaggedValue(attElt, tv);
+			}			
 
 		};
 	}
 
 	public UMLAssociationWriter getUMLAssociationWriter() {
 		return new UMLAssociationWriter() {
+
 			public UMLTaggedValue writeTaggedValue(UMLAssociation azz, UMLTaggedValue tv) {
+
 				UMLAssociationBean azzBean = (UMLAssociationBean)azz;
 				Element azzElt = azzBean.getJDomElement();
 
-				return new AttributeTaggedValueWriter().addTaggedValue(azzElt, tv);
-
+				return new UMLTagValueWriter().addTaggedValue(azzElt, tv);				
 			}
 
 			public void removeTaggedValue(UMLAssociation azz, UMLTaggedValue tv) {
+
 				UMLAssociationBean azzBean = (UMLAssociationBean)azz;
 				Element azzElt = azzBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(azzElt, tv);
-			}
+				new UMLTagValueWriter().removeTaggedValue(azzElt, tv);
+			}			
 
 		};
 	}
@@ -104,44 +107,40 @@ public class JDomEAXmiWriter implements UMLWriter {
 	public UMLAssociationEndWriter getUMLAssociationEndWriter() {
 		return new UMLAssociationEndWriter() {
 			public UMLTaggedValue writeTaggedValue(UMLAssociationEnd end, UMLTaggedValue tv) {
+
 				UMLAssociationEndBean endBean = (UMLAssociationEndBean)end;
 				Element endElt = endBean.getJDomElement();
 
-				return new AttributeTaggedValueWriter().addTaggedValue(endElt, tv);
-
+				return new UMLTagValueWriter().addTaggedValue(endElt, tv);				
 			}
 
 			public void removeTaggedValue(UMLAssociationEnd end, UMLTaggedValue tv) {
 				UMLAssociationEndBean endBean = (UMLAssociationEndBean)end;
 				Element endElt = endBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(endElt, tv);
+				new UMLTagValueWriter().removeTaggedValue(endElt, tv);
 			}
 
 		};
 	}
 
-	public UMLTaggedValueWriter getUMLTaggedValueWriter() {
-		return new GenericTaggedValueWriter() ;
-	}
-
 	public UMLModelWriter getUMLModelWriter() {
 		return new UMLModelWriter() {
+			
 			public UMLTaggedValue writeTaggedValue(UMLModel model, UMLTaggedValue tv) {
+
 				UMLModelBean modelBean = (UMLModelBean)model;
 				Element modelElt = modelBean.getJDomElement();
 
-				return new GenericTaggedValueWriter().addTaggedValue(modelElt, tv);
-
+				return new UMLTagValueWriter().addTaggedValue(modelElt, tv);				
 			}
 
 			public void removeTaggedValue(UMLModel model, UMLTaggedValue tv) {
 				UMLModelBean modelBean = (UMLModelBean)model;
 				Element modelElt = modelBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(modelElt, tv);
+				new UMLTagValueWriter().removeTaggedValue(modelElt, tv);
 			}
-
 
 			public UMLDependency writeDependency(UMLModel model, UMLDependency dependency) {
 				UMLModelBean modelBean = (UMLModelBean)model;
@@ -155,20 +154,33 @@ public class JDomEAXmiWriter implements UMLWriter {
 					JDomDomainObject supplierObj = (JDomDomainObject)dependency.getSupplier();
 
 					Element depElement = new Element("Dependency", ns);
-					depElement.setAttribute("client", clientObj.getModelId());
-					depElement.setAttribute("supplier", supplierObj.getModelId());
+
+					Element clientElement = new Element("Dependency.client", ns);
+					Element clientClassElement = new Element("Class", ns);
+					clientClassElement.setAttribute("xmi.idref", clientObj.getModelId());
+
+					clientElement.addContent(clientClassElement);
+					depElement.addContent(clientElement);
+
+					Element supplierElement = new Element("Dependency.supplier", ns);
+					Element supplierClassElement = new Element("Class", ns);
+					supplierClassElement.setAttribute("xmi.idref", supplierObj.getModelId());
+
+					supplierElement.addContent(supplierClassElement);
+					depElement.addContent(supplierElement);
+
 					depElement.setAttribute("name", dependency.getName());
 
 					if(dependency.getVisibility() != null) {
 						depElement.setAttribute("visibility", dependency.getVisibility().getName());
 					}
 
-					depElement.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+					depElement.setAttribute("xmi.id", java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
 
 					Element supplierElt = supplierObj.getJDomElement();
 					supplierElt.getParentElement().addContent(depElement);
 
-					return new UMLDependencyBean(depElement, dependency.getName(), dependency.getVisibility(), dependency.getClient(), dependency.getSupplier());
+					return new UMLDependencyBean(depElement, dependency.getName(), dependency.getVisibility(), dependency.getClient(), dependency.getSupplier(), null);
 
 
 				} catch (ClassCastException e) {
@@ -182,37 +194,39 @@ public class JDomEAXmiWriter implements UMLWriter {
 
 	public UMLPackageWriter getUMLPackageWriter() {
 		return new UMLPackageWriter() {
+			
 			public UMLTaggedValue writeTaggedValue(UMLPackage pkg, UMLTaggedValue tv) {
-				UMLPackageBean packageBean = (UMLPackageBean)pkg;
-				Element pkgElt = packageBean.getJDomElement();
+				UMLPackageBean pkgBean = (UMLPackageBean)pkg;
+				Element pkgElt = pkgBean.getJDomElement();
 
-				return new GenericTaggedValueWriter().addTaggedValue(pkgElt, tv);
-
+				return new UMLTagValueWriter().addTaggedValue(pkgElt, tv);				
 			}
+
 			public void removeTaggedValue(UMLPackage pkg, UMLTaggedValue tv) {
 				UMLPackageBean pkgBean = (UMLPackageBean)pkg;
 				Element pkgElt = pkgBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(pkgElt, tv);
+				new UMLTagValueWriter().removeTaggedValue(pkgElt, tv);
 			}
 		};
 	}
 
 	public UMLDependencyWriter getUMLDependencyWriter() {
 		return new UMLDependencyWriter() {
-
+			
 			public UMLTaggedValue writeTaggedValue(UMLDependency dep, UMLTaggedValue tv) {
 				UMLDependencyBean depBean = (UMLDependencyBean)dep;
 				Element depElt = depBean.getJDomElement();
 
-				return new GenericTaggedValueWriter().addTaggedValue(depElt, tv);
+				return new UMLTagValueWriter().addTaggedValue(depElt, tv);				
 			}
+
 			public void removeTaggedValue(UMLDependency dep, UMLTaggedValue tv) {
 				UMLDependencyBean depBean = (UMLDependencyBean)dep;
 				Element depElt = depBean.getJDomElement();
 
-				new GenericTaggedValueWriter().removeTaggedValue(depElt, tv);
-			}
+				new UMLTagValueWriter().removeTaggedValue(depElt, tv);
+			}		
 			
 			public void writeStereotype(UMLDependency dep, String stereotype) {
 				UMLDependencyBean depBean = (UMLDependencyBean)dep;
@@ -226,7 +240,7 @@ public class JDomEAXmiWriter implements UMLWriter {
 				Element depElt = depBean.getJDomElement();
 
 				new StereotypeWriter().removeStereotype(depElt, stereotype);
-			}				
+			}	
 
 		};
 	}
@@ -237,9 +251,6 @@ public class JDomEAXmiWriter implements UMLWriter {
 
 	private class StereotypeWriter implements UMLStereotypeWriter {	
 
-//		<UML:ModelElement.stereotype>
-//			<UML:Stereotype name="DataSource"/>
-//		</UML:ModelElement.stereotype>
 		public void addStereotype(Element elt, String stereotype) {
 			Namespace ns = elt.getNamespace();
 			List<Element> meStereotypeElts = (List<Element>)elt.getChildren("ModelElement.stereotype", ns);
@@ -253,33 +264,49 @@ public class JDomEAXmiWriter implements UMLWriter {
 			}      
 
 			Element newStereotypeElt = new Element("Stereotype", ns);
-			newStereotypeElt.setAttribute("name", stereotype);
+			
+			UMLStereotypeDefinitionBean stereotypeDef = ArgoJDomXmiTransformer.getStereotypeDefinition(stereotype);
+			if (stereotypeDef == null){
+				logger.debug("Adding Tag Definition for Name:  " + stereotype);				
+				stereotypeDef = ArgoJDomXmiTransformer.addStereotypeDefinition(elt, stereotype);
+			}
 
+			logger.debug("Stereotype Definition xmi.id: " + stereotypeDef.getXmiId());
+			newStereotypeElt.setAttribute("xmi.idref", stereotypeDef.getXmiId());
+   
 			meStereotypeElt.addContent(newStereotypeElt);
 
 		}
 
 		public void removeStereotype(Element elt, String stereotype) {
+			logger.debug("stereotype: " + stereotype);
+			UMLStereotypeDefinitionBean stereotypeDef = ArgoJDomXmiTransformer.getStereotypeDefinition(stereotype);
+			if (stereotypeDef != null){
+				Namespace ns = elt.getNamespace();
+				List<Element> meStereotypeElts = (List<Element>)elt.getChildren("ModelElement.stereotype", ns);
 
-			Namespace ns = elt.getNamespace();
-			List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.stereotype", ns);
-			
-			logger.debug("meTvElts.size(): " + meTvElts.size());
+				logger.debug("Removing Stereotype: " + stereotype + " with xmi.id: " + stereotypeDef.getModelId() + " from Element: " + elt.getAttributeValue("name"));
+				logger.debug("meStereotypeElts.size(): " + meStereotypeElts.size());
 
-			Element meTvElt = null;
-			if(meTvElts.size() > 0)
-				meTvElt = meTvElts.get(0);
+				Element meStereotypeElt = null;
+				if(meStereotypeElts.size() > 0)
+					meStereotypeElt = meStereotypeElts.get(0);
 
-			if(meTvElt == null || !meTvElt.removeChild("Stereotype", ns)) { // try to remove from elt itself, if not, do the following
-				logger.error("Was not able to remove stereotype: " + stereotype + " from Element: " + elt.getName());
+				if(meStereotypeElt == null || !meStereotypeElt.removeChild("Stereotype", ns)) { // try to remove from elt itself, if not, do the following
+					logger.error("Was not able to remove stereotype: " + stereotype + " from Element: " + elt.getName());
+				}
 			}
 		}
-
+	}		
+	
+	public UMLTaggedValueWriter getUMLTaggedValueWriter() {
+		return new UMLTagValueWriter();
 	}
-	class GenericTaggedValueWriter implements UMLTaggedValueWriter {
+
+	private class UMLTagValueWriter implements UMLTaggedValueWriter {	
 
 		public void writeTaggedValue(UMLTaggedValue taggedValue) {
-			UMLTaggedValueBean tvb = (UMLTaggedValueBean) taggedValue;
+			UMLTaggedValueBean tvb = (UMLTaggedValueBean)taggedValue;
 
 			Element tvElt = tvb.getJDomElement();
 
@@ -287,82 +314,6 @@ public class JDomEAXmiWriter implements UMLWriter {
 			valueAtt.setValue(taggedValue.getValue());
 		}
 
-		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
-			Namespace ns = elt.getNamespace();
-			List<Element> meTvElts = (List<Element>) elt.getChildren(
-					"ModelElement.taggedValue", ns);
-
-			Element meTvElt = null;
-			if (meTvElts.size() > 0)
-				meTvElt = meTvElts.get(0);
-			else {
-				meTvElt = new Element("ModelElement.taggedValue", ns);
-				elt.addContent(meTvElt);
-			}
-
-			Element newTvElt = new Element("TaggedValue", ns);
-			newTvElt.setAttribute("tag", tv.getName());
-			newTvElt.setAttribute("value", tv.getValue());
-
-			// newTvElt.setAttribute("xmi.id", "EAID_" +
-			// java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
-
-			meTvElt.addContent(newTvElt);
-
-			tv = new UMLTaggedValueBean(meTvElt, tv.getName(), tv.getValue());
-
-			return tv;
-		}
-
-		public void removeTaggedValue(Element elt, UMLTaggedValue tv) {
-			UMLTaggedValueBean tvBean = (UMLTaggedValueBean) tv;
-			Namespace ns = elt.getNamespace();
-			List<Element> meTvElts = (List<Element>) elt.getChildren(
-					"ModelElement.taggedValue", ns);
-
-			Element meTvElt = null;
-			if (meTvElts.size() > 0)
-				meTvElt = meTvElts.get(0);
-
-			if (meTvElt == null
-					|| !meTvElt.removeContent(tvBean.getJDomElement())) {
-
-				Element rootElement = elt.getDocument().getRootElement();
-				Element xmiContentElt = rootElement.getChild("XMI.content");
-				xmiContentElt.removeContent(tvBean.getJDomElement());
-			}
-		}
-
-	}
-
-	class ClassTaggedValueWriter {
-		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
-
-			Element rootElement = elt.getDocument().getRootElement();
-			Element xmiContentElt = rootElement.getChild("XMI.content");
-
-			Namespace ns = elt.getNamespace();
-
-			Attribute xmiId = elt.getAttribute("xmi.id");
-			if(xmiId == null)
-				return null;
-
-			Element newTvElt = new Element("TaggedValue", ns);
-			newTvElt.setAttribute("tag", tv.getName());
-			newTvElt.setAttribute("value", tv.getValue());
-
-			newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
-			newTvElt.setAttribute("modelElement", xmiId.getValue());
-
-			xmiContentElt.addContent(newTvElt);
-
-			tv = new UMLTaggedValueBean(newTvElt, tv.getName(), tv.getValue());
-
-			return tv;
-		}
-	}
-
-	class AttributeTaggedValueWriter {
 		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
 			Namespace ns = elt.getNamespace();
 			List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
@@ -376,16 +327,56 @@ public class JDomEAXmiWriter implements UMLWriter {
 			}      
 
 			Element newTvElt = new Element("TaggedValue", ns);
-			newTvElt.setAttribute("tag", tv.getName());
-			newTvElt.setAttribute("value", tv.getValue());
-			newTvElt.setAttribute("xmi.id", "EAID_" + java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+			newTvElt.setAttribute("xmi.id", java.util.UUID.randomUUID().toString().replace('-','_').toUpperCase());
+
+			Element tvDataValueElt = new Element("TaggedValue.dataValue", ns);
+			tvDataValueElt.setText(tv.getValue());
+
+			Element tvTypeElt = new Element("TaggedValue.type", ns);
+			Element tvTagDefinition = new Element("TagDefinition",ns);
+
+			logger.debug("Adding Tag Value Tag Definition for Name:  " + tv.getName());
+			UMLTagDefinitionBean td = UMLModelBean.getTagDefinition(tv.getName());
+			if (td == null){
+				logger.debug("Adding Tag Definition for Name:  " + tv.getName());
+				td = UMLModelBean.addTagDefinition(elt, tv.getName());
+			}
+
+			logger.debug("Tag Definition xmi.id: " + td.getXmiId());
+
+			tvTagDefinition.setAttribute("xmi.idref", td.getXmiId());
+
+			tvTypeElt.addContent(tvTagDefinition);
+
+			newTvElt.addContent(tvDataValueElt);
+			newTvElt.addContent(tvTypeElt);      
 
 			meTvElt.addContent(newTvElt);
 
 			tv = new UMLTaggedValueBean(newTvElt, tv.getName(), tv.getValue());
 
 			return tv;
-		} 
-	}
+		}
 
+		public void removeTaggedValue(Element elt, UMLTaggedValue tv) {
+			UMLTaggedValueBean tvBean = (UMLTaggedValueBean)tv;
+			Namespace ns = elt.getNamespace();
+			List<Element> meTvElts = (List<Element>)elt.getChildren("ModelElement.taggedValue", ns);
+
+			logger.debug("Removing tagged value: " + tv.getName() + " with xmi.id: " + tvBean.getModelId() + " from Element: " + elt.getAttributeValue("name"));
+			logger.debug("meTvElts.size(): " + meTvElts.size());
+
+			Element meTvElt = null;
+			if(meTvElts.size() > 0)
+				meTvElt = meTvElts.get(0);
+
+			if(meTvElt == null || !meTvElt.removeContent(tvBean.getJDomElement())) { // try to remove from elt itself, if not, do the following
+				logger.debug("Was not able to remove tagged value: " + tv.getName() + " from Element: " + elt.getName());
+				Element rootElement = elt.getDocument().getRootElement();
+				Element xmiContentElt = rootElement.getChild("XMI.content");
+				xmiContentElt.removeContent(tvBean.getJDomElement());
+			}
+		}
+
+	}	
 }

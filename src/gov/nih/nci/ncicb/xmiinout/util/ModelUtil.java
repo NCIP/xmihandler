@@ -62,6 +62,25 @@ public class ModelUtil {
     return null;
   }
 
+  /**
+   * Util method to return a package name given a package
+   * <br> e.g "java.lang" if package is "lang"
+   */
+  public static String getFullPackageName(UMLPackage pkg) {
+
+    StringBuilder sb = new StringBuilder();
+
+    while(pkg != null) {
+      if(sb.length() > 0)
+        sb.insert(0, ".");
+      sb.insert(0, pkg.getName());
+      
+      pkg = pkg.getParent();
+    }
+    
+    return sb.toString();
+    
+  }
 
   /**
    * Util method to return a package name given a class
