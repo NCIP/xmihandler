@@ -5,12 +5,13 @@
 
   <property name="src.dir" value="src"/>
   <property name="test.src.dir" value="test/src"/>
-  <property name="test.class.dir" value="./test/classes" />
-  <property name="class.dir" value="./classes"/>
-  <property name="lib.dir" value="./lib"/>
-  <property name="dist.dir" value="./dist" />
+  <property name="test.class.dir" value="test/classes" />
+  <property name="class.dir" value="classes"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="dist.dir" value="dist" />
   <property name="config.dir" value="properties"/>
-  <property name="docs.dir" value="./javadoc" />
+  <property name="docs.dir" value="javadoc" />
+  <property name="log4j.dir" value="test/resources" />	
 
   <path id="proj.class.path">
     <pathelement location="${class.dir}"/>
@@ -99,13 +100,48 @@
     </javadoc>
   </target>
 
-  <target name="jUnit" depends="prepare">
-    <java classname="XmiTestCase"
+  <target name="jUnit" depends="clean, prepare">
+
+<!--  -->
+  	
+  	<java classname="XmiTestCase"
       fork="yes"
       >
       <arg value="test/testdata/test-with-dependency.xmi"/>
       <classpath refid="test.classpath"/>
+	  <sysproperty key="log4j.configuration"
+			value="${log4j.dir}/log4j.properties"/>
     </java>
+    
+<!-- -->
+
+<!-- -->
+    <java classname="SDKTestModel_TestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/SDKTestModel.uml"/>
+      <arg value="ArgoUMLDefault"/>
+      <arg value=".new.uml"/>    	
+      <arg value="Model"/>        
+      <classpath refid="test.classpath"/>
+  	  <sysproperty key="log4j.configuration"
+  			value="${log4j.dir}/log4j.properties"/>
+    </java>
+<!-- -->  	
+<!--    -->
+	<java classname="SDKTestModel_TestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/sdk-test-full-roundtrip.xmi"/>
+      <arg value="EADefault"/>
+      <arg value=".new.xmi"/>    
+	  <arg value="EA Model"/>    		
+      <classpath refid="test.classpath"/>
+  	  <sysproperty key="log4j.configuration"
+  			value="${log4j.dir}/log4j.properties"/>
+    </java>  	
+	
+<!-- -->
   </target>
 
 </project>
