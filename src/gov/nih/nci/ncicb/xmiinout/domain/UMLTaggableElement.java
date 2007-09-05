@@ -15,6 +15,14 @@ public interface UMLTaggableElement {
   public UMLTaggedValue getTaggedValue(String name);
 
   /**
+   * Retrieve tagged value, case-sensitive.
+   *
+   * @param name the tagged value name (or key identifier)
+   * @param ignoreCase if true, will return a case insensitive match.
+   */
+  public UMLTaggedValue getTaggedValue(String name, boolean ignoreCase);
+
+  /**
    * Retrieve all tagged values for this element.
    */
   public Collection<UMLTaggedValue> getTaggedValues();

@@ -71,6 +71,19 @@ public class UMLAssociationEndBean extends JDomDomainObject implements UMLAssoci
     return taggedValuesMap.get(name);
   }
 
+  public UMLTaggedValue getTaggedValue(String name, boolean ignoreCase) {
+    if(!ignoreCase)
+      return getTaggedValue(name);
+
+    for(String tvName : taggedValuesMap.keySet()) {
+      if(tvName.equalsIgnoreCase(name)) {
+        return taggedValuesMap.get(tvName);
+      }
+    }
+    
+    return null;
+  }
+
   public Collection<UMLTaggedValue> getTaggedValues() {
     return new ArrayList(taggedValuesMap.values());
   }
