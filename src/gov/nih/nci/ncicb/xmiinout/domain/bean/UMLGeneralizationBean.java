@@ -18,6 +18,12 @@ public class UMLGeneralizationBean extends JDomDomainObject implements UMLGenera
     this.subtype = subtype;
     this.supertype = supertype;
 
+    if(subtype == null)
+      throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. Please correct model.");
+
+    if(supertype == null)
+      throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid supertype. Please correct model.");
+
     supertype.addGeneralization(this);
     subtype.addGeneralization(this);
   }
