@@ -570,7 +570,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 					logger.debug("multiplicity upper:  " + upper);
 
 					low = Integer.valueOf(lower);
-					low = Integer.valueOf(upper);          
+					high = Integer.valueOf(upper);          
 				}
 
 				boolean navigable = Boolean.valueOf(endElt.getAttribute("isNavigable").getValue());
