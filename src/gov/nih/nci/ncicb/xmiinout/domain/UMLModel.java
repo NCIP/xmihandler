@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Reprensents a single model within an XMI file
  */
-public interface UMLModel {
+public interface UMLModel extends UMLTaggableElement {
 
   /**
    * @return the model name
