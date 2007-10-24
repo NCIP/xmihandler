@@ -44,8 +44,13 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
   protected Element rootElement;
 
   protected Map<String, UMLClassBean> idClassMap = new HashMap<String, UMLClassBean>();
+  
+  protected JDomXmiTransformer jdomXmiTransformer;
 
   public void _load(String filename) {
+    models = new HashMap<String, UMLModel>();
+
+    jdomXmiTransformer = new JDomXmiTransformer();
 
     try {
       SAXBuilder builder = new SAXBuilder();
@@ -60,6 +65,9 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
   }
 
   public void _load(java.net.URI uri) {
+    models = new HashMap<String, UMLModel>();
+
+    jdomXmiTransformer = new JDomXmiTransformer();
 
     try {
       SAXBuilder builder = new SAXBuilder();
@@ -108,12 +116,12 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     List<Element> elts = path.selectNodes(rootElement);
 
     for(Element elt : elts) {
-      UMLModelBean model = JDomXmiTransformer.toUMLModel(elt);
+      UMLModelBean model = jdomXmiTransformer.toUMLModel(elt);
       models.put(model.getName(), model);
 
       for(UMLDatatype type : doDataTypes(elt)) {
         model.addDatatype(type);
-        JDomXmiTransformer.addDatatype(type);
+        jdomXmiTransformer.addDatatype(type);
       }
 
       for(UMLPackage pkg : doPackages(elt)) {
@@ -140,7 +148,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     doRootTaggedValues(rootElement);
 
     // Must be done after classes for cross references.
-    JDomXmiTransformer.completeAttributes(ns);
+    jdomXmiTransformer.completeAttributes(ns);
   }
 
 
@@ -153,7 +161,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
 
     for(Element tvElt : elts) {
-      UMLTaggedValue tv = JDomXmiTransformer.toUMLTaggedValue(tvElt);
+      UMLTaggedValue tv = jdomXmiTransformer.toUMLTaggedValue(tvElt);
 
       if(tv != null)
         result.add(tv);
@@ -179,7 +187,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     List<UMLPackageBean> result = new ArrayList<UMLPackageBean>();
 
     for(Element pkgElement : packageElements) {
-      UMLPackageBean umlPkg = JDomXmiTransformer.toUMLPackage(pkgElement);
+      UMLPackageBean umlPkg = jdomXmiTransformer.toUMLPackage(pkgElement);
       result.add(umlPkg);
 
       Collection<UMLTaggedValue> taggedValues = doTaggedValues(pkgElement);
@@ -207,7 +215,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     List<UMLClassBean> result = new ArrayList<UMLClassBean>();
 
     for(Element classElement : classElements) {
-      UMLClassBean umlClass = JDomXmiTransformer.toUMLClass(classElement, ns);
+      UMLClassBean umlClass = jdomXmiTransformer.toUMLClass(classElement, ns);
       Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement);
       for(UMLTaggedValue tv : taggedValues) {
         umlClass.addTaggedValue(tv);

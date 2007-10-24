@@ -34,7 +34,7 @@ public class EADefaultImpl extends EABaseImpl {
 		List<UMLDatatype> result = new ArrayList<UMLDatatype>();
 
 		for(Element typeElt : typeElements) {
-			result.add(JDomXmiTransformer.toUMLDatatype(typeElt));
+			result.add(jdomXmiTransformer.toUMLDatatype(typeElt));
 		}
 		return result;
 
@@ -50,7 +50,7 @@ public class EADefaultImpl extends EABaseImpl {
 
 		List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
 		for(Element tvElt : tvElements) {
-			UMLTaggedValue tv = JDomXmiTransformer.toUMLTaggedValue(tvElt);
+			UMLTaggedValue tv = jdomXmiTransformer.toUMLTaggedValue(tvElt);
 			if(tv != null)
 				result.add(tv);
 		}
@@ -69,7 +69,7 @@ public class EADefaultImpl extends EABaseImpl {
 		List<Element> attElements = (List<Element>)featureElement.getChildren("Attribute", ns);
 
 		for(Element attElt : attElements) {
-			UMLAttributeBean umlAtt = JDomXmiTransformer.toUMLAttribute(attElt, ns);
+			UMLAttributeBean umlAtt = jdomXmiTransformer.toUMLAttribute(attElt, ns);
 
 			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt);
 			for(UMLTaggedValue tv : taggedValues) {
@@ -148,7 +148,7 @@ public class EADefaultImpl extends EABaseImpl {
 		for(Element genElt : genElts) {
 			UMLClassBean subClass = idClassMap.get(genElt.getAttribute("subtype").getValue());
 			UMLClassBean superClass = idClassMap.get(genElt.getAttribute("supertype").getValue());
-//			result.add(JDomXmiTransformer.toUMLGeneralization(genElt));
+//			result.add(jdomXmiTransformer.toUMLGeneralization(genElt));
 			result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
 		}    
 

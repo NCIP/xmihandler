@@ -22,21 +22,21 @@ import org.jdom.Namespace;
 
 public class JDomXmiTransformer {
 
-	protected static Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
+	protected Map<String, UMLDatatype> datatypes = new HashMap<String, UMLDatatype>();
 
-	protected static List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
+	protected List<UMLAttributeBean> attWithMissingDatatypes = new ArrayList<UMLAttributeBean>();
 
 	private static Logger logger = Logger.getLogger(JDomXmiTransformer.class
 			.getName());
 
-	static void addDatatype(UMLDatatype datatype) {
+	void addDatatype(UMLDatatype datatype) {
 		if (datatype instanceof UMLDatatypeBean)
 			datatypes.put(((UMLDatatypeBean) datatype).getModelId(), datatype);
 		else if (datatype instanceof UMLClassBean)
 			datatypes.put(((UMLClassBean) datatype).getModelId(), datatype);
 	}
 	
-	static String getStereotypeName(Element stElt){
+	 String getStereotypeName(Element stElt){
 		
 		String stereotypeName = null;
 		Attribute stereotypeAtt = stElt.getAttribute("name");
@@ -45,7 +45,7 @@ public class JDomXmiTransformer {
 		return stereotypeName;
 	}
 
-	static UMLDatatypeBean toUMLDatatype(Element typeElt) {
+	 UMLDatatypeBean toUMLDatatype(Element typeElt) {
 		String xmi_id = typeElt.getAttribute("xmi.id").getValue();
 
 		Attribute nameAtt = typeElt.getAttribute("name");
@@ -60,19 +60,19 @@ public class JDomXmiTransformer {
 		return result;
 	}
 
-	static UMLModelBean toUMLModel(Element modelElement) {
+	 UMLModelBean toUMLModel(Element modelElement) {
 		UMLModelBean model = new UMLModelBean(modelElement);
 		model.setName(modelElement.getAttribute("name").getValue());
 		return model;
 	}
 
-	static UMLPackageBean toUMLPackage(Element packageElement) {
+	 UMLPackageBean toUMLPackage(Element packageElement) {
 		UMLPackageBean pkg = new UMLPackageBean(packageElement, packageElement
 				.getAttribute("name").getValue());
 		return pkg;
 	}
 
-	static UMLClassBean toUMLClass(Element classElement, Namespace ns) {
+	 UMLClassBean toUMLClass(Element classElement, Namespace ns) {
 
 		Attribute visibilityAtt = classElement.getAttribute("visibility");
 		String visibility = visibilityAtt != null ? visibilityAtt.getValue()
@@ -103,7 +103,7 @@ public class JDomXmiTransformer {
 		return clazz;
 	}
 
-	static UMLAttributeBean toUMLAttribute(Element attElement, Namespace ns) {
+	 UMLAttributeBean toUMLAttribute(Element attElement, Namespace ns) {
 		Attribute visibilityAtt = attElement.getAttribute("visibility");
 		String visibility = visibilityAtt != null ? visibilityAtt.getValue()
 				: null;
@@ -146,7 +146,7 @@ public class JDomXmiTransformer {
 	 * Run this after you've processed attributes for attributes that use
 	 * classes as datatypes.
 	 */
-	static void completeAttributes(Namespace ns) {
+	 void completeAttributes(Namespace ns) {
 		for (UMLAttributeBean att : attWithMissingDatatypes) {
 			Element attElement = att.getJDomElement();
 
@@ -166,7 +166,7 @@ public class JDomXmiTransformer {
 
 	}
 	
-	static UMLTaggedValueBean toUMLTaggedValue(Element tvElement) {
+	 UMLTaggedValueBean toUMLTaggedValue(Element tvElement) {
 		if (tvElement.getAttribute("tag") == null) {
 			logger.info("taggedValue missing tag attribute, skipping");
 			logger.debug("taggedValue missing tag attribute, skipping");
