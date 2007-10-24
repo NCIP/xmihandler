@@ -13,12 +13,12 @@ public abstract class DefaultXmiHandler implements XmiInOutHandler {
   private byte[] clones = null;
 
   public void load(String filename) {
-    
     _load(filename);
     
   }
 
   public void load(java.net.URI url) {
+    models = new HashMap<String, UMLModel>();
     
     _load(url);
     
