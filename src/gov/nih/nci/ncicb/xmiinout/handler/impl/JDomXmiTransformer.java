@@ -1,7 +1,9 @@
 package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
+import gov.nih.nci.ncicb.xmiinout.domain.UMLAbstractModifier;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAbstractModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDatatypeBean;
@@ -74,6 +76,11 @@ public class JDomXmiTransformer {
 
 	 UMLClassBean toUMLClass(Element classElement, Namespace ns) {
 
+		Attribute isAbstractAtt = classElement.getAttribute("isAbstract");
+		String abstractModifier = isAbstractAtt != null ? isAbstractAtt.getValue()
+				: "false";
+		UMLAbstractModifier umlAbstractModifier = new UMLAbstractModifierBean(abstractModifier);
+		 
 		Attribute visibilityAtt = classElement.getAttribute("visibility");
 		String visibility = visibilityAtt != null ? visibilityAtt.getValue()
 				: null;
@@ -95,7 +102,7 @@ public class JDomXmiTransformer {
 		}
 
 		UMLClassBean clazz = new UMLClassBean(classElement, classElement
-				.getAttribute("name").getValue(), umlVis, stereotypeName);
+				.getAttribute("name").getValue(), umlAbstractModifier, umlVis, stereotypeName);
 
 		clazz.setModelId(classElement.getAttribute("xmi.id").getValue());
 

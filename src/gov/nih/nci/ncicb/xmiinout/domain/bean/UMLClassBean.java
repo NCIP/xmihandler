@@ -16,6 +16,7 @@ public class UMLClassBean extends JDomDomainObject
 
   private Set<UMLDependency> dependencies = new HashSet<UMLDependency>();
 
+  private UMLAbstractModifier abstractModifier;
   private UMLVisibility visibility;
   private UMLPackageBean umlPkg;
 
@@ -23,10 +24,12 @@ public class UMLClassBean extends JDomDomainObject
 
   public UMLClassBean(org.jdom.Element element, 
                       String className,
+                      UMLAbstractModifier abstractModifier,
                       UMLVisibility visibility,
                       String stereotype) {
     super(element);
     this.name = className;
+    this.abstractModifier = abstractModifier;
     this.visibility = visibility;
     this.stereotype = stereotype;
   }
@@ -131,6 +134,16 @@ public class UMLClassBean extends JDomDomainObject
 
   public List<UMLGeneralization> getGeneralizations() {
     return generalizations;
+  }
+
+  
+  
+  public UMLAbstractModifier getAbstractModifier() {
+	return abstractModifier;
+  }
+
+  public void setAbstractModifier(UMLAbstractModifier abstractModifier) {
+	this.abstractModifier = abstractModifier;
   }
 
   public UMLVisibility getVisibility() {

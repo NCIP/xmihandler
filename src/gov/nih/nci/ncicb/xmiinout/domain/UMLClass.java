@@ -13,6 +13,11 @@ public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssoc
   public String getName();
 
   /**
+   * @return the isAbstract modifier
+   */
+  public UMLAbstractModifier getAbstractModifier();
+  
+  /**
    * @return the visibility (scope)
    */
   public UMLVisibility getVisibility();
