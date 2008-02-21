@@ -102,6 +102,26 @@ public class ModelUtil {
     return sb.toString();
     
   }
+  /**
+   * Util method to return a package name given an interface
+   * <br> e.g "java.lang" if class is "java.lang.Serializable"
+   */
+  public static String getFullPackageName(UMLInterface interfaze) {
+
+    StringBuilder sb = new StringBuilder();
+
+    UMLPackage pkg = interfaze.getPackage();
+    while(pkg != null) {
+      if(sb.length() > 0)
+        sb.insert(0, ".");
+      sb.insert(0, pkg.getName());
+      
+      pkg = pkg.getParent();
+    }
+    
+    return sb.toString();
+    
+  }
 
   /**
    * Util method to return a full name given a class
@@ -113,6 +133,21 @@ public class ModelUtil {
 
     sb.append(".");
     sb.append(clazz.getName());
+    
+    return sb.toString();
+    
+  }
+  
+  /**
+   * Util method to return a full name given an interface
+   * <br> e.g "java.lang.Serializable"
+   */
+  public static String getFullName(UMLInterface interfaze) {
+
+    StringBuilder sb = new StringBuilder(getFullPackageName(interfaze));
+
+    sb.append(".");
+    sb.append(interfaze.getName());
     
     return sb.toString();
     
@@ -131,8 +166,8 @@ public class ModelUtil {
 
     List<UMLClass> classes = new ArrayList<UMLClass>();
     for(UMLGeneralization gen : gens) {
-      if(gen.getSupertype() != clazz) 
-        classes.add(gen.getSupertype());
+      if(gen.getSupertype() instanceof UMLClass && ((UMLClass)gen.getSupertype()) != clazz) 
+        classes.add((UMLClass)gen.getSupertype());
     }
 
     UMLClass[] result = new UMLClass[classes.size()];
@@ -140,23 +175,52 @@ public class ModelUtil {
 
     return result;
   }
+  
+  /**
+   * returns an array of classes this class extends from, or an empty array if none.
+   */ 
+  public static UMLInterface[] getSuperInterfaces(UMLInterface interfaze) {
+
+    if(interfaze == null)
+      return null;
+
+    List<UMLGeneralization> gens = interfaze.getGeneralizations();
+
+    List<UMLInterface> interfaces = new ArrayList<UMLInterface>();
+    for(UMLGeneralization gen : gens) {
+      if(gen.getSupertype() instanceof UMLInterface && ((UMLInterface)gen.getSupertype()) != interfaze) 
+    	  interfaces.add((UMLInterface)gen.getSupertype());
+    }
+
+    UMLInterface[] result = new UMLInterface[interfaces.size()];
+    result = interfaces.toArray(result);
+
+    return result;
+  }  
+  
+  /**
+   * returns an array of classes this class extends from, or an empty array if none.
+   */ 
+  public static UMLInterface[] getInterfaces(UMLClass clazz) {
+
+    if(clazz == null)
+      return null;
+
+    Set<UMLDependency> deps = clazz.getDependencies();
+
+    List<UMLInterface> interfaces = new ArrayList<UMLInterface>();
+    for(UMLDependency dep : deps) {
+      if(dep.getSupplier() instanceof UMLInterface) //&& dep.getStereotype().equalsIgnoreCase( "realize ) 
+    	  interfaces.add((UMLInterface)dep.getSupplier());
+    }
+
+    UMLInterface[] result = new UMLInterface[interfaces.size()];
+    result = interfaces.toArray(result);
+
+    return result;
+  }
 
 
 
-//   /**
-//    * returns the full name for an association end.
-//    * <br> including package name, other end's class name and end role name
-//    * <br> returns null if the end is not navigable or the role name is not set.
-//    */
-//   public static String getFullName(UMLAssociationEnd end) {
-
-//     StringBuilder sb = new StringBuilder(getFullPackageName(clazz));
-
-//     sb.append(".");
-//     sb.append(clazz.getName());
-    
-//     return sb.toString();
-    
-//   }
 
 }

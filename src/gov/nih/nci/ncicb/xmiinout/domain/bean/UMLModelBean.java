@@ -17,6 +17,7 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
   private static Logger logger = Logger.getLogger(JDomDomainObject.class.getName());
   private List<UMLPackage> packages = new ArrayList<UMLPackage>();
   private List<UMLClass> classes = new ArrayList<UMLClass>();
+  private List<UMLInterface> interfaces = new ArrayList<UMLInterface>();
   
   private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
   
@@ -79,6 +80,11 @@ public class UMLModelBean extends JDomDomainObject implements UMLModel {
   
   public void addClass(UMLClass clazz) {
     classes.add(clazz);
+  }
+  
+  
+  public void addInterface(UMLInterface interfaze) {
+    interfaces.add(interfaze);
   }
   
   public UMLTaggedValue getTaggedValue(String name) {

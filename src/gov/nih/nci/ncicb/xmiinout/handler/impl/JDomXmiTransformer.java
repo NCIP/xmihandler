@@ -7,6 +7,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAbstractModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDatatypeBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
@@ -109,6 +110,33 @@ public class JDomXmiTransformer {
 		addDatatype(clazz);
 		return clazz;
 	}
+	 
+	 UMLInterfaceBean toUMLInterface(Element interfaceElement, Namespace ns) {
+
+			String stereotypeName = null;
+				
+			List<Element> elts = (List<Element>) interfaceElement.getChildren(
+					"ModelElement.stereotype", ns);
+			
+			if (elts.size() > 0) {
+				Element modelStElt = elts.get(0);
+				List<Element> stElts = (List<Element>) modelStElt.getChildren(
+						"Stereotype", ns);
+				if (stElts.size() > 0) {
+					Element stElt = stElts.get(0);
+					stereotypeName = getStereotypeName(stElts.get(0));
+				}
+			}
+
+			UMLInterfaceBean interfaze = new UMLInterfaceBean(interfaceElement, interfaceElement
+					.getAttribute("name").getValue(), stereotypeName);
+
+			interfaze.setModelId(interfaceElement.getAttribute("xmi.id").getValue());
+
+			addDatatype(interfaze);
+			return interfaze;
+		}
+	 
 
 	 UMLAttributeBean toUMLAttribute(Element attElement, Namespace ns) {
 		Attribute visibilityAtt = attElement.getAttribute("visibility");

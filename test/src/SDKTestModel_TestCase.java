@@ -4,7 +4,9 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociationEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLAttribute;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
@@ -289,14 +291,20 @@ public class SDKTestModel_TestCase extends TestCase {
 		for(UMLClass clazz : pkg.getClasses()) {
 			printClass(clazz, pkgDepth);
 		}
+		
+		for(UMLInterface interfaze : pkg.getInterfaces()) {
+			printInterface(interfaze, pkgDepth);
+		}
+		
 		for(UMLPackage _pkg : pkg.getPackages()) {
 			printPackage(_pkg, pkgDepth + 1);
 		}
 	}
+	
 	private void printClass(UMLClass clazz, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
-		System.out.print("  ");
+		System.out.print("  Class: ");
 
 		if(clazz.getVisibility() != null)
 			printInColor(RED, clazz.getVisibility().getName());
@@ -328,6 +336,39 @@ public class SDKTestModel_TestCase extends TestCase {
 		}
 
 	}
+	
+	private void printInterface(UMLInterface interfaze, int pkgDepth) {
+		for(int i = 0; i < pkgDepth; i++)
+			System.out.print("  ");
+		System.out.print("  Interface: ");
+
+		System.out.println(" " + interfaze.getName());    
+
+		for(UMLTaggedValue tv : interfaze.getTaggedValues()) {
+			printTaggedValue(tv, pkgDepth);
+		}
+
+		for(UMLAttribute att : interfaze.getAttributes()) {
+			printAttribute(att, pkgDepth + 1);
+		}
+
+		for(UMLGeneralization gen : interfaze.getGeneralizations()) {
+			printGeneralization(gen, pkgDepth + 1);
+		}
+
+		System.out.println("");
+
+		for(UMLDependency dep : interfaze.getDependencies()) {
+			printDependency(dep, pkgDepth + 1);
+		}
+
+		System.out.println("");
+
+		for(UMLAssociation assoc : interfaze.getAssociations()) {
+			printAssociation(assoc, pkgDepth + 1);
+		}
+
+	}	
 
 	private void printAssociation(UMLAssociation assoc, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
@@ -401,7 +442,22 @@ public class SDKTestModel_TestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Generalization: " + gen.getSubtype().getName() + " --> " + gen.getSupertype().getName());
+		String subtypeName = null;
+		String supertypeName = null;
+		
+		if (gen.getSubtype() instanceof UMLClass) {
+			subtypeName = ((UMLClass)gen.getSubtype()).getName();
+		} else {
+			subtypeName = ((UMLInterface)gen.getSubtype()).getName();
+		}
+		
+		if (gen.getSupertype() instanceof UMLClass) {
+			supertypeName = ((UMLClass)gen.getSupertype()).getName();
+		} else {
+			supertypeName = ((UMLInterface)gen.getSupertype()).getName();
+		}
+		
+		printInColor(GREEN, "Generalization: " + subtypeName + " --> " + supertypeName);
 		System.out.println("");
 	}
 
@@ -410,7 +466,26 @@ public class SDKTestModel_TestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());		
+		UMLDependencyEnd clientEnd = dep.getClient();
+		UMLDependencyEnd supplierEnd = dep.getSupplier();
+		
+		String clientName = null;
+		String supplierName = null;
+		
+		if (clientEnd instanceof UMLClass){
+			clientName = ((UMLClass)(clientEnd)).getName();
+		} else if (clientEnd instanceof UMLInterface){
+			clientName = ((UMLInterface)(clientEnd)).getName();
+		}
+		
+		if (supplierEnd instanceof UMLClass){
+			supplierName = ((UMLClass)(supplierEnd)).getName();
+		} else if (supplierEnd instanceof UMLInterface){
+			supplierName = ((UMLInterface)(supplierEnd)).getName();
+		}
+		
+		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());	
+
 		System.out.println("");
 
 		for(UMLTaggedValue tv : dep.getTaggedValues()) {

@@ -6,6 +6,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAbstractModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
@@ -115,7 +116,20 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
     result.setModelId(xmiId);
     return result;
   }
-	
+
+   UMLInterfaceBean toUMLInterface(Element interfaceElement, Namespace ns) {
+
+	   String stereotypeName = "interface";
+
+	   UMLInterfaceBean interfaze = new UMLInterfaceBean(interfaceElement, interfaceElement
+			   .getAttribute("name").getValue(), stereotypeName);
+
+	   interfaze.setModelId(interfaceElement.getAttribute("xmi.id").getValue());
+
+	   addDatatype(interfaze);
+	   return interfaze;
+   }
+   
    UMLAttributeBean toUMLAttribute(Element attElement, Namespace ns) {
     Attribute visibilityAtt = attElement.getAttribute("visibility");
     String visibility = visibilityAtt != null ? visibilityAtt.getValue()

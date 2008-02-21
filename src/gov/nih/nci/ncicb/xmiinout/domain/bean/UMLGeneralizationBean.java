@@ -3,6 +3,7 @@ package gov.nih.nci.ncicb.xmiinout.domain.bean;
 
 import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 
 import java.util.*;
 import org.jdom.*;
@@ -10,13 +11,14 @@ import org.jdom.*;
 
 public class UMLGeneralizationBean extends JDomDomainObject implements UMLGeneralization {
 
-  private UMLClass subtype, supertype;
+  private UMLClass subClassType, superClassType;
+  private UMLInterface subInterfaceType, superInterfaceType;
 
   public UMLGeneralizationBean(Element element, UMLClassBean supertype, UMLClassBean subtype) {
     super(element);
 
-    this.subtype = subtype;
-    this.supertype = supertype;
+    this.subClassType = subtype;
+    this.superClassType = supertype;
 
     if(subtype == null)
       throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. Please correct model.");
@@ -27,13 +29,48 @@ public class UMLGeneralizationBean extends JDomDomainObject implements UMLGenera
     supertype.addGeneralization(this);
     subtype.addGeneralization(this);
   }
+  
+  public UMLGeneralizationBean(Element element, UMLInterfaceBean supertype, UMLInterfaceBean subtype) {
+	    super(element);
 
-  public UMLClass getSubtype() {
-    return subtype;
+	    this.subInterfaceType = subtype;
+	    this.superInterfaceType = supertype;
+
+	    if(subtype == null)
+	      throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. Please correct model.");
+
+	    if(supertype == null)
+	      throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid supertype. Please correct model.");
+
+	    supertype.addGeneralization(this);
+	    subtype.addGeneralization(this);
+	  }
+  
+  public UMLGeneralizationBean(Element element, UMLInterface supertype, UMLClass subtype) {
+	    super(element);
+
+	    throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. A Generalization between a class and an interface is not supported.  Please correct model.");
+	  }
+  
+  public UMLGeneralizationBean(Element element, UMLClass supertype, UMLInterface subtype) {
+	    super(element);
+
+	    throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. A Generalization between a class and an interface is not supported.  Please correct model.");
+	  }
+
+  public Object getSubtype() {
+	  
+	  if (subClassType != null)
+		  return subClassType;
+	  
+	  return subInterfaceType;
   }
 
-  public UMLClass getSupertype() {
-    return supertype;
+  public Object getSupertype() {
+	  if (superClassType != null)
+		  return superClassType;
+		  
+    return superInterfaceType;
   }
 
 }

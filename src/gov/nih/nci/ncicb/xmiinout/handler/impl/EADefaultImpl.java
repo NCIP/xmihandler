@@ -97,12 +97,20 @@ public class EADefaultImpl extends EABaseImpl {
 			UMLDependencyEnd supplier = idClassMap.get(depElt.getAttribute("supplier").getValue());
 
 			if(client == null) {
-				logger.info("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-				continue;
+				client = idInterfaceMap.get(depElt.getAttribute("client").getValue());
+				
+				if(client == null) {
+					logger.info("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- ignoring");
+					continue;
+				}
 			}
 			if(supplier == null) {
-				logger.info("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-				continue;
+				supplier = idInterfaceMap.get(depElt.getAttribute("supplier").getValue());
+				
+				if(supplier == null) {
+					logger.info("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- ignoring");
+					continue;
+				}
 			}
 
 
@@ -146,10 +154,20 @@ public class EADefaultImpl extends EABaseImpl {
 		List<UMLGeneralization> result = new ArrayList<UMLGeneralization>();
 
 		for(Element genElt : genElts) {
-			UMLClassBean subClass = idClassMap.get(genElt.getAttribute("subtype").getValue());
-			UMLClassBean superClass = idClassMap.get(genElt.getAttribute("supertype").getValue());
-//			result.add(jdomXmiTransformer.toUMLGeneralization(genElt));
-			result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
+			String subtypeId = genElt.getAttribute("subtype").getValue();
+			String supertypeId = genElt.getAttribute("supertype").getValue();
+			
+			UMLClassBean subClass = idClassMap.get(subtypeId);
+			UMLClassBean superClass = idClassMap.get(supertypeId);
+			
+			if (subClass != null && superClass != null){
+				result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
+
+			} else {
+				UMLInterfaceBean subInterface = idInterfaceMap.get(subtypeId);
+				UMLInterfaceBean superInterface = idInterfaceMap.get(supertypeId);
+				result.add(new UMLGeneralizationBean(genElt, superInterface, subInterface));
+			}
 		}    
 
 		return result;

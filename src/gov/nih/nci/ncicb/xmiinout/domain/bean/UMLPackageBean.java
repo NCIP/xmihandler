@@ -8,6 +8,7 @@ public class UMLPackageBean extends JDomDomainObject implements UMLPackage {
 
   private List<UMLPackage> packages = new ArrayList<UMLPackage>();
   private List<UMLClass> classes = new ArrayList<UMLClass>();
+  private List<UMLInterface> interfaces = new ArrayList<UMLInterface>();
 
   private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
@@ -74,6 +75,10 @@ public class UMLPackageBean extends JDomDomainObject implements UMLPackage {
   public List<UMLClass> getClasses() {
     return classes;
   }
+  
+  public List<UMLInterface> getInterfaces() {
+    return interfaces;
+  }
 
   public UMLClass getClass(String name) {
     for(UMLClass clazz : classes)
@@ -83,10 +88,23 @@ public class UMLPackageBean extends JDomDomainObject implements UMLPackage {
     return null;
   }
 
+  public UMLInterface getInterface(String name) {
+    for(UMLInterface interfaze : interfaces)
+      if(interfaze.getName().equals(name))
+        return interfaze;
+    
+    return null;
+  }
+  
   public void addClass(UMLClassBean clazz) {
     classes.add(clazz);
     clazz.setPackage(this);
   }
+  
+  public void addInterface(UMLInterfaceBean interfaze) {
+		interfaces.add(interfaze);
+		interfaze.setPackage(this);
+	}
 
   public UMLTaggedValue addTaggedValue(UMLTaggedValue taggedValue) {
     taggedValuesMap.put(taggedValue.getName(), taggedValue);

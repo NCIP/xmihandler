@@ -119,7 +119,7 @@
     <java classname="SDKTestModel_TestCase"
       fork="yes"
       >
-      <arg value="test/testdata/SDKTestModel.uml"/>
+      <arg value="test/testdata/sdk.uml"/>
       <arg value="ArgoUMLDefault"/>
       <arg value=".new.uml"/>    	
       <arg value="Model"/>        
@@ -128,11 +128,11 @@
   			value="${log4j.dir}/log4j.properties"/>
     </java>
 <!-- -->  	
-<!--    -->
+<!-- -->
 	<java classname="SDKTestModel_TestCase"
       fork="yes"
       >
-      <arg value="test/testdata/sdk-test-full-roundtrip.xmi"/>
+      <arg value="test/testdata/sdk.xmi"/>
       <arg value="EADefault"/>
       <arg value=".new.xmi"/>    
 	  <arg value="EA Model"/>    		

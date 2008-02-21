@@ -31,6 +31,11 @@ public interface UMLPackage extends UMLTaggableElement {
    * All classes directly under this package
    */ 
   public Collection<UMLClass> getClasses();
+  
+  /**
+   * All interfaces directly under this package
+   */ 
+  public Collection<UMLInterface> getInterfaces();
 
   /**
    * Convenient method to retrieve one Class by it's name.

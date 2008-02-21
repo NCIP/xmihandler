@@ -1,16 +1,17 @@
 package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
-
 import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociation;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLAttribute;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 
@@ -41,212 +42,251 @@ import org.jdom.output.XMLOutputter;
  */
 public abstract class EABaseImpl extends DefaultXmiHandler {
 
-  protected Element rootElement;
+	protected Element rootElement;
 
-  protected Map<String, UMLClassBean> idClassMap = new HashMap<String, UMLClassBean>();
-  
-  protected JDomXmiTransformer jdomXmiTransformer;
+	protected Map<String, UMLClassBean> idClassMap = new HashMap<String, UMLClassBean>();
+	
+	protected Map<String, UMLInterfaceBean> idInterfaceMap = new HashMap<String, UMLInterfaceBean>();
 
-  public void _load(String filename) {
-    models = new HashMap<String, UMLModel>();
+	protected JDomXmiTransformer jdomXmiTransformer;
 
-    jdomXmiTransformer = new JDomXmiTransformer();
+	public void _load(String filename) {
+		models = new HashMap<String, UMLModel>();
 
-    try {
-      SAXBuilder builder = new SAXBuilder();
-      Document doc = builder.build(filename);
-      rootElement = doc.getRootElement();
-      readModel(rootElement);
-      
-    } catch (Exception ex) {
-      throw new RuntimeException("Error initializing model", ex);
-    }
-    
-  }
+		jdomXmiTransformer = new JDomXmiTransformer();
 
-  public void _load(java.net.URI uri) {
-    models = new HashMap<String, UMLModel>();
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			Document doc = builder.build(filename);
+			rootElement = doc.getRootElement();
+			readModel(rootElement);
 
-    jdomXmiTransformer = new JDomXmiTransformer();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error initializing model", ex);
+		}
 
-    try {
-      SAXBuilder builder = new SAXBuilder();
-      Document doc = builder.build(uri.toURL());
-      rootElement = doc.getRootElement();
-      readModel(rootElement);
-      
-    } catch (Exception ex) {
-      throw new RuntimeException("Error initializing model", ex);
-    }
-    
-  }
+	}
 
+	public void _load(java.net.URI uri) {
+		models = new HashMap<String, UMLModel>();
 
-  public void save(String filename) throws IOException {
-    File f = new File(filename);
-    
-    Writer writer = new OutputStreamWriter
-      (new FileOutputStream(f), "UTF-8");
-    XMLOutputter xmlout = new XMLOutputter();
-    xmlout.setFormat(Format.getPrettyFormat());
-    writer.write(xmlout.outputString(rootElement));
-    writer.flush();
-    writer.close();
-    
-  }
+		jdomXmiTransformer = new JDomXmiTransformer();
 
-  public UMLModel getModel() {
-    Iterator<UMLModel> it = models.values().iterator();
-    if(it.hasNext())
-      return it.next();
-    else 
-      return null;
-  }
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			Document doc = builder.build(uri.toURL());
+			rootElement = doc.getRootElement();
+			readModel(rootElement);
 
-  public UMLModel getModel(String modelName) {
-    return models.get(modelName);
-  }
+		} catch (Exception ex) {
+			throw new RuntimeException("Error initializing model", ex);
+		}
 
-  private void readModel(Element rootElement) throws JaxenException {
+	}
 
-    String xpath = "/XMI/XMI.content/*[local-name()='Model']";
-    Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+	public void save(String filename) throws IOException {
+		File f = new File(filename);
 
-    JDOMXPath path = new JDOMXPath(xpath);
-    List<Element> elts = path.selectNodes(rootElement);
+		Writer writer = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
+		XMLOutputter xmlout = new XMLOutputter();
+		xmlout.setFormat(Format.getPrettyFormat());
+		writer.write(xmlout.outputString(rootElement));
+		writer.flush();
+		writer.close();
 
-    for(Element elt : elts) {
-      UMLModelBean model = jdomXmiTransformer.toUMLModel(elt);
-      models.put(model.getName(), model);
+	}
 
-      for(UMLDatatype type : doDataTypes(elt)) {
-        model.addDatatype(type);
-        jdomXmiTransformer.addDatatype(type);
-      }
+	public UMLModel getModel() {
+		Iterator<UMLModel> it = models.values().iterator();
+		if (it.hasNext())
+			return it.next();
+		else
+			return null;
+	}
 
-      for(UMLPackage pkg : doPackages(elt)) {
-        model.addPackage(pkg);
-      }
+	public UMLModel getModel(String modelName) {
+		return models.get(modelName);
+	}
 
-      for(UMLClass clazz : doClasses(elt)) {
-        model.addClass(clazz);
-      }
+	private void readModel(Element rootElement) throws JaxenException {
 
-      for(UMLGeneralization gen : doGeneralizations(elt)) {
-        model.addGeneralization(gen);
-      }
+		String xpath = "/XMI/XMI.content/*[local-name()='Model']";
+		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
 
-      for(UMLDependency dep : doDependencies(elt)) {
-        model._addDependency(dep);
-      }
+		JDOMXPath path = new JDOMXPath(xpath);
+		List<Element> elts = path.selectNodes(rootElement);
 
-      for(UMLAssociation assoc : doAssociations(elt)) {
-        model.addAssociation(assoc);
-      }      
-    }
+		for (Element elt : elts) {
+			UMLModelBean model = jdomXmiTransformer.toUMLModel(elt);
+			models.put(model.getName(), model);
 
-    doRootTaggedValues(rootElement);
+			for (UMLDatatype type : doDataTypes(elt)) {
+				model.addDatatype(type);
+				jdomXmiTransformer.addDatatype(type);
+			}
 
-    // Must be done after classes for cross references.
-    jdomXmiTransformer.completeAttributes(ns);
-  }
+			for (UMLPackage pkg : doPackages(elt)) {
+				model.addPackage(pkg);
+			}
 
+			for (UMLClass clazz : doClasses(elt)) {
+				model.addClass(clazz);
+			}
 
-  private List<UMLTaggedValue> doRootTaggedValues(Element rootElement) 
-    throws JaxenException {
-    String xpath = "/XMI/XMI.content/*[local-name()='TaggedValue']";
-    JDOMXPath path = new JDOMXPath(xpath);
-    List<Element> elts = path.selectNodes(rootElement);
-    
-    List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
+			for (UMLInterface interfaze : doInterfaces(elt)) {
+				model.addInterface(interfaze);
+			}
 
-    for(Element tvElt : elts) {
-      UMLTaggedValue tv = jdomXmiTransformer.toUMLTaggedValue(tvElt);
+			for (UMLGeneralization gen : doGeneralizations(elt)) {
+				model.addGeneralization(gen);
+			}
 
-      if(tv != null)
-        result.add(tv);
+			for (UMLDependency dep : doDependencies(elt)) {
+				model._addDependency(dep);
+			}
 
-      Attribute refAtt = tvElt.getAttribute("modelElement");
-      if(refAtt != null) {
-        UMLClassBean clazz = idClassMap.get(refAtt.getValue());
-        if(clazz != null) {
-          clazz.addTaggedValue(tv);
-        }
-      }
-    }
+			for (UMLAssociation assoc : doAssociations(elt)) {
+				model.addAssociation(assoc);
+			}
+		}
 
-    return result;
-    
-  }
+		doRootTaggedValues(rootElement);
 
-  private List<UMLPackageBean> doPackages(Element elt) {
-    Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
-    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
-    List<Element> packageElements = (List<Element>)ownedElement.getChildren("Package", ns);
+		// Must be done after classes for cross references.
+		jdomXmiTransformer.completeAttributes(ns);
+	}
 
-    List<UMLPackageBean> result = new ArrayList<UMLPackageBean>();
+	private List<UMLTaggedValue> doRootTaggedValues(Element rootElement)
+			throws JaxenException {
+		String xpath = "/XMI/XMI.content/*[local-name()='TaggedValue']";
+		JDOMXPath path = new JDOMXPath(xpath);
+		List<Element> elts = path.selectNodes(rootElement);
 
-    for(Element pkgElement : packageElements) {
-      UMLPackageBean umlPkg = jdomXmiTransformer.toUMLPackage(pkgElement);
-      result.add(umlPkg);
+		List<UMLTaggedValue> result = new ArrayList<UMLTaggedValue>();
 
-      Collection<UMLTaggedValue> taggedValues = doTaggedValues(pkgElement);
-      for(UMLTaggedValue tv : taggedValues) {
-        umlPkg.addTaggedValue(tv);
-      }
+		for (Element tvElt : elts) {
+			UMLTaggedValue tv = jdomXmiTransformer.toUMLTaggedValue(tvElt);
 
-      for(UMLPackageBean pkg : doPackages(pkgElement)) {
-        umlPkg.addPackage(pkg);
-      }
-      for(UMLClassBean clazz : doClasses(pkgElement)) {
-        umlPkg.addClass(clazz);
-      }
-    }
-    
-    return result;
-    
-  }
+			if (tv != null)
+				result.add(tv);
 
-  private List<UMLClassBean> doClasses(Element elt) {
-    Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
-    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
-    
-    List<Element> classElements = (List<Element>)ownedElement.getChildren("Class", ns);
-    List<UMLClassBean> result = new ArrayList<UMLClassBean>();
+			Attribute refAtt = tvElt.getAttribute("modelElement");
+			if (refAtt != null) {
+				UMLClassBean clazz = idClassMap.get(refAtt.getValue());
+				if (clazz != null) {
+					clazz.addTaggedValue(tv);
+				}
+			}
+		}
 
-    for(Element classElement : classElements) {
-      UMLClassBean umlClass = jdomXmiTransformer.toUMLClass(classElement, ns);
-      Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement);
-      for(UMLTaggedValue tv : taggedValues) {
-        umlClass.addTaggedValue(tv);
-      }
+		return result;
 
-      List<UMLAttribute> atts = doAttributes(classElement);
-      for(UMLAttribute att : atts) {
-        umlClass.addAttribute(att);
-      }
+	}
 
-      idClassMap.put(umlClass.getModelId(), umlClass);
-      result.add(umlClass);
-      
+	private List<UMLPackageBean> doPackages(Element elt) {
+		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
+		List<Element> packageElements = (List<Element>) ownedElement
+				.getChildren("Package", ns);
 
-    }
-    
-    return result;
+		List<UMLPackageBean> result = new ArrayList<UMLPackageBean>();
 
-  }
+		for (Element pkgElement : packageElements) {
+			UMLPackageBean umlPkg = jdomXmiTransformer.toUMLPackage(pkgElement);
+			result.add(umlPkg);
 
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(pkgElement);
+			for (UMLTaggedValue tv : taggedValues) {
+				umlPkg.addTaggedValue(tv);
+			}
 
-  
-  protected abstract List<UMLAttribute> doAttributes(Element elt);
+			for (UMLPackageBean pkg : doPackages(pkgElement)) {
+				umlPkg.addPackage(pkg);
+			}
+			for (UMLClassBean clazz : doClasses(pkgElement)) {
+				umlPkg.addClass(clazz);
+			}
+			for (UMLInterfaceBean interfaze : doInterfaces(pkgElement)) {
+				umlPkg.addInterface(interfaze);
+			}			
+		}
 
-  protected abstract List<UMLTaggedValue> doTaggedValues(Element elt);
+		return result;
 
-  protected abstract List<UMLAssociation> doAssociations(Element elt) throws JaxenException;
+	}
 
-  protected abstract List<UMLGeneralization> doGeneralizations(Element elt) throws JaxenException;
+	private List<UMLClassBean> doClasses(Element elt) {
+		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
 
-  protected abstract List<UMLDependency> doDependencies(Element elt) throws JaxenException;
+		List<Element> classElements = (List<Element>) ownedElement.getChildren(
+				"Class", ns);
+		List<UMLClassBean> result = new ArrayList<UMLClassBean>();
 
-  protected abstract List<UMLDatatype> doDataTypes(Element elt);
+		for (Element classElement : classElements) {
+			UMLClassBean umlClass = jdomXmiTransformer.toUMLClass(classElement,
+					ns);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(classElement);
+			for (UMLTaggedValue tv : taggedValues) {
+				umlClass.addTaggedValue(tv);
+			}
+
+			List<UMLAttribute> atts = doAttributes(classElement);
+			for (UMLAttribute att : atts) {
+				umlClass.addAttribute(att);
+			}
+
+			idClassMap.put(umlClass.getModelId(), umlClass);
+			result.add(umlClass);
+
+		}
+
+		return result;
+
+	}
+
+	private List<UMLInterfaceBean> doInterfaces(Element elt) {
+		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+		Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
+
+		List<Element> interfaceElements = (List<Element>) ownedElement
+				.getChildren("Interface", ns);
+		List<UMLInterfaceBean> result = new ArrayList<UMLInterfaceBean>();
+
+		for (Element interfaceElement : interfaceElements) {
+			UMLInterfaceBean umlInterface = jdomXmiTransformer.toUMLInterface(
+					interfaceElement, ns);
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(interfaceElement);
+			for (UMLTaggedValue tv : taggedValues) {
+				umlInterface.addTaggedValue(tv);
+			}
+
+			List<UMLAttribute> atts = doAttributes(interfaceElement);
+			for (UMLAttribute att : atts) {
+				umlInterface.addAttribute(att);
+			}
+
+			idInterfaceMap.put(umlInterface.getModelId(), umlInterface);
+			result.add(umlInterface);
+
+		}
+
+		return result;
+
+	}
+
+	protected abstract List<UMLAttribute> doAttributes(Element elt);
+
+	protected abstract List<UMLTaggedValue> doTaggedValues(Element elt);
+
+	protected abstract List<UMLAssociation> doAssociations(Element elt)
+			throws JaxenException;
+
+	protected abstract List<UMLGeneralization> doGeneralizations(Element elt)
+			throws JaxenException;
+
+	protected abstract List<UMLDependency> doDependencies(Element elt)
+			throws JaxenException;
+
+	protected abstract List<UMLDatatype> doDataTypes(Element elt);
 }

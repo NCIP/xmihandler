@@ -3,6 +3,8 @@ package gov.nih.nci.ncicb.xmiinout.writer;
 public interface UMLWriter {
   
   public UMLClassWriter getUMLClassWriter();
+  
+  public UMLInterfaceWriter getUMLInterfaceWriter();
 
   public UMLAttributeWriter getUMLAttributeWriter();
 

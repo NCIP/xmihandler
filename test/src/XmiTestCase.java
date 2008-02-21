@@ -4,7 +4,9 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLAssociationEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLAttribute;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
@@ -394,7 +396,22 @@ public class XmiTestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Generalization: " + gen.getSubtype().getName() + " --> " + gen.getSupertype().getName());
+		String subtypeName = null;
+		String supertypeName = null;
+		
+		if (gen.getSubtype() instanceof UMLClass) {
+			subtypeName = ((UMLClass)gen.getSubtype()).getName();
+		} else {
+			subtypeName = ((UMLInterface)gen.getSubtype()).getName();
+		}
+		
+		if (gen.getSupertype() instanceof UMLClass) {
+			supertypeName = ((UMLClass)gen.getSupertype()).getName();
+		} else {
+			supertypeName = ((UMLInterface)gen.getSupertype()).getName();
+		}
+		
+		printInColor(GREEN, "Generalization: " + subtypeName + " --> " + supertypeName);
 		System.out.println("");
 	}
 
@@ -403,8 +420,31 @@ public class XmiTestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, "Dependency: " + ((UMLClass)dep.getClient()).getName() + " --> " + ((UMLClass)dep.getSupplier()).getName() + "; Stereotype: " + dep.getStereotype());
+		UMLDependencyEnd clientEnd = dep.getClient();
+		UMLDependencyEnd supplierEnd = dep.getSupplier();
+		
+		String clientName = null;
+		String supplierName = null;
+		
+		if (clientEnd instanceof UMLClass){
+			clientName = ((UMLClass)(clientEnd)).getName();
+		} else if (clientEnd instanceof UMLInterface){
+			clientName = ((UMLInterface)(clientEnd)).getName();
+		}
+		
+		if (supplierEnd instanceof UMLClass){
+			supplierName = ((UMLClass)(supplierEnd)).getName();
+		} else if (supplierEnd instanceof UMLInterface){
+			supplierName = ((UMLInterface)(supplierEnd)).getName();
+		}
+		
+		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());	
+
 		System.out.println("");
+
+		for(UMLTaggedValue tv : dep.getTaggedValues()) {
+			printTaggedValue(tv, pkgDepth);
+		}    
 	}
 
 	private void printAttribute(UMLAttribute att, int pkgDepth) {

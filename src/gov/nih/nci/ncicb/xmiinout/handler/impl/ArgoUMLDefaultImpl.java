@@ -9,6 +9,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
@@ -19,6 +20,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLGeneralizationBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
@@ -58,6 +60,8 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
   protected Element rootElement;
   
   protected Map<String, UMLClassBean> idClassMap = new HashMap<String, UMLClassBean>();
+  
+  protected Map<String, UMLInterfaceBean> idInterfaceMap = new HashMap<String, UMLInterfaceBean>();
 
   protected ArgoJDomXmiTransformer argoJDomXmiTransformer;
 
@@ -137,7 +141,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
       logger.debug("Model Name:  " + model.getName());
 
-      for(UMLTagDefinitionBean def : doTagDefinitions(elt, ns)) {
+      for(UMLTagDefinitionBean def : doTagDefinitions(rootElement, ns)) {
         argoJDomXmiTransformer.addTagDefinition(def);
       }
 
@@ -147,7 +151,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       }
 			
 
-      for(UMLStereotypeDefinitionBean stereotype : doStereotypeDefinitions(elt, ns)) {
+      for(UMLStereotypeDefinitionBean stereotype : doStereotypeDefinitions(rootElement, ns)) {
         argoJDomXmiTransformer.addStereotypeDefinition(stereotype);
       }			
 
@@ -157,6 +161,10 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
       for(UMLClass clazz : doClasses(elt, ns)) {
         model.addClass(clazz);
+      }
+      
+      for(UMLInterface interfaze : doInterfaces(elt, ns)) {
+        model.addInterface(interfaze);
       }
 
       for(UMLGeneralization gen : doGeneralizations(elt, ns)) {
@@ -213,27 +221,26 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
   }
 
-  protected List<UMLTagDefinitionBean> doTagDefinitions(Element elt, Namespace ns) {
-    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);	    
+  protected List<UMLTagDefinitionBean> doTagDefinitions(Element rootElement, Namespace ns) throws JaxenException {
+ 
+	  List<UMLTagDefinitionBean> result = new ArrayList<UMLTagDefinitionBean>();
+	  String xpath = "//*[local-name()='TagDefinition']";
 
-    if (ownedElement == null){
-      logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
-      return (List)new ArrayList();
-    }
+	  JDOMXPath path = new JDOMXPath(xpath);
+	  List<Element> tdElements = path.selectNodes(rootElement);
+	  
+	  logger.debug("TagDefinition Elements found: " + tdElements.size());
 
-    List<UMLTagDefinitionBean> result = new ArrayList<UMLTagDefinitionBean>();
+	  for(Element tdElt : tdElements) {
+		  if (tdElt.getAttribute("name") != null){
+			  UMLTagDefinitionBean td = argoJDomXmiTransformer.toUMLTagDefinition(tdElt);
+			  logger.debug("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
+			  if(td != null)
+				  result.add(td);
+		  }
+	  }
 
-    List<Element> tdElements = (List<Element>)ownedElement.getChildren("TagDefinition", ns);
-    logger.debug("TagDefinition Elements found: " + tdElements.size());
-
-    for(Element tdElt : tdElements) {
-      UMLTagDefinitionBean td = argoJDomXmiTransformer.toUMLTagDefinition(tdElt);
-      logger.debug("TagDefinition: " + td.getName() + ", xmi.id: " + td.getXmiId());
-      if(td != null)
-        result.add(td);
-    }
-
-    return result;
+	  return result;
   }
 
   protected List<UMLPackageBean> doPackages(Element elt, Namespace ns) {
@@ -262,8 +269,13 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       for(UMLPackageBean pkg : doPackages(pkgElement, ns)) {
         umlPkg.addPackage(pkg);
       }
+      
       for(UMLClassBean clazz : doClasses(pkgElement, ns)) {
         umlPkg.addClass(clazz);
+      }
+      
+      for(UMLInterfaceBean interfaze : doInterfaces(pkgElement, ns)) {
+          umlPkg.addInterface(interfaze);
       }
     }
 
@@ -303,7 +315,39 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
     return result;
 
   }
+  
+  protected List<UMLInterfaceBean> doInterfaces(Element elt, Namespace ns) {
+	    Element ownedElement = elt.getChild("Namespace.ownedElement", ns);
 
+	    if (ownedElement == null){
+	      logger.debug("ownedElement is null for Element " + elt.getAttributeValue("name"));
+	      return (List)new ArrayList();
+	    }
+
+	    List<Element> interfaceElements = (List<Element>)ownedElement.getChildren("Interface", ns);
+	    List<UMLInterfaceBean> result = new ArrayList<UMLInterfaceBean>();
+
+	    for(Element interfaceElement : interfaceElements) {
+	      UMLInterfaceBean umlInterface = argoJDomXmiTransformer.toUMLInterface(interfaceElement, ns);
+
+	      Collection<UMLTaggedValue> taggedValues = doTaggedValues(interfaceElement, ns);
+	      for(UMLTaggedValue tv : taggedValues) {
+	    	  umlInterface.addTaggedValue(tv);
+	      }
+
+	      List<UMLAttribute> atts = doAttributes(interfaceElement, ns);
+	      for(UMLAttribute att : atts) {
+	    	  umlInterface.addAttribute(att);
+	      }
+
+	      idInterfaceMap.put(umlInterface.getModelId(), umlInterface);
+	      result.add(umlInterface);
+
+	    }
+
+	    return result;
+
+	  }
 
   protected List<UMLDatatype> doDataTypes(Element modelElt, Namespace ns) {
     Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);
@@ -322,19 +366,23 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
   }
 	
-  protected List<UMLStereotypeDefinitionBean> doStereotypeDefinitions(Element modelElt, Namespace ns) {
-    Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);
+  protected List<UMLStereotypeDefinitionBean> doStereotypeDefinitions(Element rootElement, Namespace ns) throws JaxenException {
+	  
+	  String xpath = "//*[local-name()='Stereotype']";
 
-    List<Element> typeElements = (List<Element>)ownedElement.getChildren("Stereotype", ns);
+	  JDOMXPath path = new JDOMXPath(xpath);
+	  List<Element> typeElements = path.selectNodes(rootElement);
 
-    logger.debug("Stereotype Elements size: " + typeElements.size());
+	  logger.debug("Stereotype Elements size: " + typeElements.size());
 
-    List<UMLStereotypeDefinitionBean> result = new ArrayList<UMLStereotypeDefinitionBean>();
+	  List<UMLStereotypeDefinitionBean> result = new ArrayList<UMLStereotypeDefinitionBean>();
 
-    for(Element typeElt : typeElements) {
-      result.add(argoJDomXmiTransformer.toUMLStereotypeDefinition(typeElt));
-    }
-    return result;
+	  for(Element typeElt : typeElements) {
+		  if (typeElt.getAttribute("name") != null){
+			  result.add(argoJDomXmiTransformer.toUMLStereotypeDefinition(typeElt));
+		  }
+	  }
+	  return result;
 
   }	
 
@@ -385,6 +433,27 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
     JDOMXPath path = new JDOMXPath(xpath);
     List<Element> depElts = path.selectNodes(rootElement);
+    
+    
+//   Interface realizations in Argo are saved as an Abstraction; e.g.:
+//
+//    <UML:Abstraction xmi.id = '-64--88-1-103-8238f4:11838536527:-8000:000000000000147D'
+//        name = 'Realization:  Dog -&gt; Carnivora' isSpecification = 'false'>
+//        <UML:ModelElement.stereotype>
+//          <UML:Stereotype xmi.idref = '-64--88-1-103-8238f4:1183378f56e:-8000:000000000000143D'/>
+//        </UML:ModelElement.stereotype>
+//        <UML:Dependency.client>
+//          <UML:Class xmi.idref = '-64--88-1-103-8238f4:1183378f56e:-8000:0000000000001422'/>
+//        </UML:Dependency.client>
+//        <UML:Dependency.supplier>
+//          <UML:Interface xmi.idref = '-64--88-1-103-8238f4:1183378f56e:-8000:0000000000001434'/>
+//        </UML:Dependency.supplier>
+//      </UML:Abstraction>
+    
+    xpath = "//*[local-name()='Abstraction']";
+
+    path = new JDOMXPath(xpath);
+    depElts.addAll(path.selectNodes(rootElement));
 
     logger.debug("Dependency Elements Found: " + depElts.size());
 
@@ -399,11 +468,19 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
       Element clientElement = depElt.getChild("Dependency.client", ns);
       Element clientClassElement = clientElement.getChild("Class", ns);
+      
+      if (clientClassElement == null) {//see if we are dealing with an interface instead of a class
+    	  clientClassElement = clientElement.getChild("Interface", ns);
+      }
 
       logger.debug("clientClassElement: " + clientClassElement.getAttributeValue("xmi.idref")); 
 
       Element supplierElement = depElt.getChild("Dependency.supplier", ns);
       Element supplierClassElement = supplierElement.getChild("Class", ns);
+      
+      if (supplierClassElement == null) {//see if we are dealing with an interface instead of a class
+    	  supplierClassElement = supplierElement.getChild("Interface", ns);
+      }
 
       logger.debug("supplierClassElement: " + supplierClassElement.getAttributeValue("xmi.idref"));  
 
@@ -413,13 +490,22 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       UMLDependencyEnd supplier = idClassMap.get(supplierClassElement.getAttributeValue("xmi.idref"));
       logger.debug("supplier: " + supplier);
 
-      if(client == null) {
-        logger.debug("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-        continue;
+      if(client == null) {//    	see if we are dealing with an interface instead of a class
+    	  client = idInterfaceMap.get(clientClassElement.getAttributeValue("xmi.idref"));
+
+    	  if (client==null){
+    		  logger.debug("Can't find client for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+    		  continue;
+    	  }
       }
-      if(supplier == null) {
-        logger.debug("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
-        continue;
+      
+      if(supplier == null) {//    	see if we are dealing with an interface instead of a class
+    	  supplier = idInterfaceMap.get(supplierClassElement.getAttributeValue("xmi.idref"));
+
+    	  if (supplier == null){
+    		  logger.debug("Can't find supplier for dependency: " + depElt.getAttribute("xmi.id") + " -- only dependencies to classes are supported -- ignoring");
+    		  continue;
+    	  }
       }
 
       Attribute nameAtt = depElt.getAttribute("name");
@@ -478,25 +564,40 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
       if (genElt.getAttributeValue("xmi.id") == null ) { continue; }
 
-      //			logger.debug("genElt.getAttributeValue('xmi.id'): " + genElt.getAttributeValue("xmi.id"));
+      //logger.debug("genElt.getAttributeValue('xmi.id'): " + genElt.getAttributeValue("xmi.id"));
 
       Element childElement = genElt.getChild("Generalization.child", ns);
       Element childClassElement = childElement.getChild("Class", ns);
+      
+      if (childClassElement == null){//Check if a Generalization between interfaces
+    	  childClassElement = childElement.getChild("Interface", ns);
+      }
 
-      //			logger.debug("*** childClassElement: " + childClassElement.getAttributeValue("xmi.idref")); 
+      //logger.debug("*** childClassElement: " + childClassElement.getAttributeValue("xmi.idref")); 
 
       Element parentElement = genElt.getChild("Generalization.parent", ns);
       Element parentClassElement = parentElement.getChild("Class", ns);
+      
+      if (parentClassElement == null){//Check if a Generalization between interfaces
+    	  parentClassElement = parentElement.getChild("Interface", ns);
+      }      
 
-      //			logger.debug("*** parentClassElement: " + parentClassElement.getAttributeValue("xmi.idref"));  
+      //logger.debug("*** parentClassElement: " + parentClassElement.getAttributeValue("xmi.idref"));  
 
-      UMLClassBean subClass = idClassMap.get(childClassElement.getAttributeValue("xmi.idref"));
-      logger.debug("*** subClass name: " + subClass.getName());
+		String subtypeId = childClassElement.getAttributeValue("xmi.idref");
+		String supertypeId = parentClassElement.getAttributeValue("xmi.idref");
+		
+		UMLClassBean subClass = idClassMap.get(subtypeId);
+		UMLClassBean superClass = idClassMap.get(supertypeId);
+		
+		if (subClass != null && superClass != null){
+			result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
 
-      UMLClassBean superClass = idClassMap.get(parentClassElement.getAttributeValue("xmi.idref"));
-      logger.debug("*** superClass name: " + superClass.getName());      
-      //			result.add(ArgoJDomXmiTransformer.toUMLGeneralization(genElt));
-      result.add(new UMLGeneralizationBean(genElt, superClass, subClass));
+		} else {
+			UMLInterfaceBean subInterface = idInterfaceMap.get(subtypeId);
+			UMLInterfaceBean superInterface = idInterfaceMap.get(supertypeId);
+			result.add(new UMLGeneralizationBean(genElt, superInterface, subInterface));
+		}
     }    
 
     return result;
