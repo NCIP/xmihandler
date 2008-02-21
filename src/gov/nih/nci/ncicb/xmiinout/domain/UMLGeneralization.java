@@ -8,11 +8,11 @@ public interface UMLGeneralization {
   /**
    * @return the sub type, or child class
    */
-  public Object getSubtype();
+  public UMLGeneralizable getSubtype();
 
   /**
    * @return the super type, or parent class
    */
-  public Object getSupertype();
+  public UMLGeneralizable getSupertype();
 
 }

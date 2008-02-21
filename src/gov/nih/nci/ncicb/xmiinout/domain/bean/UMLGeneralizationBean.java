@@ -2,6 +2,7 @@ package gov.nih.nci.ncicb.xmiinout.domain.bean;
 
 
 import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralizable;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 
@@ -58,7 +59,7 @@ public class UMLGeneralizationBean extends JDomDomainObject implements UMLGenera
 	    throw new IllegalArgumentException("Generalization with Id: " + getId() + " has invalid subtype. A Generalization between a class and an interface is not supported.  Please correct model.");
 	  }
 
-  public Object getSubtype() {
+  public UMLGeneralizable getSubtype() {
 	  
 	  if (subClassType != null)
 		  return subClassType;
@@ -66,7 +67,7 @@ public class UMLGeneralizationBean extends JDomDomainObject implements UMLGenera
 	  return subInterfaceType;
   }
 
-  public Object getSupertype() {
+  public UMLGeneralizable getSupertype() {
 	  if (superClassType != null)
 		  return superClassType;
 		  

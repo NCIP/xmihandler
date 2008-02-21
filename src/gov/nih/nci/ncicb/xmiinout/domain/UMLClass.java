@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * UMLClass represents a Class in a UML Model
  */
-public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssociable, UMLDatatype {
+public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssociable, UMLGeneralizable, UMLDatatype {
 
   /**
    * @return the class name

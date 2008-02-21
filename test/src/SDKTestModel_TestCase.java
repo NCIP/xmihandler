@@ -442,20 +442,8 @@ public class SDKTestModel_TestCase extends TestCase {
 			System.out.print("  ");
 		System.out.print("  ");
 
-		String subtypeName = null;
-		String supertypeName = null;
-		
-		if (gen.getSubtype() instanceof UMLClass) {
-			subtypeName = ((UMLClass)gen.getSubtype()).getName();
-		} else {
-			subtypeName = ((UMLInterface)gen.getSubtype()).getName();
-		}
-		
-		if (gen.getSupertype() instanceof UMLClass) {
-			supertypeName = ((UMLClass)gen.getSupertype()).getName();
-		} else {
-			supertypeName = ((UMLInterface)gen.getSupertype()).getName();
-		}
+		String subtypeName = gen.getSubtype().getName();
+		String supertypeName = gen.getSupertype().getName();
 		
 		printInColor(GREEN, "Generalization: " + subtypeName + " --> " + supertypeName);
 		System.out.println("");
