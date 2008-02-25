@@ -93,10 +93,10 @@
             name="sdk.todo" />
     <historyfile name="" />
   </argo>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Fri Feb 22 13:20:53 PST 2008'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Feb 25 13:40:48 PST 2008'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
-      <XMI.exporterVersion>0.24(5) revised on $Date: 2006-11-06 19:55:22 +0100 (Mon, 06 Nov 2006) $ </XMI.exporterVersion>
+      <XMI.exporterVersion>0.24(5) revised on $Date: 2008/02/25 22:22:41 $ </XMI.exporterVersion>
     </XMI.documentation>
     <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
   <XMI.content>
@@ -17162,8 +17162,8 @@
                                           name = 'Canidae' visibility = 'public' isSpecification = 'false' isRoot = 'false'
                                           isLeaf = 'false' isAbstract = 'false'>
                                           <UML:GeneralizableElement.generalization>
-                                            <UML:Generalization xmi.idref = '-64--88-1-103-8238f4:11842d46956:-8000:000000000000146F'/>
                                             <UML:Generalization xmi.idref = '-64--88-1-103-8238f4:1183378f56e:-8000:000000000000143E'/>
+                                            <UML:Generalization xmi.idref = '-64--88-1-103-8238f4:11842d46956:-8000:000000000000146F'/>
                                           </UML:GeneralizableElement.generalization>
                                         </UML:Interface>
                                         <UML:Interface xmi.id = '-64--88-1-103-8238f4:1183378f56e:-8000:0000000000001438'
@@ -17237,7 +17237,7 @@
                                           </UML:ModelElement.taggedValue>
                                         </UML:Interface>
                                         <UML:Interface xmi.id = '-64--88-1-103-8238f4:11842d46956:-8000:0000000000001470'
-                                          name = 'Female' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+                                          name = 'Pet' visibility = 'public' isSpecification = 'false' isRoot = 'false'
                                           isLeaf = 'false' isAbstract = 'false'/>
                                         <UML:Interface xmi.id = '-64--88-1-103-8238f4:11842d46956:-8000:0000000000001474'
                                           name = 'Mammalia' visibility = 'public' isSpecification = 'false' isRoot = 'false'
@@ -47966,7 +47966,7 @@
       strokecolor="red"
       font="Dialog"
       textsize="10"
-    >Female</text>
+    >Pet</text>
     <group name="Fig7.3"
          description="org.argouml.uml.diagram.ui.FigOperationsCompartment[481, 446, 71, 23]"
          fill="1"
