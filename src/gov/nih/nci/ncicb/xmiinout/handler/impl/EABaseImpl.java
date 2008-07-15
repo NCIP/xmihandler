@@ -148,10 +148,17 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
 			for (UMLAssociation assoc : doAssociations(elt)) {
 				model.addAssociation(assoc);
 			}
+
+                        Collection<UMLTaggedValue> taggedValues = doTaggedValues(elt);
+                        for(UMLTaggedValue tv : taggedValues) {
+                          model.addTaggedValue(tv);
+                        }
+                        
 		}
 
 		doRootTaggedValues(rootElement);
 
+                
 		// Must be done after classes for cross references.
 		jdomXmiTransformer.completeAttributes(ns);
 	}
