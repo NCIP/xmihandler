@@ -10,6 +10,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggableElement;
 import gov.nih.nci.ncicb.xmiinout.handler.HandlerEnum;
 import gov.nih.nci.ncicb.xmiinout.handler.XmiException;
 import gov.nih.nci.ncicb.xmiinout.handler.XmiHandlerFactory;
@@ -59,6 +60,15 @@ public class XmiTestCase extends TestCase {
 		}
 	}
 
+  private void testSaveModel(String filename) {
+    try {
+      handler.save(filename + ".new.xmi");
+    } catch (Exception e){
+      e.printStackTrace();
+    } // end of try-catch
+  }
+
+
 	private void testSaveModel() {
 		try {
 			handler.save(filename + ".new.xmi");
@@ -76,37 +86,76 @@ public class XmiTestCase extends TestCase {
 
 	private void suite() {
 
-		init();
+// 		init();
 
-		UMLModel model = testGetModel("EA Model");
+// 		UMLModel model = testGetModel("EA Model");
 
-		printModel(model);
+// 		printModel(model);
 
-		testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+//                testFindPackage(model, "Logical View.Logical Model.com.ludet.hr.domain");
 
-		testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
+// 		testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
-		testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+// 		testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
 
-		testGetSuperclasses(model);
+// 		testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
-		addTaggedValueToAll(model);
+// 		testGetSuperclasses(model);
 
-		addDependency(model);
+// 		addTaggedValueToAll(model);
 
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
+// 		addDependency(model);
 
-		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
+//		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
+// 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
 
-		testSaveModel();
+// 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
 
-		testLoadModel(filename + ".new.xmi");
-		model = testGetModel("EA Model");
-		printModel(model);
+// 		printModel(model);
 
+          testPkgRemoveTaggedValue();
+
+          testModelRemoveTaggedValue();
 
 	}
+
+  private void testPkgRemoveTaggedValue() {
+    init("gme_test1.xmi");
+
+    UMLModel model = testGetModel("EA Model");
+
+    testTaggedValuePresent(model, "Domain Model.Domain Objects.test", "NCI_GME_XML_NAMESPACE", true);
+    
+    testRemoveTaggedValue(model, "Domain Model.Domain Objects.test", "NCI_GME_XML_NAMESPACE");
+    
+    testSaveModel("gme_test1.xmi");
+    
+    testLoadModel("gme_test1.xmi.new.xmi");
+    
+    model = testGetModel("EA Model");
+    
+    testTaggedValuePresent(model, "Domain Model.Domain Objects", "NCI_GME_XML_NAMESPACE", false);
+    
+  }
+
+  private void testModelRemoveTaggedValue() {
+    init("gme_test1.xmi");
+
+    UMLModel model = testGetModel("EA Model");
+
+    testTaggedValuePresent(model, "NCI_GME_XML_NAMESPACE", true);
+    
+    testRemoveTaggedValue(model, "NCI_GME_XML_NAMESPACE");
+    
+    testSaveModel("gme_test1.xmi");
+    
+    testLoadModel("gme_test1.xmi.new.xmi");
+    
+    model = testGetModel("EA Model");
+    
+    testTaggedValuePresent(model, "NCI_GME_XML_NAMESPACE", false);
+    
+  }
 
 
 	private void testGetSuperclasses(UMLModel model) {
@@ -138,6 +187,13 @@ public class XmiTestCase extends TestCase {
 
 		System.out.println("Correct Package: " + result);
 	}
+  
+  private void testFindPackage(UMLModel model, String fullName) {
+    UMLPackage pkg = ModelUtil.findPackage(model, fullName);
+
+    Assert.assertNotNull("Package not found -- " + fullName, pkg);
+    
+  }
 
 	private void testFindClass(UMLModel model, String fullClassName) {
 
@@ -206,27 +262,68 @@ public class XmiTestCase extends TestCase {
 		return null;
 	}
 
-	private void testRemoveTaggedValue(UMLModel model, String fullName, String tvName) {
-		UMLClass clazz = ModelUtil.findClass(model, fullName);
+  private void testTaggedValuePresent(UMLModel model, String fullName, String tvName, boolean present) {
+    UMLPackage pkg = ModelUtil.findPackage(model, fullName);
+    if(pkg != null) {
+      testTaggedValuePresent(pkg, tvName, present);
+    } else {
+      UMLClass clazz = ModelUtil.findClass(model, fullName);
+      
+      if(clazz != null) {
+        testTaggedValuePresent(clazz, tvName, present);
+      } else {
+        UMLAttribute att = ModelUtil.findAttribute(model, fullName);
+        if(att != null) {
+          testTaggedValuePresent(att, tvName, present);
+        } else {
+          Assert.assertTrue("testTaggedValuePresent element can't be found: " + fullName , false);
+        }
+      }
+    }
 
-		if(clazz != null)
-			clazz.removeTaggedValue(tvName);
-		else {
-			UMLAttribute att = ModelUtil.findAttribute(model, fullName);
-			att.removeTaggedValue(tvName);
-		}
+  }
+   
 
-	}
+  private void testTaggedValuePresent(UMLTaggableElement elt, String tvName, boolean present) {
+    UMLTaggedValue tv = elt.getTaggedValue(tvName);
+    
+    Assert.assertTrue("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + present, (tv == null) != present);
+    
+  }
+    
 
-	private void addTaggedValueToAll(UMLModel model) {
-		for(UMLPackage pkg : model.getPackages()) {
-			addTaggedValueToAll(pkg);
-		}
-		for(UMLClass clazz : model.getClasses()) {
-			addTaggedValueToAll(clazz);
-		}
-	}
+  private void testRemoveTaggedValue(UMLTaggableElement elt , String tvName) {
+    elt.removeTaggedValue(tvName);
+  }
 
+  private void testRemoveTaggedValue(UMLModel model, String fullName, String tvName) {
+    UMLPackage pkg = ModelUtil.findPackage(model, fullName);
+    if(pkg != null) {
+      testRemoveTaggedValue(pkg, tvName);
+    } else {
+      UMLClass clazz = ModelUtil.findClass(model, fullName);
+      if(clazz != null) {
+        testRemoveTaggedValue(clazz, tvName);
+      } else {
+        UMLAttribute att = ModelUtil.findAttribute(model, fullName);
+        if(att != null) {
+          testRemoveTaggedValue(att, tvName);
+        } else {
+          Assert.assertTrue("testRemoveTaggedValue element can't be found: " + fullName , false);
+        }
+      }
+    }
+  }
+    
+  private void addTaggedValueToAll(UMLModel model) {
+    for(UMLPackage pkg : model.getPackages()) {
+      addTaggedValueToAll(pkg);
+    }
+    for(UMLClass clazz : model.getClasses()) {
+      addTaggedValueToAll(clazz);
+    }
+  }
+  
 	private void addTaggedValueToAll(UMLPackage pkg) {
 		pkg.addTaggedValue("myPackageTaggedValue", "test package tagged Value");
 
@@ -464,6 +561,20 @@ public class XmiTestCase extends TestCase {
 
 		System.out.println();
 	}
+
+
+
+  private void init(String filename) {
+    try {
+      handler = XmiHandlerFactory.getXmiHandler(HandlerEnum.EADefault);
+      handler.load("test/testdata/" + filename);
+    } catch (XmiException e){
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
 
 	private void init() {
 		try {
