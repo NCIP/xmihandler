@@ -178,6 +178,12 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
       for(UMLAssociation assoc : doAssociations(elt, ns)) {
         model.addAssociation(assoc);
       }      
+      
+      Collection<UMLTaggedValue> taggedValues = doTaggedValues(elt, ns);
+      for(UMLTaggedValue tv : taggedValues) {
+        model.addTaggedValue(tv);
+      }
+
     }
 
     doRootTaggedValues(rootElement, ns);
