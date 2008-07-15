@@ -212,8 +212,6 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 		
     if (tdElement.getAttribute("name") == null) {
       logger.info("tagDefinition missing 'name' attribute, skipping");
-      System.out
-        .println("tagDefinition missing 'name' attribute, skipping");
       return null;
     }
 
@@ -223,7 +221,7 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
     return td;
   }
 	
-   UMLTaggedValueBean toUMLTaggedValue(Element tvElement, Namespace ns) {
+  UMLTaggedValueBean toUMLTaggedValue(Element tvElement, Namespace ns) {
     //
     // EA
     // <UML:TaggedValue tag="myClassTaggedValue" value="test 123"
@@ -238,11 +236,11 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
     // <UML:TagDefinition xmi.idref="-64--88-1-107-16925b0:1120c726d7c:-8000:0000000000003170" />
     // </UML:TaggedValue.type>
     // </UML:TaggedValue>
-
+    
     Element dataValueElement = tvElement.getChild("TaggedValue.dataValue",
                                                   ns);
     Element typeElement = tvElement.getChild("TaggedValue.type", ns);
-
+    
     if (typeElement == null) {
       logger.info("taggedValue "
                   + tvElement.getAttribute("xmi.id").getValue()
@@ -250,26 +248,30 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
       logger.debug("taggedValue "
                    + tvElement.getAttribute("xmi.id").getValue()
                    + " missing 'TagDefinition' element, skipping");
-
+      
       return null;
     }
-
+    
     if (dataValueElement == null) {
       logger.info("taggedValue missing dataValue Element, skipping");
-      System.out
-        .println("taggedValue missing dataValue Element, skipping");
       return null;
     }
-
+    
     Element tagDefinitionElement = typeElement
       .getChild("TagDefinition", ns);
+    
+//     logger.debug("*** tagDefinition name: "
+//                  + tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
+    
+//     logger.debug("*** dataValue: "
+//                  + dataValueElement.getText());
 
-    logger.debug("*** tagDefinition name: "
-                 + tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName());		
-
-    logger.debug("*** dataValue: "
-                 + dataValueElement.getText());
-
+    if(tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")) == null) {
+      logger.info("Cannot find tagDefinition with xmi.idref = " + tagDefinitionElement.getAttributeValue("xmi.idref") + " -- We are skipping the tag value pointing to it.");
+      return null;
+    }
+       
+    
     UMLTaggedValueBean tv = new UMLTaggedValueBean(tvElement,
                                                    tagDefinitionsByXmiIdMap.get(tagDefinitionElement.getAttributeValue("xmi.idref")).getName(),
                                                    dataValueElement.getText());
