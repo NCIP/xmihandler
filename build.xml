@@ -86,6 +86,7 @@
       use="true"
       windowtitle="Xmi In Out">
 
+
       <packageset dir="src" defaultexcludes="yes">
         <include name="gov/nih/nci/ncicb/xmiinout/domain" />
         <include name="gov/nih/nci/ncicb/xmiinout/handler" />
@@ -100,22 +101,21 @@
     </javadoc>
   </target>
 
-  <target name="jUnit" depends="clean, prepare">
-
-<!--  -->
-  	
-  	<java classname="XmiTestCase"
+  <target name="jUnit" depends="clean, prepare, testEA, testArgo">
+    
+    <java classname="XmiTestCase"
       fork="yes"
       >
       <arg value="test/testdata/test-with-dependency.xmi"/>
       <classpath refid="test.classpath"/>
-	  <sysproperty key="log4j.configuration"
-			value="${log4j.dir}/log4j.properties"/>
+      
+      <sysproperty key="log4j.configuration"
+        value="${log4j.dir}/log4j.properties"/>
     </java>
     
-<!-- -->
+  </target>
 
-<!-- -->
+  <target name="testArgo" depends="clean, prepare">
     <java classname="SDKTestModel_TestCase"
       fork="yes"
       >
@@ -127,21 +127,32 @@
   	  <sysproperty key="log4j.configuration"
   			value="${log4j.dir}/log4j.properties"/>
     </java>
-<!-- -->  	
-<!-- -->
-	<java classname="SDKTestModel_TestCase"
+  </target>
+
+
+  <target name="testEA" depends="clean, prepare">
+    <java classname="SDKTestModel_TestCase"
       fork="yes"
       >
       <arg value="test/testdata/sdk.xmi"/>
       <arg value="EADefault"/>
       <arg value=".new.xmi"/>    
-	  <arg value="EA Model"/>    		
+      <arg value="EA Model"/>    		
       <classpath refid="test.classpath"/>
-  	  <sysproperty key="log4j.configuration"
-  			value="${log4j.dir}/log4j.properties"/>
+      <sysproperty key="log4j.configuration"
+        value="${log4j.dir}/log4j.properties"/>
     </java>  	
-	
-<!-- -->
+  </target>
+
+  <target name="testEA2" depends="prepare">
+    <java classname="XmiTestCase"
+      fork="yes"
+      >
+      <arg value="test/testdata/test-with-dependency.xmi"/>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="log4j.configuration"
+        value="${log4j.dir}/log4j.properties"/>
+    </java>  	
   </target>
 
 </project>
