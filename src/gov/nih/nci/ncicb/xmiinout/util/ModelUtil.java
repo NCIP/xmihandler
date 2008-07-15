@@ -6,6 +6,37 @@ import java.util.*;
 
 public class ModelUtil {
 
+  /**
+   * Util method to find a package in a model given it's fully qualified name. <br>
+   * Packages are separated by '.'. <br> Sample query string could be:
+   * <br> "gov.nih.nci.xmiinout.domain"
+   */
+  public static UMLPackage findPackage(UMLModel model, String fullName) {
+    String[] queries = fullName.split("\\.");
+
+    UMLPackage pkg = null;
+    
+    for(int i = 0; i<queries.length; i++) {
+      if(pkg == null) {
+        pkg = model.getPackage(queries[i]);
+        if(pkg == null)
+          return null;
+      } else {
+        if(i == queries.length - 1) {
+          return pkg.getPackage(queries[i]);
+        } else {
+          UMLPackage newPkg = pkg.getPackage(queries[i]);
+          if(newPkg != null)
+            pkg = newPkg;
+          else return null;
+        }
+      }
+    }
+
+    return null;
+  }
+  
+
   
   /**
    * Util method to find a class in a model given it's fully qualified name. <br>
@@ -177,7 +208,7 @@ public class ModelUtil {
   }
   
   /**
-   * returns an array of classes this class extends from, or an empty array if none.
+   * returns an array of interfaces this Interface extends from, or an empty array if none.
    */ 
   public static UMLInterface[] getSuperInterfaces(UMLInterface interfaze) {
 
