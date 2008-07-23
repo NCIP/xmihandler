@@ -26,20 +26,22 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 public class XmiTestCase extends TestCase {
+  
+  private static Logger logger = Logger.getLogger(XmiTestCase.class.getName());
 
-	private XmiInOutHandler handler = null;
-	private String filename;
-
-	private boolean noColor = false;
-
-	static final short RED = 31, GREEN = 32,
-	BLACK = 30, YELLOW = 33, BLUE = 34,
-	MAGENTA = 35, CYAN = 36, WHITE = 37; 
-
-	public XmiTestCase(String filename) {
-		this.filename = filename;
-	}
-	private void testGetModel() {
+  private XmiInOutHandler handler = null;
+  private String filename;
+  
+  private boolean noColor = false;
+  
+  static final short RED = 31, GREEN = 32,
+    BLACK = 30, YELLOW = 33, BLUE = 34,
+    MAGENTA = 35, CYAN = 36, WHITE = 37; 
+  
+  public XmiTestCase(String filename) {
+    this.filename = filename;
+  }
+  private void testGetModel() {
 		UMLModel model = handler.getModel();
 		System.out.println("Model: " + model.getName());
 	}
@@ -115,7 +117,7 @@ public class XmiTestCase extends TestCase {
 
           testClassRemoveTaggedValue();
 
-          testPkgRemoveTaggedValue();
+          testPackageTaggedValue();
 
           testModelRemoveTaggedValue();
 
@@ -142,27 +144,33 @@ public class XmiTestCase extends TestCase {
     
   }
 
-  private void testPkgRemoveTaggedValue() {
+  private void testPackageTaggedValue() {
+    logger.info("Package Test Suite");
+
     init("XMI_Handler_TEST.xmi");
 
     UMLModel model = testGetModel("EA Model");
 
+    // testing Presence
+    logger.info("Test TV Presence");
     testTaggedValuePresent(model, "Domain Model.hr", "TEST_PACKAGE_TV", "test hr");
     testTaggedValuePresent(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV", "test domain");
     testTaggedValuePresent(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV", "test companies");
     testTaggedValuePresent(model, "Domain Model.hr.common", "TEST_PACKAGE_TV", "test common");
     testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", "test Domain Model");
+
     
+    // testing Remove
+    logger.info("Test TV Remove");
     testRemoveTaggedValue(model, "Domain Model.hr", "TEST_PACKAGE_TV");
     testRemoveTaggedValue(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV");
     testRemoveTaggedValue(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV");
     testRemoveTaggedValue(model, "Domain Model.hr.common", "TEST_PACKAGE_TV");
     testRemoveTaggedValue(model, "Domain Model", "TEST_PACKAGE_TV");
-    
+
     testSaveModel("XMI_Handler_TEST.xmi");
     
     testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
-    
     model = testGetModel("EA Model");
     
     testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", false);
@@ -170,8 +178,32 @@ public class XmiTestCase extends TestCase {
     testTaggedValuePresent(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV", false);
     testTaggedValuePresent(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV", false);
     testTaggedValuePresent(model, "Domain Model.hr.common", "TEST_PACKAGE_TV", false);
+
+
+    // testing ADD
+    logger.info("Test TV Add");
+    testLoadModel("XMI_Handler_TEST.xmi");
+    model = testGetModel("EA Model");
+
+    testAddTaggedValue(model, "Domain Model", "NEW_PACKAGE_TV", "new domain model");
+    testAddTaggedValue(model, "Domain Model.hr", "NEW_PACKAGE_TV", "new hr");
+    testAddTaggedValue(model, "Domain Model.hr.domain", "NEW_PACKAGE_TV", "new domain");
+    testAddTaggedValue(model, "Domain Model.hr.domain.companies", "NEW_PACKAGE_TV", "new companies");
+    testAddTaggedValue(model, "Domain Model.hr.common", "NEW_PACKAGE_TV", "new common");
     
+    testSaveModel("XMI_Handler_TEST.xmi");
+    
+    testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
+    model = testGetModel("EA Model");
+    
+    testTaggedValuePresent(model, "Domain Model", "NEW_PACKAGE_TV", "new domain model");
+    testTaggedValuePresent(model, "Domain Model.hr", "NEW_PACKAGE_TV", "new hr");
+    testTaggedValuePresent(model, "Domain Model.hr.domain", "NEW_PACKAGE_TV", "new domain");
+    testTaggedValuePresent(model, "Domain Model.hr.domain.companies", "NEW_PACKAGE_TV", "new companies");
+    testTaggedValuePresent(model, "Domain Model.hr.common", "NEW_PACKAGE_TV", "new common");
+
   }
+
 
   private void testModelRemoveTaggedValue() {
     init("gme_test1.xmi");
@@ -341,7 +373,8 @@ public class XmiTestCase extends TestCase {
 
   private void testTaggedValuePresent(UMLTaggableElement elt, String tvName, String value) {
     UMLTaggedValue tv = elt.getTaggedValue(tvName);
-    
+
+    Assert.assertNotNull("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + value, tv);
     Assert.assertEquals("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + value, tv.getValue(), value);
     
     
@@ -377,6 +410,30 @@ public class XmiTestCase extends TestCase {
       }
     }
   }
+
+  private void testAddTaggedValue(UMLTaggableElement elt, String tvName, String tvValue) {
+    elt.addTaggedValue(tvName, tvValue);
+  }
+
+  private void testAddTaggedValue(UMLModel model, String fullName, String tvName, String tvValue) {
+    UMLPackage pkg = ModelUtil.findPackage(model, fullName);
+    if(pkg != null) {
+      testAddTaggedValue(pkg, tvName, tvValue);
+    } else {
+      UMLClass clazz = ModelUtil.findClass(model, fullName);
+      if(clazz != null) {
+        testAddTaggedValue(clazz, tvName, tvValue);
+      } else {
+        UMLAttribute att = ModelUtil.findAttribute(model, fullName);
+        if(att != null) {
+          testAddTaggedValue(att, tvName, tvValue);
+        } else {
+          Assert.assertTrue("testAddTaggedValue element can't be found: " + fullName , false);
+        }
+      }
+    }
+  }
+
     
   private void addTaggedValueToAll(UMLModel model) {
     for(UMLPackage pkg : model.getPackages()) {
