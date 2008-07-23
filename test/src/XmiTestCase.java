@@ -50,19 +50,19 @@ public class XmiTestCase extends TestCase {
 		return model;
 	}
 
-	private void testLoadModel(String f) {
-		try {
-			handler.load(f);
-		} catch (XmiException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
+  private void testLoadModel(String f) {
+    try {
+      handler.load("test/testdata/" + f);
+    } catch (XmiException e){
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
   private void testSaveModel(String filename) {
     try {
-      handler.save(filename + ".new.xmi");
+      handler.save("test/testdata/" + filename + ".new.xmi");
     } catch (Exception e){
       e.printStackTrace();
     } // end of try-catch
@@ -113,28 +113,63 @@ public class XmiTestCase extends TestCase {
 
 // 		printModel(model);
 
+          testClassRemoveTaggedValue();
+
           testPkgRemoveTaggedValue();
 
           testModelRemoveTaggedValue();
 
 	}
 
-  private void testPkgRemoveTaggedValue() {
-    init("gme_test1.xmi");
+
+
+  private void testClassRemoveTaggedValue() {
+    init("XMI_Handler_TEST.xmi");
 
     UMLModel model = testGetModel("EA Model");
 
-    testTaggedValuePresent(model, "Domain Model.Domain Objects.test", "NCI_GME_XML_NAMESPACE", true);
+    testTaggedValuePresent(model, "Domain Model.hr.domain.Company", "CADSR_Description", true);
     
-    testRemoveTaggedValue(model, "Domain Model.Domain Objects.test", "NCI_GME_XML_NAMESPACE");
+    testRemoveTaggedValue(model, "Domain Model.hr.domain.Company", "CADSR_Description");
     
-    testSaveModel("gme_test1.xmi");
+    testSaveModel("XMI_Handler_TEST.xmi");
     
-    testLoadModel("gme_test1.xmi.new.xmi");
+    testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
     
     model = testGetModel("EA Model");
     
-    testTaggedValuePresent(model, "Domain Model.Domain Objects", "NCI_GME_XML_NAMESPACE", false);
+    testTaggedValuePresent(model, "Domain Model.hr.domain.Company", "CADSR_Description", false);
+    
+  }
+
+  private void testPkgRemoveTaggedValue() {
+    init("XMI_Handler_TEST.xmi");
+
+    UMLModel model = testGetModel("EA Model");
+
+    testTaggedValuePresent(model, "Domain Model.hr", "TEST_PACKAGE_TV", "test hr");
+    testTaggedValuePresent(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV", "test domain");
+    testTaggedValuePresent(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV", "test companies");
+    testTaggedValuePresent(model, "Domain Model.hr.common", "TEST_PACKAGE_TV", "test common");
+    testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", "test Domain Model");
+    
+    testRemoveTaggedValue(model, "Domain Model.hr", "TEST_PACKAGE_TV");
+    testRemoveTaggedValue(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV");
+    testRemoveTaggedValue(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV");
+    testRemoveTaggedValue(model, "Domain Model.hr.common", "TEST_PACKAGE_TV");
+    testRemoveTaggedValue(model, "Domain Model", "TEST_PACKAGE_TV");
+    
+    testSaveModel("XMI_Handler_TEST.xmi");
+    
+    testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
+    
+    model = testGetModel("EA Model");
+    
+    testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", false);
+    testTaggedValuePresent(model, "Domain Model.hr", "TEST_PACKAGE_TV", false);
+    testTaggedValuePresent(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV", false);
+    testTaggedValuePresent(model, "Domain Model.hr.domain.companies", "TEST_PACKAGE_TV", false);
+    testTaggedValuePresent(model, "Domain Model.hr.common", "TEST_PACKAGE_TV", false);
     
   }
 
@@ -262,6 +297,27 @@ public class XmiTestCase extends TestCase {
 		return null;
 	}
 
+
+  private void testTaggedValuePresent(UMLModel model, String fullName, String tvName, String value) {
+    UMLPackage pkg = ModelUtil.findPackage(model, fullName);
+    if(pkg != null) {
+      testTaggedValuePresent(pkg, tvName, value);
+    } else {
+      UMLClass clazz = ModelUtil.findClass(model, fullName);
+      
+      if(clazz != null) {
+        testTaggedValuePresent(clazz, tvName, value);
+      } else {
+        UMLAttribute att = ModelUtil.findAttribute(model, fullName);
+        if(att != null) {
+          testTaggedValuePresent(att, tvName, value);
+        } else {
+          Assert.assertTrue("testTaggedValuePresent element can't be found: " + fullName , false);
+        }
+      }
+    }
+  }
+
   private void testTaggedValuePresent(UMLModel model, String fullName, String tvName, boolean present) {
     UMLPackage pkg = ModelUtil.findPackage(model, fullName);
     if(pkg != null) {
@@ -282,7 +338,14 @@ public class XmiTestCase extends TestCase {
     }
 
   }
-   
+
+  private void testTaggedValuePresent(UMLTaggableElement elt, String tvName, String value) {
+    UMLTaggedValue tv = elt.getTaggedValue(tvName);
+    
+    Assert.assertEquals("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + value, tv.getValue(), value);
+    
+    
+  }
 
   private void testTaggedValuePresent(UMLTaggableElement elt, String tvName, boolean present) {
     UMLTaggedValue tv = elt.getTaggedValue(tvName);
