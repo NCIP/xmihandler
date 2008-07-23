@@ -21,6 +21,9 @@ public class ModelUtil {
         pkg = model.getPackage(queries[i]);
         if(pkg == null)
           return null;
+        if(i == queries.length - 1) {
+          return pkg;
+        }
       } else {
         if(i == queries.length - 1) {
           return pkg.getPackage(queries[i]);
