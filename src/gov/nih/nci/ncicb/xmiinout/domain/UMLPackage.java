@@ -45,4 +45,12 @@ public interface UMLPackage extends UMLTaggableElement {
    */
   public UMLClass getClass(String name);
 
+  /**
+   * Convenient method to retrieve one Interface by it's name.
+   *
+   * @param name the name of the class to find
+   * @return The Interface with requested name or null if none exists
+   */
+  public UMLInterface getInterface(String name);
+
 }

@@ -80,6 +80,47 @@ public class JDomEAXmiWriter implements UMLWriter {
 
       };
   }
+  
+	public UMLOperationWriter getUMLOperationWriter() {
+		return new UMLOperationWriter() {
+
+			public UMLTaggedValue writeTaggedValue(UMLOperation pkg,
+					UMLTaggedValue tv) {
+				UMLOperationBean pkgBean = (UMLOperationBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				return new OperationTaggedValueWriter().addTaggedValue(pkgElt, tv);
+			}
+
+			public void removeTaggedValue(UMLOperation pkg, UMLTaggedValue tv) {
+				UMLOperationBean pkgBean = (UMLOperationBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				new GenericTaggedValueWriter().removeTaggedValue(pkgElt, tv);
+			}
+		};
+	}
+  
+	public UMLOperationParameterWriter getUMLOperationParameterWriter() {
+		return new UMLOperationParameterWriter() {
+
+			public UMLTaggedValue writeTaggedValue(UMLOperationParameter pkg,
+					UMLTaggedValue tv) {
+				UMLOperationParameterBean pkgBean = (UMLOperationParameterBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				return new OperationParameterTaggedValueWriter().addTaggedValue(pkgElt, tv);
+			}
+
+			public void removeTaggedValue(UMLOperationParameter pkg, UMLTaggedValue tv) {
+				UMLOperationParameterBean pkgBean = (UMLOperationParameterBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				new GenericTaggedValueWriter().removeTaggedValue(pkgElt, tv);
+			}
+		};
+	}
+  
 
   public UMLAssociationWriter getUMLAssociationWriter() {
     return new UMLAssociationWriter() {
@@ -510,4 +551,61 @@ public class JDomEAXmiWriter implements UMLWriter {
 		}
 	}
 
+	class OperationTaggedValueWriter {
+		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
+			Namespace ns = elt.getNamespace();
+			List<Element> meTvElts = (List<Element>) elt.getChildren(
+					"ModelElement.taggedValue", ns);
+
+			Element meTvElt = null;
+			if (meTvElts.size() > 0)
+				meTvElt = meTvElts.get(0);
+			else {
+				meTvElt = new Element("ModelElement.taggedValue", ns);
+				elt.addContent(meTvElt);
+			}
+
+			Element newTvElt = new Element("TaggedValue", ns);
+			newTvElt.setAttribute("tag", tv.getName());
+			newTvElt.setAttribute("value", tv.getValue());
+			newTvElt.setAttribute("xmi.id", "EAID_"
+					+ java.util.UUID.randomUUID().toString().replace('-', '_')
+							.toUpperCase());
+
+			meTvElt.addContent(newTvElt);
+
+			tv = new UMLTaggedValueBean(newTvElt, tv.getName(), tv.getValue());
+
+			return tv;
+		}
+	}
+
+	class OperationParameterTaggedValueWriter {
+		public UMLTaggedValue addTaggedValue(Element elt, UMLTaggedValue tv) {
+			Namespace ns = elt.getNamespace();
+			List<Element> meTvElts = (List<Element>) elt.getChildren(
+					"ModelElement.taggedValue", ns);
+
+			Element meTvElt = null;
+			if (meTvElts.size() > 0)
+				meTvElt = meTvElts.get(0);
+			else {
+				meTvElt = new Element("ModelElement.taggedValue", ns);
+				elt.addContent(meTvElt);
+			}
+
+			Element newTvElt = new Element("TaggedValue", ns);
+			newTvElt.setAttribute("tag", tv.getName());
+			newTvElt.setAttribute("value", tv.getValue());
+			newTvElt.setAttribute("xmi.id", "EAID_"
+					+ java.util.UUID.randomUUID().toString().replace('-', '_')
+							.toUpperCase());
+
+			meTvElt.addContent(newTvElt);
+
+			tv = new UMLTaggedValueBean(newTvElt, tv.getName(), tv.getValue());
+
+			return tv;
+		}
+	}
 }

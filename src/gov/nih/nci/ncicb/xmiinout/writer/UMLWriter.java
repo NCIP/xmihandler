@@ -22,4 +22,7 @@ public interface UMLWriter {
   
   public UMLStereotypeWriter getUMLStereotypeWriter();  
   
+  public UMLOperationWriter getUMLOperationWriter();
+  
+  public UMLOperationParameterWriter getUMLOperationParameterWriter();
 }

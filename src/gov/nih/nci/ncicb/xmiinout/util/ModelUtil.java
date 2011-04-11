@@ -1,11 +1,15 @@
 package gov.nih.nci.ncicb.xmiinout.util;
 
 import gov.nih.nci.ncicb.xmiinout.domain.*;
+import gov.nih.nci.ncicb.xmiinout.handler.impl.EABaseImpl;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 public class ModelUtil {
 
+  private static Logger logger = Logger.getLogger(ModelUtil.class.getName());
   /**
    * Util method to find a package in a model given it's fully qualified name. <br>
    * Packages are separated by '.'. <br> Sample query string could be:
@@ -70,6 +74,34 @@ public class ModelUtil {
   }
 
   /**
+   * Util method to find a class in a model given it's fully qualified name. <br>
+   * Packages are separated by '.'. <br> Sample query string could be:
+   * <br> "gov.nih.nci.xmiinout.domain.UMLModel"
+   */
+  public static UMLInterface findInterface(UMLModel model, String fullInterfaceName) {
+    String[] queries = fullInterfaceName.split("\\.");
+
+    UMLPackage pkg = null;
+    
+    for(int i = 0; i<queries.length; i++) {
+      if(pkg == null) {
+        pkg = model.getPackage(queries[i]);
+        if(pkg == null)
+          return null;
+      } else {
+        UMLPackage newPkg = pkg.getPackage(queries[i]);
+        if(newPkg != null)
+          pkg = newPkg;
+        else if(i == queries.length -1){
+          return pkg.getInterface(queries[i]);
+        } else
+          return null;
+      }
+    }
+    return null;
+  }
+  
+  /**
    * Util method to find an Attribute in a model given it's fully qualified name. <br>
    * Packages are separated by '.'. <br> Sample query string could be:
    * <br> "gov.nih.nci.xmiinout.domain.UMLModel.name"
@@ -97,6 +129,61 @@ public class ModelUtil {
   }
 
   /**
+   * Util method to find an Attribute in a model given it's fully qualified name. <br>
+   * Packages are separated by '.'. <br> Sample query string could be:
+   * <br> "gov.nih.nci.xmiinout.domain.UMLModel.name"
+   */
+  public static UMLOperation findClassOperation(UMLModel model, String fullOperName) {
+    String[] queries = fullOperName.split("\\.");
+
+    UMLPackage pkg = null;
+    UMLClass clazz = null;    
+    for(String query : queries) {
+      if(clazz != null) {
+        return clazz.getOperation(query);
+      } else if(pkg == null) {
+          pkg = model.getPackage(query);
+      } else {
+        UMLPackage newPkg = pkg.getPackage(query);
+        if(newPkg != null)
+          pkg = newPkg;
+        else {
+          clazz = pkg.getClass(query);
+        }
+      }
+    }
+    return null;
+  }
+
+  
+  /**
+   * Util method to find an Attribute in a model given it's fully qualified name. <br>
+   * Packages are separated by '.'. <br> Sample query string could be:
+   * <br> "gov.nih.nci.xmiinout.domain.UMLModel.name"
+   */
+  public static UMLOperation findInterfaceOperation(UMLModel model, String fullOperName) {
+    String[] queries = fullOperName.split("\\.");
+
+    UMLPackage pkg = null;
+    UMLInterface clazz = null;    
+    for(String query : queries) {
+      if(clazz != null) {
+        return clazz.getOperation(query);
+      } else if(pkg == null) {
+          pkg = model.getPackage(query);
+      } else {
+        UMLPackage newPkg = pkg.getPackage(query);
+        if(newPkg != null)
+          pkg = newPkg;
+        else {
+          clazz = pkg.getInterface(query);
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
    * Util method to return a package name given a package
    * <br> e.g "java.lang" if package is "lang"
    */
@@ -122,7 +209,10 @@ public class ModelUtil {
    */
   public static String getFullPackageName(UMLClass clazz) {
 
-    StringBuilder sb = new StringBuilder();
+    if(clazz == null)
+    	return null;
+    
+	StringBuilder sb = new StringBuilder();
 
     UMLPackage pkg = clazz.getPackage();
     while(pkg != null) {
@@ -254,7 +344,186 @@ public class ModelUtil {
     return result;
   }
 
+	public static boolean isOperationStatic(UMLOperation operation)
+	{
+		UMLTaggedValue isStaticTag = operation.getTaggedValue("static", false);
+		
+		if(isStaticTag != null && isStaticTag.getValue().equals("1"))
+			return true;
+		
+		return false;
+	}
 
+	public static boolean isOperationAbstract(UMLOperation operation)
+	{
+		UMLTaggedValue isAbstractTag = operation.getTaggedValue("isAbstract", false);
+		
+		if(isAbstractTag != null && isAbstractTag.getValue().equals("1"))
+			return true;
+		
+		return false;
+	}
 
+	public static boolean isOperationFinal(UMLOperation operation)
+	{
+		UMLTaggedValue isFinalTag = operation.getTaggedValue("const", false);
+		
+		if(isFinalTag != null && isFinalTag.getValue().equals("true"))
+			return true;
+		
+		return false;
+	}
+	
+	public static String getOperationReturnType(UMLOperation operation)
+	{
+		List<UMLOperationParameter> params = operation.getParameters();
+		for(UMLOperationParameter param : params)
+		{
+			if((param.getName() != null && param.getName().equals("return")) || (param.getKind() != null && param.getKind().equals("return")))
+				return param.getDataType().getName();
+		}
 
+		return "void";
+	}
+	
+	public static String getOperationExceptions(UMLOperation operation)
+	{
+		UMLTaggedValue returnTypeTag = operation.getTaggedValue("throws", false);
+		
+		if(returnTypeTag != null)
+			return returnTypeTag.getValue();
+		
+		return null;
+	}
+
+	public static boolean isOperationArrayReturnType(UMLOperation operation)
+	{
+		UMLTaggedValue returnArrayTypeTag = operation.getTaggedValue("returnarray", false);
+		
+		if(returnArrayTypeTag != null && returnArrayTypeTag.getValue().equals("1"))
+			return true;
+		
+		return false;
+	}
+	
+	
+	public static boolean isOperationSynchronised(UMLOperation operation)
+	{
+		UMLTaggedValue isSyncTag = operation.getTaggedValue("synchronised", false);
+		
+		if(isSyncTag != null && isSyncTag.getValue().equals("1"))
+			return true;
+		
+		return false;
+	}
+	
+	//Modifier(s), return type, method name, parameter list, exception list, method body
+	public static String getOperationSignature(UMLOperation operation, boolean includeException)
+	{
+		StringBuffer str = new StringBuffer();
+		if(operation.getVisibility() != null)
+			str.append(operation.getVisibility().getName());
+		
+		if(operation.getAbstractModifier().isAbstract())
+			str.append(" abstract");
+		
+		if(operation.getFinalModifier().isFinal())
+			str.append(" final");
+
+		if(operation.getStaticModifier().isStatic())
+			str.append(" static");
+		
+		if(operation.getSynchronizedModifier().isSynchronized())
+			str.append(" synchronized");
+		
+		str.append(" "+getOperationReturnType(operation));
+		if(isOperationArrayReturnType(operation))
+			str.append("[]");
+		
+		str.append(" " + getOperationName(operation, true));
+		if(includeException)
+		{
+			String exceptions = getOperationExceptions(operation);
+			
+			if(exceptions != null)
+			{
+				str.append(" throws ");
+				str.append(exceptions);
+			}
+		}
+		return str.toString();
+	}
+
+	//Modifier(s), return type, method name, parameter list, exception list, method body
+	public static String getOperationName(UMLOperation operation, boolean actualParamName)
+	{
+		logger.debug("Finding operation name for: "+operation.getName());
+		StringBuffer str = new StringBuffer();
+		str.append(operation.getName());
+		str.append("(");
+		List<UMLOperationParameter> params = operation.getParameters();
+		boolean hasParams = false;
+		if(params != null && params.size() > 0)
+		{
+			int i = 0;
+			for(UMLOperationParameter param : params)
+			{
+				String paramText = null;
+				String paramTypeText = null;
+				if(actualParamName)
+					paramText = getOperationParameterText(param);
+				else
+				{
+					paramTypeText = getOperationParameterType(param);
+					if(paramTypeText == null)
+						continue;
+					logger.debug("Finding operation name for: "+param.getKind());
+					logger.debug("Finding operation name for: "+param.getDataType());
+					logger.debug("Finding operation name paramTypeText: "+paramTypeText);
+					paramText = paramTypeText + " param"+i;
+				}
+				
+				if(paramText != null)
+				{
+					if(hasParams)
+						str.append(",");
+					str.append(paramText);
+					hasParams = true;
+				}
+			}
+		}
+		str.append(")");
+		return str.toString();
+	}
+	
+	public static String getOperationBody(UMLOperation operation)
+	{
+		if(operation == null)
+			return null;
+		
+		return operation.getSpecification();
+	}
+
+	
+	public static String getOperationParameterText(UMLOperationParameter param)
+	{
+		String type = getOperationParameterType(param);
+		if(type != null)
+			return type+ " " + param.getName();
+		
+		return null; 	
+	}
+
+	public static String getOperationParameterType(UMLOperationParameter param)
+	{
+		if(param.getKind() != null && param.getKind().equals("return"))
+			return null;
+		else if(param.getKind() != null && param.getKind().equals("in"))
+			return param.getTaggedValue("type").getValue();
+		else if(param.getKind() == null && param.getDataType() != null )
+			return param.getDataType().getName();
+		
+		return null; 	
+	}
+	
 }

@@ -16,5 +16,4 @@ public class UMLDatatypeBean extends JDomDomainObject implements UMLDatatype {
   public String getName() {
     return name;
   }
-
 }

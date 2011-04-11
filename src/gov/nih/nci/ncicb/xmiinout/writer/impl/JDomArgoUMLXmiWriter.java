@@ -7,6 +7,8 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLClass;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLOperation;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLOperationParameter;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.JDomDomainObject;
@@ -17,6 +19,8 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLOperationBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLOperationParameterBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
@@ -29,6 +33,8 @@ import gov.nih.nci.ncicb.xmiinout.writer.UMLClassWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLDependencyWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLInterfaceWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLModelWriter;
+import gov.nih.nci.ncicb.xmiinout.writer.UMLOperationParameterWriter;
+import gov.nih.nci.ncicb.xmiinout.writer.UMLOperationWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLPackageWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLStereotypeWriter;
 import gov.nih.nci.ncicb.xmiinout.writer.UMLTaggedValueWriter;
@@ -116,6 +122,46 @@ public class JDomArgoUMLXmiWriter implements UMLWriter {
 				new UMLTagValueWriter().removeTaggedValue(attElt, tv);
 			}
 
+		};
+	}
+
+	public UMLOperationWriter getUMLOperationWriter() {
+		return new UMLOperationWriter() {
+
+			public UMLTaggedValue writeTaggedValue(UMLOperation pkg,
+					UMLTaggedValue tv) {
+				UMLOperationBean pkgBean = (UMLOperationBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				return new UMLTagValueWriter().addTaggedValue(pkgElt, tv);
+			}
+
+			public void removeTaggedValue(UMLOperation pkg, UMLTaggedValue tv) {
+				UMLOperationBean pkgBean = (UMLOperationBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				new UMLTagValueWriter().removeTaggedValue(pkgElt, tv);
+			}
+		};
+	}
+	
+	public UMLOperationParameterWriter getUMLOperationParameterWriter() {
+		return new UMLOperationParameterWriter() {
+
+			public UMLTaggedValue writeTaggedValue(UMLOperationParameter pkg,
+					UMLTaggedValue tv) {
+				UMLOperationParameterBean pkgBean = (UMLOperationParameterBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				return new UMLTagValueWriter().addTaggedValue(pkgElt, tv);
+			}
+
+			public void removeTaggedValue(UMLOperationParameter pkg, UMLTaggedValue tv) {
+				UMLOperationParameterBean pkgBean = (UMLOperationParameterBean) pkg;
+				Element pkgElt = pkgBean.getJDomElement();
+
+				new UMLTagValueWriter().removeTaggedValue(pkgElt, tv);
+			}
 		};
 	}
 

@@ -10,6 +10,7 @@ public class UMLClassBean extends JDomDomainObject
   private Map<String, UMLTaggedValue> taggedValuesMap = new HashMap<String, UMLTaggedValue>();
 
   private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
+	private List<UMLOperation> operations = new ArrayList<UMLOperation>();
 
   private Set<UMLAssociation> associations = new HashSet<UMLAssociation>();
   private List<UMLGeneralization> generalizations = new ArrayList<UMLGeneralization>();
@@ -103,6 +104,21 @@ public class UMLClassBean extends JDomDomainObject
     
   }
 
+	public List<UMLOperation> getOperations() {
+		return operations;
+	}
+
+	public UMLOperation getOperation(String name) {
+		for (UMLOperation att : operations)
+			if (att.getName().equals(name))
+				return att;
+
+		return null;
+	}
+
+	public void addOperation(UMLOperation operation) {
+		operations.add(operation);
+	}
 
   public List<UMLAttribute> getAttributes() {
     return attributes;

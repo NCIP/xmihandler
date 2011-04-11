@@ -8,6 +8,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDependency;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLOperation;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
@@ -164,6 +165,7 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
     
     // Must be done after classes for cross references.
     jdomXmiTransformer.completeAttributes(ns);
+    jdomXmiTransformer.completeOperations(ns);
   }
 
   private List<UMLTaggedValue> doRootTaggedValues(Element rootElement)
@@ -279,6 +281,12 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
 				umlClass.addAttribute(att);
 			}
 
+			logger.debug("Parsing operations for Class: "+classElement.getAttributeValue("name"));
+			List<UMLOperation> ops = doOperations(classElement);
+			for (UMLOperation att : ops) {
+				umlClass.addOperation(att);
+			}
+			
 			idClassMap.put(umlClass.getModelId(), umlClass);
 			result.add(umlClass);
 
@@ -309,6 +317,11 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
 				umlInterface.addAttribute(att);
 			}
 
+			List<UMLOperation> ops = doOperations(interfaceElement);
+			for (UMLOperation att : ops) {
+				umlInterface.addOperation(att);
+			}
+			
 			idInterfaceMap.put(umlInterface.getModelId(), umlInterface);
 			result.add(umlInterface);
 
@@ -319,6 +332,8 @@ public abstract class EABaseImpl extends DefaultXmiHandler {
 	}
 
 	protected abstract List<UMLAttribute> doAttributes(Element elt);
+
+	protected abstract List<UMLOperation> doOperations(Element elt);
 
 	protected abstract List<UMLTaggedValue> doTaggedValues(Element elt);
 

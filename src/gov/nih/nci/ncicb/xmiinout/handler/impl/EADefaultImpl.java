@@ -83,6 +83,31 @@ public class EADefaultImpl extends EABaseImpl {
 
 	}
 
+	protected  List<UMLOperation> doOperations(Element classElement) {
+		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");
+		Element featureElement = classElement.getChild("Classifier.feature", ns);
+
+		List<UMLOperation> result = new ArrayList<UMLOperation>();
+		if(featureElement == null)
+			return result;
+
+		List<Element> attElements = (List<Element>)featureElement.getChildren("Operation", ns);
+
+		for(Element attElt : attElements) {
+			UMLOperationBean umlAtt = jdomXmiTransformer.toUMLOperation(attElt, ns);
+
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt);
+			for(UMLTaggedValue tv : taggedValues) {
+				umlAtt.addTaggedValue(tv);
+			}
+
+			result.add(umlAtt);
+		}
+
+		return result;
+
+	}
+	
 	public List<UMLDependency> doDependencies(Element modelElement) throws JaxenException {
 		String xpath = "//*[local-name()='Dependency']";
 		Namespace ns = Namespace.getNamespace("omg.org/UML1.3");

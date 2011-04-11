@@ -30,6 +30,18 @@ public interface UMLInterface extends UMLTaggableElement, UMLDependencyEnd, UMLA
    */
   public UMLAttribute getAttribute(String name);
 
+  /**
+   * Convenient method to retrieve one Operation by it's name.
+   *
+   * @param name the name of the attribute to find
+   * @return The Attribute with requested name or null if none exists
+   */
+  public UMLOperation getOperation(String name);
+
+  /**
+   * @return a List of all the UML Operations belonging to this class
+   */
+  public List<UMLOperation> getOperations();
 
   /**
    * @return a Set of all associations where at least one end points to this class. 

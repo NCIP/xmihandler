@@ -44,4 +44,10 @@ public class EAXmi10Impl extends EABaseImpl {
   {
     return null;
   }
+
+  protected List<UMLOperation> doOperations(Element elt)
+  {
+    return null;
+  }
+  
 }

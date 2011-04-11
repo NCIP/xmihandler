@@ -2,12 +2,18 @@ package gov.nih.nci.ncicb.xmiinout.handler.impl;
 
 import gov.nih.nci.ncicb.xmiinout.domain.UMLAbstractModifier;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLDatatype;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAbstractModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLAttributeBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLClassBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLFinalModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLOperationBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLOperationParameterBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStaticModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLSynchronizedModifierBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTaggedValueBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLVisibilityBean;
@@ -173,6 +179,136 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
     return att;
   }	
 
+	 UMLOperationBean toUMLOperation(Element operationElement, Namespace ns) {
+
+		 	String stereotypeName = null;
+		 	logger.debug("Parsing operationElement: "+operationElement.getAttributeValue("name"));
+			Attribute visibilityAtt = operationElement.getAttribute("visibility");
+			String visibility = visibilityAtt != null ? visibilityAtt.getValue()
+					: null;
+			UMLVisibility umlVis = new UMLVisibilityBean(visibility);
+
+			logger.debug("***attElement.getAttribute('name'): " + operationElement.getAttribute("name"));
+
+
+			Attribute abstractAtt = operationElement.getAttribute("isAbstract");
+			Attribute synchAtt = operationElement.getAttribute("concurrency");
+			Attribute finalAtt = operationElement.getAttribute("isLeaf");
+			Attribute staticAtt = operationElement.getAttribute("ownerScope");
+			
+			
+			List<Element> elts = (List<Element>) operationElement.getChildren(
+					"ModelElement.stereotype", ns);
+			
+			if (elts.size() > 0) {
+				Element modelStElt = elts.get(0);
+				List<Element> stElts = (List<Element>) modelStElt.getChildren(
+						"Stereotype", ns);
+				if (stElts.size() > 0) {
+					Element stElt = stElts.get(0);
+					stereotypeName = getStereotypeName(stElts.get(0));
+				}
+			}
+			
+			Element sfTypeElement = operationElement.getChild("BehavioralFeature.parameter", ns);		
+			logger.debug("BehavioralFeature.parameter: " + sfTypeElement);
+			Attribute specification = operationElement.getAttribute("specification");
+
+			UMLOperationBean operation = new UMLOperationBean(operationElement, operationElement
+					.getAttribute("name").getValue(), stereotypeName, specification==null?null:specification.getValue(), umlVis);
+
+			if(staticAtt != null && staticAtt.getValue() != null && staticAtt.getValue().equals("classifier"))
+				operation.setStaticModifier(new UMLStaticModifierBean("true"));
+			if(abstractAtt != null && abstractAtt.getValue() != null && abstractAtt.getValue().equals("true"))
+				operation.setAbstractModifier(new UMLAbstractModifierBean("true"));
+			if(synchAtt != null && synchAtt.getValue() != null && synchAtt.getValue().equals("guarded"))
+				operation.setSynchronizedModifier(new UMLSynchronizedModifierBean("true"));
+			if(finalAtt != null && finalAtt.getValue() != null && finalAtt.getValue().equals("true"))
+				operation.setFinalModifier(new UMLFinalModifierBean("true"));
+
+			if (sfTypeElement != null) {
+				List<Element> paramElements = (List<Element>) sfTypeElement.getChildren(
+						"Parameter", ns);
+				if(paramElements != null && paramElements.size() > 0)
+				{
+					for(Element paramElt : paramElements) {
+						UMLOperationParameterBean parameter = toUMLOperationParameter(paramElt, ns);
+						operation.addOperationParameter(parameter);
+					}
+				}
+			}
+
+			Element modelElement = operationElement.getChild("ModelElement.taggedValue", ns);
+			if(modelElement != null)
+			{
+				List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
+				for(Element tvElt : tvElements) {
+					UMLTaggedValue tv = toUMLTaggedValue(tvElt);
+					if(tv != null)
+						operation.addTaggedValue(tv);
+				}
+			}
+
+			return operation;
+		}
+
+	 
+	 UMLOperationParameterBean toUMLOperationParameter(Element operationParamElement, Namespace ns) {
+
+			Attribute visibilityAtt = operationParamElement.getAttribute("visibility");
+			String visibility = visibilityAtt != null ? visibilityAtt.getValue()
+					: null;
+			UMLVisibility umlVis = new UMLVisibilityBean(visibility);
+			
+			Attribute kindAtt = operationParamElement.getAttribute("kind");
+			String kind = kindAtt != null ? kindAtt.getValue()
+					: null;
+			
+			UMLDatatype datatype = null;
+
+			logger.debug("***attElement.getAttribute('name'): " + operationParamElement.getAttribute("name"));
+			
+			Element sfTypeElement = operationParamElement.getChild("Parameter.type", ns);		
+			logger.debug("Parameter.type: " + sfTypeElement);
+			
+			if (sfTypeElement != null) {
+				Element classifElt = sfTypeElement.getChild("DataType", ns);
+				logger.debug("DataTypeElt: " + classifElt);
+				
+				if (classifElt != null) {
+					Attribute typeAtt = classifElt.getAttribute("xmi.idref");
+					if (typeAtt != null) {
+						String typeId = typeAtt.getValue();
+						logger.debug("*** typeId: " + typeId);
+						datatype = datatypes.get(typeId);
+					}
+				}
+			}
+
+			Attribute nameAttr = operationParamElement.getAttribute("name");
+			String attrName =  nameAttr != null ? nameAttr.getValue(): null; 
+			UMLOperationParameterBean paramBean = new UMLOperationParameterBean(operationParamElement, attrName, umlVis, datatype,  kind);
+
+			// maybe we haven't discovered the datatype yet.
+			if (datatype == null) {
+				logger.debug("*** datatype is null; will try to discover later");
+				paramWithMissingDatatypes.add(paramBean);
+			}
+			
+			Element modelElement = operationParamElement.getChild("ModelElement.taggedValue", ns);
+			if(modelElement != null)
+			{
+				List<Element> tvElements = (List<Element>)modelElement.getChildren("TaggedValue", ns);
+				for(Element tvElt : tvElements) {
+					UMLTaggedValue tv = toUMLTaggedValue(tvElt);
+					if(tv != null)
+						paramBean.addTaggedValue(tv);
+				}
+			}
+
+			return paramBean;
+		}
+   
   /**
    * Run this after you've processed attributes for attributes that use
    * classes as datatypes.
@@ -201,6 +337,34 @@ public class ArgoJDomXmiTransformer extends JDomXmiTransformer {
 
   }	
 
+	/**
+	 * Run this after you've processed attributes for attributes that use
+	 * classes as datatypes.
+	 */
+	 void completeOperations(Namespace ns) {
+		for (UMLOperationParameterBean att : paramWithMissingDatatypes) {
+			Element attElement = att.getJDomElement();
+
+			Element sfTypeElement = attElement.getChild(
+					"Parameter.type", ns);
+			if (sfTypeElement != null) {
+				Element classifElt = sfTypeElement.getChild("DataType", ns);
+		        if (classifElt == null) {
+		            classifElt = sfTypeElement.getChild("Class", ns);
+		          }
+
+				if (classifElt != null) {
+					Attribute typeAtt = classifElt.getAttribute("xmi.idref");
+					if (typeAtt != null) {
+						String typeId = typeAtt.getValue();
+						att._setDatatype(datatypes.get(typeId));
+					}
+				}
+			}
+		}
+
+	}
+   
    UMLTagDefinitionBean toUMLTagDefinition(Element tdElement) {
     //
     // EA

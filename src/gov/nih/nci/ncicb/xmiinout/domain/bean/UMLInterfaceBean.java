@@ -13,6 +13,8 @@ public class UMLInterfaceBean extends JDomDomainObject implements UMLInterface,
 
 	private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
 
+	private List<UMLOperation> operations = new ArrayList<UMLOperation>();
+
 	private Set<UMLAssociation> associations = new HashSet<UMLAssociation>();
 
 	private List<UMLGeneralization> generalizations = new ArrayList<UMLGeneralization>();
@@ -102,6 +104,10 @@ public class UMLInterfaceBean extends JDomDomainObject implements UMLInterface,
 		return attributes;
 	}
 
+	public List<UMLOperation> getOperations() {
+		return operations;
+	}
+
 	public UMLAttribute getAttribute(String name) {
 		for (UMLAttribute att : attributes)
 			if (att.getName().equals(name))
@@ -110,8 +116,20 @@ public class UMLInterfaceBean extends JDomDomainObject implements UMLInterface,
 		return null;
 	}
 
+	public UMLOperation getOperation(String name) {
+		for (UMLOperation att : operations)
+			if (att.getName().equals(name))
+				return att;
+
+		return null;
+	}
+
 	public void addAttribute(UMLAttribute attribute) {
 		attributes.add(attribute);
+	}
+
+	public void addOperation(UMLOperation operation) {
+		operations.add(operation);
 	}
 
 	public void addAssociation(UMLAssociation assoc) {

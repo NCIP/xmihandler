@@ -11,6 +11,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLOperation;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLVisibility;
@@ -22,6 +23,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLDependencyBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLGeneralizationBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLInterfaceBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLModelBean;
+import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLOperationBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLPackageBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLStereotypeDefinitionBean;
 import gov.nih.nci.ncicb.xmiinout.domain.bean.UMLTagDefinitionBean;
@@ -190,6 +192,7 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 
     // Must be done after classes for cross references.
     argoJDomXmiTransformer.completeAttributes(ns);
+    argoJDomXmiTransformer.completeOperations(ns);
   }
 
 
@@ -313,6 +316,12 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
         umlClass.addAttribute(att);
       }
 
+      logger.debug("Argo Parsing operations for Class: "+classElement.getAttributeValue("name"));
+      List<UMLOperation> ops = doOperations(classElement, ns);
+		for (UMLOperation att : ops) {
+			umlClass.addOperation(att);
+	  }
+
       idClassMap.put(umlClass.getModelId(), umlClass);
       result.add(umlClass);
 
@@ -345,6 +354,11 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	      for(UMLAttribute att : atts) {
 	    	  umlInterface.addAttribute(att);
 	      }
+ 		  
+	      List<UMLOperation> ops = doOperations(interfaceElement, ns);
+			for (UMLOperation att : ops) {
+				umlInterface.addOperation(att);
+		  }
 
 	      idInterfaceMap.put(umlInterface.getModelId(), umlInterface);
 	      result.add(umlInterface);
@@ -354,6 +368,30 @@ public class ArgoUMLDefaultImpl extends DefaultXmiHandler {
 	    return result;
 
 	  }
+
+	protected  List<UMLOperation> doOperations(Element classElement, Namespace ns) {
+		Element featureElement = classElement.getChild("Classifier.feature", ns);
+
+		List<UMLOperation> result = new ArrayList<UMLOperation>();
+		if(featureElement == null)
+			return result;
+
+		List<Element> attElements = (List<Element>)featureElement.getChildren("Operation", ns);
+
+		for(Element attElt : attElements) {
+			UMLOperationBean umlAtt = argoJDomXmiTransformer.toUMLOperation(attElt, ns);
+
+			Collection<UMLTaggedValue> taggedValues = doTaggedValues(attElt, ns);
+			for(UMLTaggedValue tv : taggedValues) {
+				umlAtt.addTaggedValue(tv);
+			}
+
+			result.add(umlAtt);
+		}
+
+		return result;
+
+	}
 
   protected List<UMLDatatype> doDataTypes(Element modelElt, Namespace ns) {
     Element ownedElement = modelElt.getChild("Namespace.ownedElement", ns);

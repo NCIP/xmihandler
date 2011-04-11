@@ -33,6 +33,17 @@ public interface UMLClass extends UMLTaggableElement, UMLDependencyEnd, UMLAssoc
   public List<UMLAttribute> getAttributes();
 
   /**
+   * @return UML Operation 
+   */
+  public UMLOperation getOperation(String name);
+
+
+  /**
+   * @return a List of all the UML Operations belonging to this class
+   */
+  public List<UMLOperation> getOperations();
+
+  /**
    * Convenient method to retrieve one Attribute by it's name.
    *
    * @param name the name of the attribute to find
