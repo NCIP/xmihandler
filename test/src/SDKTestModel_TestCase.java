@@ -8,6 +8,7 @@ import gov.nih.nci.ncicb.xmiinout.domain.UMLDependencyEnd;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLGeneralization;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLInterface;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLModel;
+import gov.nih.nci.ncicb.xmiinout.domain.UMLOperation;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLPackage;
 import gov.nih.nci.ncicb.xmiinout.domain.UMLTaggedValue;
 import gov.nih.nci.ncicb.xmiinout.handler.HandlerEnum;
@@ -18,6 +19,7 @@ import gov.nih.nci.ncicb.xmiinout.util.ModelUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -114,6 +116,16 @@ public class SDKTestModel_TestCase extends TestCase {
 	}
 
 
+	private void testSuite2()
+	{
+		init();
+
+		UMLModel model = testGetModel(modelName);
+
+		testFindOperations(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.interfaze.Pet", true);
+		testFindOperations(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.interfaze.Dog", false);
+	}
+	
 	private void testGetSuperclasses(UMLModel model) {
 		UMLClass[] classes = testGetSuperclasses(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Cash");
 		Assert.assertTrue(classes.length == 1);
@@ -156,6 +168,33 @@ public class SDKTestModel_TestCase extends TestCase {
 
 	}
 
+	private void testFindOperations(UMLModel model, String fullClassName, boolean interfaze) {
+
+		List<UMLOperation> operations;
+		String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+
+		if(interfaze)
+		{
+			UMLInterface clazz = ModelUtil.findInterface(model, fullClassName);
+			Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
+			operations = clazz.getOperations();
+		}
+		else
+		{
+			UMLClass clazz = ModelUtil.findClass(model, fullClassName);
+			Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
+			operations = clazz.getOperations();
+		}
+		
+		System.out.println("Operations for class: "+fullClassName);
+		
+		for(UMLOperation operation : operations)
+		{
+			System.out.println("Operation signature: "+ModelUtil.getOperationSignature(operation, true));
+			System.out.println("Operation body: "+ModelUtil.getOperationBody(operation));
+		}
+	}
+	
 	private void testFindAttribute(UMLModel model, String fullAttName) {
 
 		UMLAttribute att = ModelUtil.findAttribute(model, fullAttName);
@@ -529,14 +568,16 @@ public class SDKTestModel_TestCase extends TestCase {
 
 	public static void main(String[] args) {
 		
-		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(args[0], args[1], args[2], args[3]);
+//		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(args[0], args[1], args[2], args[3]);
 
+		String[] arg = {"C:\\Prasad\\OM\\xmihandler\\test\\testdata\\sdk_New_5.xmi", "EADefault", "new", "EA Model"};
+		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(arg[0], arg[1], arg[2], arg[3]);
 		if(Arrays.binarySearch(args, "--no-color") > -1)
 			testCase.setNoColor(true);
 		else 
 			System.out.println("run with --no-color if you terminal does not support colors");
 
-		testCase.suite();
+		testCase.testSuite2();
 
 	}
 

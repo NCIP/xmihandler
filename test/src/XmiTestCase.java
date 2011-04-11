@@ -88,38 +88,38 @@ public class XmiTestCase extends TestCase {
 
 	private void suite() {
 
-// 		init();
+ 		init();
 
-// 		UMLModel model = testGetModel("EA Model");
+ 		UMLModel model = testGetModel("EA Model");
 
-// 		printModel(model);
+ 		printModel(model);
 
-//                testFindPackage(model, "Logical View.Logical Model.com.ludet.hr.domain");
+                testFindPackage(model, "Logical View.Logical Model.com.ludet.hr.domain");
 
-// 		testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+ 		testFindClass(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
-// 		testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
+ 		testFindAttribute(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName");
 
-// 		testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
+ 		testGetFullPackageName(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee");
 
-// 		testGetSuperclasses(model);
+ 		testGetSuperclasses(model);
 
-// 		addTaggedValueToAll(model);
+ 		addTaggedValueToAll(model);
 
-// 		addDependency(model);
+ 		addDependency(model);
 
-//		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
-// 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
+		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "HUMAN_REVIEWED");
+ 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.common.DomainObject", "ea_ntype");
 
-// 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
+ 		testRemoveTaggedValue(model, "Logical View.Logical Model.com.ludet.hr.domain.Employee.firstName", "HUMAN_REVIEWED");
 
-// 		printModel(model);
+ 		printModel(model);
 
-          testClassRemoveTaggedValue();
+//          testClassRemoveTaggedValue();
+//
+//         testPackageTaggedValue();
 
-          testPackageTaggedValue();
-
-          testModelRemoveTaggedValue();
+//          testModelRemoveTaggedValue();
 
 	}
 
@@ -206,7 +206,9 @@ public class XmiTestCase extends TestCase {
 
 
   private void testModelRemoveTaggedValue() {
-    init("gme_test1.xmi");
+//    init("gme_test1.xmi");
+	    init("XMI_Handler_TEST.xmi");
+	  
 
     UMLModel model = testGetModel("EA Model");
 
@@ -713,7 +715,9 @@ public class XmiTestCase extends TestCase {
 
 	public static void main(String[] args) {
 
-		XmiTestCase testCase = new XmiTestCase(args[args.length - 1]);
+		//XmiTestCase testCase = new XmiTestCase(args[args.length - 1]);
+		String fileName="C:\\Prasad\\OM\\xmihandler\\test\\testdata\\XMI_Handler_TEST.xmi";
+		XmiTestCase testCase = new XmiTestCase(fileName);
 
 		if(Arrays.binarySearch(args, "--no-color") > -1)
 			testCase.setNoColor(true);
