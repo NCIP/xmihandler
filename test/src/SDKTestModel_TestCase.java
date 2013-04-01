@@ -48,7 +48,7 @@ public class SDKTestModel_TestCase extends TestCase {
 
 	static final short RED = 31, GREEN = 32,
 	BLACK = 30, YELLOW = 33, BLUE = 34,
-	MAGENTA = 35, CYAN = 36, WHITE = 37; 
+	MAGENTA = 35, CYAN = 36, WHITE = 37;
 
 	public SDKTestModel_TestCase(String filename, String handlerEnumType, String newFileExtension, String modelName) {
 		this.filename = filename;
@@ -133,7 +133,7 @@ public class SDKTestModel_TestCase extends TestCase {
 		testFindOperations(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.interfaze.Pet", true);
 		testFindOperations(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.interfaze.Dog", false);
 	}
-	
+
 	private void testGetSuperclasses(UMLModel model) {
 		UMLClass[] classes = testGetSuperclasses(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.inheritance.childwithassociation.Cash");
 		Assert.assertTrue(classes.length == 1);
@@ -193,16 +193,16 @@ public class SDKTestModel_TestCase extends TestCase {
 			Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
 			operations = clazz.getOperations();
 		}
-		
+
 		System.out.println("Operations for class: "+fullClassName);
-		
+
 		for(UMLOperation operation : operations)
 		{
 			System.out.println("Operation signature: "+ModelUtil.getOperationSignature(operation, true));
 			System.out.println("Operation body: "+ModelUtil.getOperationBody(operation));
 		}
 	}
-	
+
 	private void testFindAttribute(UMLModel model, String fullAttName) {
 
 		UMLAttribute att = ModelUtil.findAttribute(model, fullAttName);
@@ -231,18 +231,18 @@ public class SDKTestModel_TestCase extends TestCase {
 		dep.addTaggedValue("ea_type", "Dependency");
 		dep.addTaggedValue("direction", "Source -&gt; Destination");
 		dep.addTaggedValue("style", "3");
-		
+
 		dep.addStereotype("myTestStereotype");
 		dep.removeStereotype("myTestStereotype");
 	}
 
-	private UMLClass findClass(UMLModel model, String className) 
+	private UMLClass findClass(UMLModel model, String className)
 	{
 		for(UMLPackage pkg : model.getPackages()) {
 			UMLClass c = findClass(pkg, className);
 			if(c != null)
 				return c;
-		}    
+		}
 		return null;
 	}
 
@@ -287,7 +287,7 @@ public class SDKTestModel_TestCase extends TestCase {
 		}
 		for(UMLClass clazz : pkg.getClasses()) {
 			addTaggedValueToAll(clazz);
-		}    
+		}
 	}
 
 	private void addTaggedValueToAll(UMLClass clazz) {
@@ -304,12 +304,12 @@ public class SDKTestModel_TestCase extends TestCase {
 
 	private void addTaggedValueToAll(UMLAttribute att) {
 		att.addTaggedValue("myAttributeTaggedValue", "test attribute tagged value");
-		
+
 	}
 
 	private void addTaggedValueToAll(UMLAssociation assoc) {
 		assoc.addTaggedValue("myAssociationTaggedValue", "test association tagged value");
-		
+
 		for(UMLAssociationEnd end : assoc.getAssociationEnds()) {
 			end.addTaggedValue("myAssociationEndTaggedValue", "test associationEnd tagged value");
 		}
@@ -338,16 +338,16 @@ public class SDKTestModel_TestCase extends TestCase {
 		for(UMLClass clazz : pkg.getClasses()) {
 			printClass(clazz, pkgDepth);
 		}
-		
+
 		for(UMLInterface interfaze : pkg.getInterfaces()) {
 			printInterface(interfaze, pkgDepth);
 		}
-		
+
 		for(UMLPackage _pkg : pkg.getPackages()) {
 			printPackage(_pkg, pkgDepth + 1);
 		}
 	}
-	
+
 	private void printClass(UMLClass clazz, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
@@ -356,7 +356,7 @@ public class SDKTestModel_TestCase extends TestCase {
 		if(clazz.getVisibility() != null)
 			printInColor(RED, clazz.getVisibility().getName());
 
-		System.out.println(" " + clazz.getName());    
+		System.out.println(" " + clazz.getName());
 
 		for(UMLTaggedValue tv : clazz.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
@@ -383,13 +383,13 @@ public class SDKTestModel_TestCase extends TestCase {
 		}
 
 	}
-	
+
 	private void printInterface(UMLInterface interfaze, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
 		System.out.print("  Interface: ");
 
-		System.out.println(" " + interfaze.getName());    
+		System.out.println(" " + interfaze.getName());
 
 		for(UMLTaggedValue tv : interfaze.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
@@ -415,7 +415,7 @@ public class SDKTestModel_TestCase extends TestCase {
 			printAssociation(assoc, pkgDepth + 1);
 		}
 
-	}	
+	}
 
 	private void printAssociation(UMLAssociation assoc, int pkgDepth) {
 		for(int i = 0; i < pkgDepth; i++)
@@ -432,14 +432,14 @@ public class SDKTestModel_TestCase extends TestCase {
 		}
 		printInColor(GREEN,
 				"Association: "
-				+ ((UMLClass)srcEnd.getUMLElement()).getName() 
+				+ ((UMLClass)srcEnd.getUMLElement()).getName()
 				+ "(" + srcEnd.getRoleName() + ")"
 				+ "[" + srcEnd.getLowMultiplicity() + ".."
 				+ srcEnd.getHighMultiplicity() + "]"
 				+ (srcEnd.isNavigable()?"<":"")
 				+ "--"
 				+ (targetEnd.isNavigable()?">":"")
-				+ ((UMLClass)targetEnd.getUMLElement()).getName() 
+				+ ((UMLClass)targetEnd.getUMLElement()).getName()
 				+ "(" + targetEnd.getRoleName() + ")"
 				+ "[" + targetEnd.getLowMultiplicity() + ".."
 				+ targetEnd.getHighMultiplicity() + "]"
@@ -449,34 +449,34 @@ public class SDKTestModel_TestCase extends TestCase {
 
 		for(UMLTaggedValue tv : assoc.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 		System.out.println("");
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, 
-				"Association from Source:" 
+		printInColor(GREEN,
+				"Association from Source:"
 				+ srcEnd.getOwningAssociation().getRoleName());
 
 		System.out.println("");
 		for(UMLTaggedValue tv : srcEnd.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 		System.out.println("");
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
 		System.out.print("  ");
-		printInColor(GREEN, 
-				"Association from target:" 
+		printInColor(GREEN,
+				"Association from target:"
 				+ targetEnd.getOwningAssociation().getRoleName());
 
 		System.out.println("");
 		for(UMLTaggedValue tv : targetEnd.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 
 		System.out.println("");
@@ -491,7 +491,7 @@ public class SDKTestModel_TestCase extends TestCase {
 
 		String subtypeName = gen.getSubtype().getName();
 		String supertypeName = gen.getSupertype().getName();
-		
+
 		printInColor(GREEN, "Generalization: " + subtypeName + " --> " + supertypeName);
 		System.out.println("");
 	}
@@ -503,29 +503,29 @@ public class SDKTestModel_TestCase extends TestCase {
 
 		UMLDependencyEnd clientEnd = dep.getClient();
 		UMLDependencyEnd supplierEnd = dep.getSupplier();
-		
+
 		String clientName = null;
 		String supplierName = null;
-		
+
 		if (clientEnd instanceof UMLClass){
 			clientName = ((UMLClass)(clientEnd)).getName();
 		} else if (clientEnd instanceof UMLInterface){
 			clientName = ((UMLInterface)(clientEnd)).getName();
 		}
-		
+
 		if (supplierEnd instanceof UMLClass){
 			supplierName = ((UMLClass)(supplierEnd)).getName();
 		} else if (supplierEnd instanceof UMLInterface){
 			supplierName = ((UMLInterface)(supplierEnd)).getName();
 		}
-		
-		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());	
+
+		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());
 
 		System.out.println("");
 
 		for(UMLTaggedValue tv : dep.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 	}
 
 
@@ -540,7 +540,7 @@ public class SDKTestModel_TestCase extends TestCase {
 		if(att.getDatatype() != null)
 			printInColor(RED, " " + att.getDatatype().getName());
 
-		System.out.println(" " + att.getName());    
+		System.out.println(" " + att.getName());
 
 		for(UMLTaggedValue tv : att.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
@@ -575,14 +575,14 @@ public class SDKTestModel_TestCase extends TestCase {
 	}
 
 	public static void main(String[] args) {
-		
+
 //		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(args[0], args[1], args[2], args[3]);
 
-		String[] arg = {"C:\\Prasad\\OM\\xmihandler\\test\\testdata\\sdk_New_5.xmi", "EADefault", "new", "EA Model"};
+		String[] arg = {"C:\\DEV\\GIT-WORK\\xmihandler\\test\\testdata\\sdk.xmi", "EADefault", "new", "EA Model"};
 		SDKTestModel_TestCase testCase = new SDKTestModel_TestCase(arg[0], arg[1], arg[2], arg[3]);
 		if(Arrays.binarySearch(args, "--no-color") > -1)
 			testCase.setNoColor(true);
-		else 
+		else
 			System.out.println("run with --no-color if you terminal does not support colors");
 
 		testCase.testSuite2();

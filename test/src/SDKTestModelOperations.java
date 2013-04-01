@@ -64,7 +64,7 @@ public class SDKTestModelOperations extends TestCase {
 			model = handler.getModel();
 		else
 			model = handler.getModel(modelName);
-		
+
 		System.out.println("Model: " + model.getName());
 		return model;
 	}
@@ -100,7 +100,7 @@ public class SDKTestModelOperations extends TestCase {
 		testTestOperation(model);
 
 		testSaveModel();
-		
+
 		testLoadModel(filename + newFileExtension);
 		//model = testGetModel(modelName);
 		model = testGetModel(null);
@@ -120,7 +120,7 @@ public class SDKTestModelOperations extends TestCase {
 		assertOperation(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.operations.Site", "setActivityStatus", false);
 		assertOperation(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.operations.Site", "validateStatus", false);
 	}
-	
+
 	private void testTestOperation(UMLModel model)
 	{
 		testFindClass(model, "Logical View.Logical Model.gov.nih.nci.cacoresdk.domain.operations.TestOperationClass");
@@ -174,9 +174,9 @@ public class SDKTestModelOperations extends TestCase {
 			Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
 			operations = clazz.getOperations();
 		}
-		
+
 		System.out.println("Operations for class: "+fullClassName);
-		
+
 		for(UMLOperation operation : operations)
 		{
 			System.out.println("Operation signature: "+ModelUtil.getOperationSignature(operation, true));
@@ -201,10 +201,10 @@ public class SDKTestModelOperations extends TestCase {
 			Assert.assertNotNull("Class not found -- " + fullClassName + " -- " + className, clazz);
 			operations = clazz.getOperations();
 		}
-		
+
 		System.out.println("Operations for class: "+fullClassName);
 		boolean found = false;
-		
+
 		for(UMLOperation operation : operations)
 		{
 			if(operation.getName().equals(operationName))
@@ -260,18 +260,18 @@ public class SDKTestModelOperations extends TestCase {
 					Assert.assertEquals("public final static synchronised void testOperation5(boolean value) ", opSign);
 					String opBody = ModelUtil.getOperationBody(operation);
 					Assert.assertEquals("return;", opBody);
-					
+
 				}
 			}
-			
+
 		}
 		Assert.assertTrue("Operatation name: "+operationName + " cannot be found in class: "+fullClassName, found);
 	}
-	
+
 
 
 /*	public static void main(String[] args) {
-		
+
 		String[] arg = {"C:\\Prasad\\OM\\xmihandler\\test\\testdata\\sdk_New_6.xmi", "EADefault", "new", "EA Model"};
 		SDKTestModelOperations testCase = new SDKTestModelOperations(arg[0], arg[1], arg[2], arg[3]);
 		testCase.suite();
@@ -279,11 +279,11 @@ public class SDKTestModelOperations extends TestCase {
 	}
 */
 	public static void main(String[] args) {
-		
-		String[] arg = {"C:\\Prasad\\OM\\xmihandler\\test\\testdata\\sdk_test.uml", "ArgoUMLDefault", "new", "EA Model"};
+
+		String[] arg = {"C:\\DEV\\GIT-WORK\\xmihandler\\test\\testdata\\sdk_test.uml", "ArgoUMLDefault", "new", "EA Model"};
 		SDKTestModelOperations testCase = new SDKTestModelOperations(arg[0], arg[1], arg[2], arg[3]);
 		testCase.suite();
 
 	}
-	
+
 }

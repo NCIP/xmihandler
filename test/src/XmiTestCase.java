@@ -34,18 +34,18 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 
 public class XmiTestCase extends TestCase {
-  
+
   private static Logger logger = Logger.getLogger(XmiTestCase.class.getName());
 
   private XmiInOutHandler handler = null;
   private String filename;
-  
+
   private boolean noColor = false;
-  
+
   static final short RED = 31, GREEN = 32,
     BLACK = 30, YELLOW = 33, BLUE = 34,
-    MAGENTA = 35, CYAN = 36, WHITE = 37; 
-  
+    MAGENTA = 35, CYAN = 36, WHITE = 37;
+
   public XmiTestCase(String filename) {
     this.filename = filename;
   }
@@ -69,7 +69,7 @@ public class XmiTestCase extends TestCase {
       e.printStackTrace();
     }
   }
-  
+
   private void testSaveModel(String filename) {
     try {
       handler.save("test/testdata/" + filename + ".new.xmi");
@@ -139,17 +139,17 @@ public class XmiTestCase extends TestCase {
     UMLModel model = testGetModel("EA Model");
 
     testTaggedValuePresent(model, "Domain Model.hr.domain.Company", "CADSR_Description", true);
-    
+
     testRemoveTaggedValue(model, "Domain Model.hr.domain.Company", "CADSR_Description");
-    
+
     testSaveModel("XMI_Handler_TEST.xmi");
-    
+
     testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
-    
+
     model = testGetModel("EA Model");
-    
+
     testTaggedValuePresent(model, "Domain Model.hr.domain.Company", "CADSR_Description", false);
-    
+
   }
 
   private void testPackageTaggedValue() {
@@ -167,7 +167,7 @@ public class XmiTestCase extends TestCase {
     testTaggedValuePresent(model, "Domain Model.hr.common", "TEST_PACKAGE_TV", "test common");
     testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", "test Domain Model");
 
-    
+
     // testing Remove
     logger.info("Test TV Remove");
     testRemoveTaggedValue(model, "Domain Model.hr", "TEST_PACKAGE_TV");
@@ -177,10 +177,10 @@ public class XmiTestCase extends TestCase {
     testRemoveTaggedValue(model, "Domain Model", "TEST_PACKAGE_TV");
 
     testSaveModel("XMI_Handler_TEST.xmi");
-    
+
     testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
     model = testGetModel("EA Model");
-    
+
     testTaggedValuePresent(model, "Domain Model", "TEST_PACKAGE_TV", false);
     testTaggedValuePresent(model, "Domain Model.hr", "TEST_PACKAGE_TV", false);
     testTaggedValuePresent(model, "Domain Model.hr.domain", "TEST_PACKAGE_TV", false);
@@ -198,12 +198,12 @@ public class XmiTestCase extends TestCase {
     testAddTaggedValue(model, "Domain Model.hr.domain", "NEW_PACKAGE_TV", "new domain");
     testAddTaggedValue(model, "Domain Model.hr.domain.companies", "NEW_PACKAGE_TV", "new companies");
     testAddTaggedValue(model, "Domain Model.hr.common", "NEW_PACKAGE_TV", "new common");
-    
+
     testSaveModel("XMI_Handler_TEST.xmi");
-    
+
     testLoadModel("XMI_Handler_TEST.xmi.new.xmi");
     model = testGetModel("EA Model");
-    
+
     testTaggedValuePresent(model, "Domain Model", "NEW_PACKAGE_TV", "new domain model");
     testTaggedValuePresent(model, "Domain Model.hr", "NEW_PACKAGE_TV", "new hr");
     testTaggedValuePresent(model, "Domain Model.hr.domain", "NEW_PACKAGE_TV", "new domain");
@@ -216,22 +216,22 @@ public class XmiTestCase extends TestCase {
   private void testModelRemoveTaggedValue() {
 //    init("gme_test1.xmi");
 	    init("XMI_Handler_TEST.xmi");
-	  
+
 
     UMLModel model = testGetModel("EA Model");
 
     testTaggedValuePresent(model, "NCI_GME_XML_NAMESPACE", true);
-    
+
     testRemoveTaggedValue(model, "NCI_GME_XML_NAMESPACE");
-    
+
     testSaveModel("gme_test1.xmi");
-    
+
     testLoadModel("gme_test1.xmi.new.xmi");
-    
+
     model = testGetModel("EA Model");
-    
+
     testTaggedValuePresent(model, "NCI_GME_XML_NAMESPACE", false);
-    
+
   }
 
 
@@ -264,12 +264,12 @@ public class XmiTestCase extends TestCase {
 
 		System.out.println("Correct Package: " + result);
 	}
-  
+
   private void testFindPackage(UMLModel model, String fullName) {
     UMLPackage pkg = ModelUtil.findPackage(model, fullName);
 
     Assert.assertNotNull("Package not found -- " + fullName, pkg);
-    
+
   }
 
 	private void testFindClass(UMLModel model, String fullClassName) {
@@ -316,13 +316,13 @@ public class XmiTestCase extends TestCase {
 		dep.addTaggedValue("style", "3");
 	}
 
-	private UMLClass findClass(UMLModel model, String className) 
+	private UMLClass findClass(UMLModel model, String className)
 	{
 		for(UMLPackage pkg : model.getPackages()) {
 			UMLClass c = findClass(pkg, className);
 			if(c != null)
 				return c;
-		}    
+		}
 		return null;
 	}
 
@@ -346,7 +346,7 @@ public class XmiTestCase extends TestCase {
       testTaggedValuePresent(pkg, tvName, value);
     } else {
       UMLClass clazz = ModelUtil.findClass(model, fullName);
-      
+
       if(clazz != null) {
         testTaggedValuePresent(clazz, tvName, value);
       } else {
@@ -366,7 +366,7 @@ public class XmiTestCase extends TestCase {
       testTaggedValuePresent(pkg, tvName, present);
     } else {
       UMLClass clazz = ModelUtil.findClass(model, fullName);
-      
+
       if(clazz != null) {
         testTaggedValuePresent(clazz, tvName, present);
       } else {
@@ -386,17 +386,17 @@ public class XmiTestCase extends TestCase {
 
     Assert.assertNotNull("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + value, tv);
     Assert.assertEquals("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + value, tv.getValue(), value);
-    
-    
+
+
   }
 
   private void testTaggedValuePresent(UMLTaggableElement elt, String tvName, boolean present) {
     UMLTaggedValue tv = elt.getTaggedValue(tvName);
-    
+
     Assert.assertTrue("testTaggedValuePresent Failed. " + elt + " -- " + tvName + " -- " + present, (tv == null) != present);
-    
+
   }
-    
+
 
   private void testRemoveTaggedValue(UMLTaggableElement elt , String tvName) {
     elt.removeTaggedValue(tvName);
@@ -444,7 +444,7 @@ public class XmiTestCase extends TestCase {
     }
   }
 
-    
+
   private void addTaggedValueToAll(UMLModel model) {
     for(UMLPackage pkg : model.getPackages()) {
       addTaggedValueToAll(pkg);
@@ -453,7 +453,7 @@ public class XmiTestCase extends TestCase {
       addTaggedValueToAll(clazz);
     }
   }
-  
+
 	private void addTaggedValueToAll(UMLPackage pkg) {
 		pkg.addTaggedValue("myPackageTaggedValue", "test package tagged Value");
 
@@ -462,7 +462,7 @@ public class XmiTestCase extends TestCase {
 		}
 		for(UMLClass clazz : pkg.getClasses()) {
 			addTaggedValueToAll(clazz);
-		}    
+		}
 	}
 
 	private void addTaggedValueToAll(UMLClass clazz) {
@@ -523,7 +523,7 @@ public class XmiTestCase extends TestCase {
 		if(clazz.getVisibility() != null)
 			printInColor(RED, clazz.getVisibility().getName());
 
-		System.out.println(" " + clazz.getName());    
+		System.out.println(" " + clazz.getName());
 
 		for(UMLTaggedValue tv : clazz.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
@@ -566,14 +566,14 @@ public class XmiTestCase extends TestCase {
 		}
 		printInColor(GREEN,
 				"Association: "
-				+ ((UMLClass)srcEnd.getUMLElement()).getName() 
+				+ ((UMLClass)srcEnd.getUMLElement()).getName()
 				+ "(" + srcEnd.getRoleName() + ")"
 				+ "[" + srcEnd.getLowMultiplicity() + ".."
 				+ srcEnd.getHighMultiplicity() + "]"
 				+ (srcEnd.isNavigable()?"<":"")
 				+ "--"
 				+ (targetEnd.isNavigable()?">":"")
-				+ ((UMLClass)targetEnd.getUMLElement()).getName() 
+				+ ((UMLClass)targetEnd.getUMLElement()).getName()
 				+ "(" + targetEnd.getRoleName() + ")"
 				+ "[" + targetEnd.getLowMultiplicity() + ".."
 				+ targetEnd.getHighMultiplicity() + "]"
@@ -583,34 +583,34 @@ public class XmiTestCase extends TestCase {
 
 		for(UMLTaggedValue tv : assoc.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 		System.out.println("");
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
 		System.out.print("  ");
 
-		printInColor(GREEN, 
-				"Association from Source:" 
+		printInColor(GREEN,
+				"Association from Source:"
 				+ srcEnd.getOwningAssociation().getRoleName());
 
 		System.out.println("");
 		for(UMLTaggedValue tv : srcEnd.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 		System.out.println("");
 		for(int i = 0; i < pkgDepth; i++)
 			System.out.print("  ");
 		System.out.print("  ");
-		printInColor(GREEN, 
-				"Association from target:" 
+		printInColor(GREEN,
+				"Association from target:"
 				+ targetEnd.getOwningAssociation().getRoleName());
 
 		System.out.println("");
 		for(UMLTaggedValue tv : targetEnd.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 
 
 		System.out.println("");
@@ -625,7 +625,7 @@ public class XmiTestCase extends TestCase {
 
 		String subtypeName = gen.getSubtype().getName();
 		String supertypeName = gen.getSupertype().getName();
-		
+
 		printInColor(GREEN, "Generalization: " + subtypeName + " --> " + supertypeName);
 		System.out.println("");
 	}
@@ -637,29 +637,29 @@ public class XmiTestCase extends TestCase {
 
 		UMLDependencyEnd clientEnd = dep.getClient();
 		UMLDependencyEnd supplierEnd = dep.getSupplier();
-		
+
 		String clientName = null;
 		String supplierName = null;
-		
+
 		if (clientEnd instanceof UMLClass){
 			clientName = ((UMLClass)(clientEnd)).getName();
 		} else if (clientEnd instanceof UMLInterface){
 			clientName = ((UMLInterface)(clientEnd)).getName();
 		}
-		
+
 		if (supplierEnd instanceof UMLClass){
 			supplierName = ((UMLClass)(supplierEnd)).getName();
 		} else if (supplierEnd instanceof UMLInterface){
 			supplierName = ((UMLInterface)(supplierEnd)).getName();
 		}
-		
-		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());	
+
+		printInColor(GREEN, "Dependency: " + clientName + " --> " + supplierName + "; Stereotype: " + dep.getStereotype());
 
 		System.out.println("");
 
 		for(UMLTaggedValue tv : dep.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
-		}    
+		}
 	}
 
 	private void printAttribute(UMLAttribute att, int pkgDepth) {
@@ -673,7 +673,7 @@ public class XmiTestCase extends TestCase {
 		if(att.getDatatype() != null)
 			printInColor(RED, " " + att.getDatatype().getName());
 
-		System.out.println(" " + att.getName());    
+		System.out.println(" " + att.getName());
 
 		for(UMLTaggedValue tv : att.getTaggedValues()) {
 			printTaggedValue(tv, pkgDepth);
@@ -704,7 +704,7 @@ public class XmiTestCase extends TestCase {
       e.printStackTrace();
     }
   }
-  
+
 
 	private void init() {
 		try {
@@ -724,12 +724,12 @@ public class XmiTestCase extends TestCase {
 	public static void main(String[] args) {
 
 		//XmiTestCase testCase = new XmiTestCase(args[args.length - 1]);
-		String fileName="C:\\Prasad\\OM\\xmihandler\\test\\testdata\\XMI_Handler_TEST.xmi";
+		String fileName="C:\\DEV\\GIT-WORK\\xmihandler\\test\\testdata\\XMI_Handler_TEST.xmi";
 		XmiTestCase testCase = new XmiTestCase(fileName);
 
 		if(Arrays.binarySearch(args, "--no-color") > -1)
 			testCase.setNoColor(true);
-		else 
+		else
 			System.out.println("run with --no-color if you terminal does not support colors");
 
 
