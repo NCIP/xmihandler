@@ -1,4 +1,0 @@
-ddumitru = Daniel Dumitru <ddumitru>
-kanozad = Douglas Kanoza <kanozad@mail.nih.gov>
-konkapv = Prasad Konka <konkapv@mail.nih.gov>
-ludetc = Christophe Ludet <ludetc@moxieinformatics.com>
