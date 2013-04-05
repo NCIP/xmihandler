@@ -1,4 +1,4 @@
-Copyright (c), Ekagra Software Technologies Ltd. ("EKAGRA")
+Copyright (c) 2007, Ekagra Software Technologies Ltd. ("EKAGRA")
 and Science Applications International Corporation ("SAIC")
 All rights reserved.
 
