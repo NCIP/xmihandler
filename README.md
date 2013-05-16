@@ -8,10 +8,10 @@ Please see the NOTICE and LICENSE files for details.
 
 You will find more details about XMI Handler in the following links:
 
- * [NCI OSDI] (https://wiki.nci.nih.gov/display/caBIGCommunityCode/CBIIT+Open+Source+Development+Initiative)
- * [Forum] (https://cabig-kc.nci.nih.gov/CaGrid/forums/viewforum.php?f=31&sid=317abcd4b7ae1f07e547e12f9c2b9059)
- * [Issue Tracker] (https://tracker.nci.nih.gov/browse/SDK)
  * [Code Repository] (https://github.com/NCIP/xmihandler)
+ * [Issue Tracker] (https://tracker.nci.nih.gov/browse/SDK)
+ * [Forum] (https://cabig-kc.nci.nih.gov/CaGrid/forums/viewforum.php?f=31&sid=317abcd4b7ae1f07e547e12f9c2b9059)
+ 
 
 Please join us in further developing and improving XMI Handler.
 
@@ -19,5 +19,3 @@ Please join us in further developing and improving XMI Handler.
  * JDK 1.6.x
  * Ant 1.6.x
  
-# Build
- * ant dist
