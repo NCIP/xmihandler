@@ -1,5 +1,5 @@
 XMI Handler
-Copyright (c) 2007, Ekagra Software Technologies Ltd. ("EKAGRA") and Science Applications International Corporation ("SAIC").
+Copyright (c) 2007, Ekagra Software Technologies Ltd., and SAIC.
 
 This project is distributed under the BSD 3-Clause License.
 Please see LICENSE file for details.
@@ -9,8 +9,8 @@ This project was developed as part of the NCI CBIIT initiative.
 
 The XMI Handler provides a set of API to read from and write into XMI files. The XMI Handler parses a given XMI file and represent the model in Java objects. XML Metadata Interchange (XMI) is an interchange format for UML models.
 
-The project was initially developed by Ekagra Software Technologies Ltd. ("EKAGRA")
-and Science Applications International Corporation ("SAIC") under funding from the CBIIT office of the National Cancer Institute.
+The project was initially developed by Ekagra Software Technologies Ltd.,
+and SAIC under funding from the CBIIT office of the National Cancer Institute.
 
 In 2013, as part of the National Cancer Informatics Program (NCIP) Open Development Initiative, 
 the XMI Handler source code was migrated to GitHub to allow further development by the broader community.
