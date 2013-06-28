@@ -1,7 +1,7 @@
 Welcome to the XMI Handler Project!
 =====================================
 
-The XMI Handler provides a set of API to read from and write into XMI files. XML Metadata Interchange (XMI) is an interchange format for UML models. The XMI Handler parses a given XMI file and represent the model in Java objects. The API works with both ArgoUML and Enterprise Architect created XMI models. 
+The XMI Handler provides a set of API to read from and write into XMI files. XML Metadata Interchange (XMI) is an interchange format for UML models. The XMI Handler parses a given XMI file and represent the model in Java objects. The APIs work with both ArgoUML and Enterprise Architect created XMI models. 
  
 A UML Class Diagram is the only kind of UML model that the XMI Handler currently supports. It supports class diagrams representing the static items that exist in a system, their structure, their operations, thier tag values and their relationships. Class diagrams are usually used to depict the logical (e.g. logical model) and physical (e.g. data model) design of the system. 
 
